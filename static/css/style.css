@@ -435,6 +435,7 @@ section {
     font-size: 1.25rem;
     color: var(--text-muted);
     line-height: 1.6;
+    font-weight: 600;
 }
 
 .hero-cta {
