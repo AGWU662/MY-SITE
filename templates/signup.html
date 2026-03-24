@@ -1,0 +1,400 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Create your Elite Wealth Capital account. Start investing in premium high-yield opportunities with our trusted platform.">
+    <title>Sign Up - Elite Wealth Capital | Create Your Account</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/auth-revamp.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css' %}">
+
+    <!-- Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L35DKWMCL2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-L35DKWMCL2');
+    </script>
+</head>
+
+<body class="auth-page-revamped">
+
+    <div class="auth-split-container">
+        <!-- Visual Side (Left) -->
+        <div class="auth-visual-side">
+            <!-- Back Home Absolute -->
+            <a href="{% url 'home' %}"
+                style="position: absolute; top: 40px; left: 40px; color: white; text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 500; opacity: 0.8; transition: 0.3s; z-index: 10;">
+                <i data-lucide="arrow-left" style="width: 20px;"></i> Back to Home
+            </a>
+
+            <div class="auth-brand-large">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="40">
+                <h1>Start Your<br>Journey Today</h1>
+            </div>
+
+            <p style="font-size: 1.1rem; line-height: 1.6; color: rgba(255,255,255,0.8); max-width: 500px;">
+                Join over 50,000 investors earning consistent returns. Create your account in minutes and get immediate
+                access to our premium investment plans.
+            </p>
+
+            <div style="margin-top: 3rem; display: flex; gap: 2rem;">
+                <div>
+                    <h3 style="color: #F59E0B; font-size: 1.5rem; margin-bottom: 0.5rem;">$127M+</h3>
+                    <p style="color: rgba(255,255,255,0.6);">Assets Managed</p>
+                </div>
+                <div>
+                    <h3 style="color: #F59E0B; font-size: 1.5rem; margin-bottom: 0.5rem;">30%</h3>
+                    <p style="color: rgba(255,255,255,0.6);">Avg. Monthly ROI</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Side (Right) -->
+        <div class="auth-form-side">
+            <div class="auth-form-container">
+
+                <!-- Mobile Logo -->
+                <div class="mobile-brand">
+                    <a href="{% url 'home' %}">
+                        <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="40">
+                    </a>
+                </div>
+
+                <div class="auth-header-revamp">
+                    <h2>Create Account</h2>
+                    <p>Fill in the details below to get started.</p>
+                </div>
+
+                <!-- Alert for form errors -->
+                {% if form.errors %}
+                <div style="padding: 1rem; border-radius: 8px; margin-bottom: 2rem; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444;">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ field.label }}: {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if messages %}
+                {% for message in messages %}
+                <div style="padding: 1rem; border-radius: 8px; margin-bottom: 2rem; background: rgba({% if message.tags == 'success' %}16, 185, 129{% else %}239, 68, 68{% endif %}, 0.1); border: 1px solid {% if message.tags == 'success' %}#10b981{% else %}#ef4444{% endif %}; color: {% if message.tags == 'success' %}#10b981{% else %}#ef4444{% endif %};">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <form method="post" action="{% url 'signup' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Profile Image Upload -->
+                    <div class="form-group-modern" style="margin-bottom: 1.5rem;">
+                        <label for="profile_image">Profile Photo (Optional)</label>
+                        <div class="profile-upload-wrapper" style="display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem;">
+                            <div id="profilePreview" style="width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <i data-lucide="user" style="width: 32px; height: 32px; color: rgba(255,255,255,0.4);"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="profile_image" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: rgba(245, 158, 11, 0.2); border: 1px solid #F59E0B; border-radius: 8px; cursor: pointer; font-size: 0.9rem; color: #F59E0B; transition: all 0.3s;">
+                                    <i data-lucide="upload" style="width: 18px;"></i>
+                                    <span>Upload Photo</span>
+                                </label>
+                                <input type="file" id="profile_image" name="profile_image" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                                <p style="margin-top: 0.5rem; font-size: 0.8rem; color: rgba(255,255,255,0.5);">JPG, PNG or WebP (max 2MB)</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Full Name -->
+                    <div class="form-group-modern">
+                        <label for="full_name">Full Name</label>
+                        <div class="input-wrapper-modern">
+                            <i data-lucide="user" class="input-icon"></i>
+                            <input type="text" id="full_name" name="full_name" placeholder="John Doe" required
+                                value="{{ form.full_name.value|default:'' }}">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group-modern">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper-modern">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="email" name="email" placeholder="name@example.com" required 
+                                autocomplete="email" value="{{ form.email.value|default:'' }}">
+                        </div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="form-group-modern">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-wrapper-modern">
+                            <i data-lucide="phone" class="input-icon"></i>
+                            <input type="tel" id="phone" name="phone" placeholder="+1 234 567 8900"
+                                value="{{ form.phone.value|default:'' }}">
+                        </div>
+                    </div>
+
+                    <!-- Country -->
+                    <div class="form-group-modern">
+                        <label for="country">Country</label>
+                        <div class="input-wrapper-modern" style="position: relative;">
+                            <i data-lucide="globe" class="input-icon"></i>
+                            <input type="text" id="countrySearch" placeholder="Search country..." autocomplete="off"
+                                style="width: 100%; padding: 1rem 1rem 1rem 3rem; background: var(--auth-input-bg); border: 1px solid var(--auth-input-border); border-radius: 12px; color: white;"
+                                onclick="toggleCountryDropdown()" onkeyup="filterCountries()">
+                            <input type="hidden" id="country" name="country" required value="{{ form.country.value|default:'' }}">
+                            <i data-lucide="chevron-down" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); width: 20px; color: #94a3b8; pointer-events: none;"></i>
+                            
+                            <!-- Country Dropdown -->
+                            <div id="countryDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 250px; overflow-y: auto; background: #1e293b; border: 1px solid var(--auth-input-border); border-radius: 12px; margin-top: 5px; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+                                <!-- Countries will be populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group-modern">
+                        <label for="password1">Password</label>
+                        <div class="input-wrapper-modern">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="password1" name="password1" placeholder="Min. 8 characters" required
+                                autocomplete="new-password">
+                            <button type="button" class="password-toggle"
+                                onclick="togglePasswordVisibility('password1')">
+                                <i data-lucide="eye" style="width: 20px;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group-modern">
+                        <label for="password2">Confirm Password</label>
+                        <div class="input-wrapper-modern">
+                            <i data-lucide="check-circle" class="input-icon"></i>
+                            <input type="password" id="password2" name="password2" placeholder="Re-enter password" required
+                                autocomplete="new-password">
+                            <button type="button" class="password-toggle"
+                                onclick="togglePasswordVisibility('password2')">
+                                <i data-lucide="eye" style="width: 20px;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Referral/Coupon Code -->
+                    <div class="form-group-modern">
+                        <label for="referral_code">Referral Code (Optional)</label>
+                        <div class="input-wrapper-modern">
+                            <i data-lucide="gift" class="input-icon"></i>
+                            <input type="text" id="referral_code" name="referral_code" placeholder="Enter referral code" 
+                                autocomplete="off" style="text-transform: uppercase;" value="{{ form.referral_code.value|default:'' }}">
+                        </div>
+                        <!-- Referral bonus explanation -->
+                        <div id="referralInfo" style="margin-top: 0.6rem; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); display: flex; align-items: flex-start; gap: 0.6rem;">
+                            <span style="font-size: 1.1rem; flex-shrink:0;">🎁</span>
+                            <div style="font-size: 0.82rem; color: rgba(255,255,255,0.7); line-height: 1.5;">
+                                <strong style="color: #F59E0B;">How referral bonuses work:</strong><br>
+                                You (new user) get <strong style="color: #10B981;">$20</strong> instantly credited to your balance.
+                                The person who referred you earns <strong style="color: #F59E0B;">$30</strong> added to their account.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="form-group-modern">
+                        <label class="checkbox-custom-group">
+                            <input type="checkbox" name="terms" id="termsCheckbox" required>
+                            <span class="checkbox-box"></span>
+                            <span style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">
+                                I agree to the <a href="{% url 'terms' %}" class="link-gold">Terms & Conditions</a> and <a
+                                    href="{% url 'privacy_policy' %}" class="link-gold">Privacy Policy</a>
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn-modern-full" id="signupBtn">
+                        <span class="btn-text">Create Account</span>
+                    </button>
+                </form>
+
+                <div class="auth-footer-revamp">
+                    <p>Already have an account? <a href="{% url 'login' %}" class="link-gold">Sign In</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Init Icons
+        lucide.createIcons();
+
+        // Profile Image Preview
+        function previewImage(input) {
+            const preview = document.getElementById('profilePreview');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                // Check file size (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Image size must be less than 2MB');
+                    input.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Password Toggle Helper
+        function togglePasswordVisibility(fieldId) {
+            const input = document.getElementById(fieldId);
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
+        }
+
+        // Country List with 180+ countries
+        const countries = [
+            { code: 'AF', name: 'Afghanistan' }, { code: 'AL', name: 'Albania' }, { code: 'DZ', name: 'Algeria' },
+            { code: 'AD', name: 'Andorra' }, { code: 'AO', name: 'Angola' }, { code: 'AG', name: 'Antigua and Barbuda' },
+            { code: 'AR', name: 'Argentina' }, { code: 'AM', name: 'Armenia' }, { code: 'AU', name: 'Australia' },
+            { code: 'AT', name: 'Austria' }, { code: 'AZ', name: 'Azerbaijan' }, { code: 'BS', name: 'Bahamas' },
+            { code: 'BH', name: 'Bahrain' }, { code: 'BD', name: 'Bangladesh' }, { code: 'BB', name: 'Barbados' },
+            { code: 'BY', name: 'Belarus' }, { code: 'BE', name: 'Belgium' }, { code: 'BZ', name: 'Belize' },
+            { code: 'BJ', name: 'Benin' }, { code: 'BT', name: 'Bhutan' }, { code: 'BO', name: 'Bolivia' },
+            { code: 'BA', name: 'Bosnia and Herzegovina' }, { code: 'BW', name: 'Botswana' }, { code: 'BR', name: 'Brazil' },
+            { code: 'BN', name: 'Brunei' }, { code: 'BG', name: 'Bulgaria' }, { code: 'BF', name: 'Burkina Faso' },
+            { code: 'BI', name: 'Burundi' }, { code: 'KH', name: 'Cambodia' }, { code: 'CM', name: 'Cameroon' },
+            { code: 'CA', name: 'Canada' }, { code: 'CV', name: 'Cape Verde' }, { code: 'CF', name: 'Central African Republic' },
+            { code: 'TD', name: 'Chad' }, { code: 'CL', name: 'Chile' }, { code: 'CN', name: 'China' },
+            { code: 'CO', name: 'Colombia' }, { code: 'KM', name: 'Comoros' }, { code: 'CG', name: 'Congo' },
+            { code: 'CR', name: 'Costa Rica' }, { code: 'HR', name: 'Croatia' }, { code: 'CU', name: 'Cuba' },
+            { code: 'CY', name: 'Cyprus' }, { code: 'CZ', name: 'Czech Republic' }, { code: 'DK', name: 'Denmark' },
+            { code: 'DJ', name: 'Djibouti' }, { code: 'DM', name: 'Dominica' }, { code: 'DO', name: 'Dominican Republic' },
+            { code: 'EC', name: 'Ecuador' }, { code: 'EG', name: 'Egypt' }, { code: 'SV', name: 'El Salvador' },
+            { code: 'GQ', name: 'Equatorial Guinea' }, { code: 'ER', name: 'Eritrea' }, { code: 'EE', name: 'Estonia' },
+            { code: 'ET', name: 'Ethiopia' }, { code: 'FJ', name: 'Fiji' }, { code: 'FI', name: 'Finland' },
+            { code: 'FR', name: 'France' }, { code: 'GA', name: 'Gabon' }, { code: 'GM', name: 'Gambia' },
+            { code: 'GE', name: 'Georgia' }, { code: 'DE', name: 'Germany' }, { code: 'GH', name: 'Ghana' },
+            { code: 'GR', name: 'Greece' }, { code: 'GD', name: 'Grenada' }, { code: 'GT', name: 'Guatemala' },
+            { code: 'GN', name: 'Guinea' }, { code: 'GW', name: 'Guinea-Bissau' }, { code: 'GY', name: 'Guyana' },
+            { code: 'HT', name: 'Haiti' }, { code: 'HN', name: 'Honduras' }, { code: 'HK', name: 'Hong Kong' },
+            { code: 'HU', name: 'Hungary' }, { code: 'IS', name: 'Iceland' }, { code: 'IN', name: 'India' },
+            { code: 'ID', name: 'Indonesia' }, { code: 'IR', name: 'Iran' }, { code: 'IQ', name: 'Iraq' },
+            { code: 'IE', name: 'Ireland' }, { code: 'IL', name: 'Israel' }, { code: 'IT', name: 'Italy' },
+            { code: 'JM', name: 'Jamaica' }, { code: 'JP', name: 'Japan' }, { code: 'JO', name: 'Jordan' },
+            { code: 'KZ', name: 'Kazakhstan' }, { code: 'KE', name: 'Kenya' }, { code: 'KI', name: 'Kiribati' },
+            { code: 'KW', name: 'Kuwait' }, { code: 'KG', name: 'Kyrgyzstan' }, { code: 'LA', name: 'Laos' },
+            { code: 'LV', name: 'Latvia' }, { code: 'LB', name: 'Lebanon' }, { code: 'LS', name: 'Lesotho' },
+            { code: 'LR', name: 'Liberia' }, { code: 'LY', name: 'Libya' }, { code: 'LI', name: 'Liechtenstein' },
+            { code: 'LT', name: 'Lithuania' }, { code: 'LU', name: 'Luxembourg' }, { code: 'MO', name: 'Macau' },
+            { code: 'MK', name: 'North Macedonia' }, { code: 'MG', name: 'Madagascar' }, { code: 'MW', name: 'Malawi' },
+            { code: 'MY', name: 'Malaysia' }, { code: 'MV', name: 'Maldives' }, { code: 'ML', name: 'Mali' },
+            { code: 'MT', name: 'Malta' }, { code: 'MH', name: 'Marshall Islands' }, { code: 'MR', name: 'Mauritania' },
+            { code: 'MU', name: 'Mauritius' }, { code: 'MX', name: 'Mexico' }, { code: 'FM', name: 'Micronesia' },
+            { code: 'MD', name: 'Moldova' }, { code: 'MC', name: 'Monaco' }, { code: 'MN', name: 'Mongolia' },
+            { code: 'ME', name: 'Montenegro' }, { code: 'MA', name: 'Morocco' }, { code: 'MZ', name: 'Mozambique' },
+            { code: 'MM', name: 'Myanmar' }, { code: 'NA', name: 'Namibia' }, { code: 'NR', name: 'Nauru' },
+            { code: 'NP', name: 'Nepal' }, { code: 'NL', name: 'Netherlands' }, { code: 'NZ', name: 'New Zealand' },
+            { code: 'NI', name: 'Nicaragua' }, { code: 'NE', name: 'Niger' }, { code: 'NG', name: 'Nigeria' },
+            { code: 'KP', name: 'North Korea' }, { code: 'NO', name: 'Norway' }, { code: 'OM', name: 'Oman' },
+            { code: 'PK', name: 'Pakistan' }, { code: 'PW', name: 'Palau' }, { code: 'PS', name: 'Palestine' },
+            { code: 'PA', name: 'Panama' }, { code: 'PG', name: 'Papua New Guinea' }, { code: 'PY', name: 'Paraguay' },
+            { code: 'PE', name: 'Peru' }, { code: 'PH', name: 'Philippines' }, { code: 'PL', name: 'Poland' },
+            { code: 'PT', name: 'Portugal' }, { code: 'QA', name: 'Qatar' }, { code: 'RO', name: 'Romania' },
+            { code: 'RU', name: 'Russia' }, { code: 'RW', name: 'Rwanda' }, { code: 'KN', name: 'Saint Kitts and Nevis' },
+            { code: 'LC', name: 'Saint Lucia' }, { code: 'VC', name: 'Saint Vincent' }, { code: 'WS', name: 'Samoa' },
+            { code: 'SM', name: 'San Marino' }, { code: 'ST', name: 'Sao Tome and Principe' }, { code: 'SA', name: 'Saudi Arabia' },
+            { code: 'SN', name: 'Senegal' }, { code: 'RS', name: 'Serbia' }, { code: 'SC', name: 'Seychelles' },
+            { code: 'SL', name: 'Sierra Leone' }, { code: 'SG', name: 'Singapore' }, { code: 'SK', name: 'Slovakia' },
+            { code: 'SI', name: 'Slovenia' }, { code: 'SB', name: 'Solomon Islands' }, { code: 'SO', name: 'Somalia' },
+            { code: 'ZA', name: 'South Africa' }, { code: 'KR', name: 'South Korea' }, { code: 'SS', name: 'South Sudan' },
+            { code: 'ES', name: 'Spain' }, { code: 'LK', name: 'Sri Lanka' }, { code: 'SD', name: 'Sudan' },
+            { code: 'SR', name: 'Suriname' }, { code: 'SE', name: 'Sweden' }, { code: 'CH', name: 'Switzerland' },
+            { code: 'SY', name: 'Syria' }, { code: 'TW', name: 'Taiwan' }, { code: 'TJ', name: 'Tajikistan' },
+            { code: 'TZ', name: 'Tanzania' }, { code: 'TH', name: 'Thailand' }, { code: 'TL', name: 'Timor-Leste' },
+            { code: 'TG', name: 'Togo' }, { code: 'TO', name: 'Tonga' }, { code: 'TT', name: 'Trinidad and Tobago' },
+            { code: 'TN', name: 'Tunisia' }, { code: 'TR', name: 'Turkey' }, { code: 'TM', name: 'Turkmenistan' },
+            { code: 'TV', name: 'Tuvalu' }, { code: 'UG', name: 'Uganda' }, { code: 'UA', name: 'Ukraine' },
+            { code: 'AE', name: 'United Arab Emirates' }, { code: 'GB', name: 'United Kingdom' }, { code: 'US', name: 'United States' },
+            { code: 'UY', name: 'Uruguay' }, { code: 'UZ', name: 'Uzbekistan' }, { code: 'VU', name: 'Vanuatu' },
+            { code: 'VA', name: 'Vatican City' }, { code: 'VE', name: 'Venezuela' }, { code: 'VN', name: 'Vietnam' },
+            { code: 'YE', name: 'Yemen' }, { code: 'ZM', name: 'Zambia' }, { code: 'ZW', name: 'Zimbabwe' }
+        ];
+
+        // Populate country dropdown
+        function populateCountries(filter = '') {
+            const dropdown = document.getElementById('countryDropdown');
+            const filtered = filter ? countries.filter(c => c.name.toLowerCase().includes(filter.toLowerCase())) : countries;
+            
+            dropdown.innerHTML = filtered.map(c => `
+                <div class="country-option" onclick="selectCountry('${c.code}', '${c.name}')"
+                    style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s;"
+                    onmouseover="this.style.background='rgba(59, 130, 246, 0.2)'" 
+                    onmouseout="this.style.background='transparent'">
+                    ${c.name}
+                </div>
+            `).join('');
+        }
+
+        function toggleCountryDropdown() {
+            const dropdown = document.getElementById('countryDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            if (dropdown.style.display === 'block') {
+                populateCountries();
+            }
+        }
+
+        function filterCountries() {
+            const search = document.getElementById('countrySearch').value;
+            const dropdown = document.getElementById('countryDropdown');
+            dropdown.style.display = 'block';
+            populateCountries(search);
+        }
+
+        function selectCountry(code, name) {
+            document.getElementById('country').value = code;
+            document.getElementById('countrySearch').value = name;
+            document.getElementById('countryDropdown').style.display = 'none';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.input-wrapper-modern')) {
+                document.getElementById('countryDropdown').style.display = 'none';
+            }
+        });
+
+        // Init countries on load
+        populateCountries();
+    </script>
+        <script src="{% static 'js/main.js' %}"></script>
+
+    
+</body>
+
+</html>

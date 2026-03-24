@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Investments - Elite Wealth Capital{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-warning mb-0">
+                <i class="fas fa-chart-line me-2"></i>My Investments
+            </h2>
+            <p class="text-muted">Track your active and completed investments</p>
+        </div>
+    </div>
+
+    <!-- Investment Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-dark border-warning h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Total Invested</h6>
+                    <h3 class="text-warning">${{ total_invested|floatformat:2 }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-dark border-success h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Expected Profit</h6>
+                    <h3 class="text-success">${{ total_expected_profit|floatformat:2 }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-dark border-info h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Active Investments</h6>
+                    <h3 class="text-info">{{ active_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Completed</h6>
+                    <h3 class="text-white">{{ completed_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investments Table -->
+    <div class="card bg-dark border-warning">
+        <div class="card-header bg-transparent border-warning d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-warning">Investment History</h5>
+            <a href="{% url 'invest' %}" class="btn btn-warning btn-sm">
+                <i class="fas fa-plus me-1"></i>New Investment
+            </a>
+        </div>
+        <div class="card-body">
+            {% if investments %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Expected Profit</th>
+                            <th>Daily ROI</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inv in investments %}
+                        <tr>
+                            <td>
+                                <span class="badge bg-warning text-dark">{{ inv.plan.name }}</span>
+                            </td>
+                            <td class="text-info">${{ inv.amount|floatformat:2 }}</td>
+                            <td class="text-success">${{ inv.expected_profit|floatformat:2 }}</td>
+                            <td>{{ inv.plan.daily_roi }}%</td>
+                            <td>{{ inv.start_date|date:"M d, Y" }}</td>
+                            <td>{{ inv.end_date|date:"M d, Y" }}</td>
+                            <td>
+                                {% if inv.status == 'active' %}
+                                    <span class="badge bg-primary">Active</span>
+                                {% elif inv.status == 'completed' %}
+                                    <span class="badge bg-success">Completed</span>
+                                {% elif inv.status == 'cancelled' %}
+                                    <span class="badge bg-danger">Cancelled</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ inv.status|title }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-chart-pie fa-4x text-muted mb-3"></i>
+                <h5 class="text-muted">No investments yet</h5>
+                <p class="text-muted">Start your investment journey today</p>
+                <a href="{% url 'invest' %}" class="btn btn-warning">
+                    <i class="fas fa-plus me-2"></i>Make Your First Investment
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

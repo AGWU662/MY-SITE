@@ -1,0 +1,233 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script async type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    </head>
+
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal">
+        <div class="ticker-track"></div>
+    </div>
+
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand"
+                style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="40" style="height: 40px;">
+                <span class="logo-text">Elite Wealth Capital</span>
+            </a>
+            <div class="nav-user">
+                <span class="user-name" id="userName">Loading...</span>
+                <button class="btn-secondary" onclick="logout()" aria-label="Log out of your account">Logout</button>
+            </div>
+        </div>
+    </nav>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link"><span class="icon">📊</span><span>Dashboard</span></a>
+                <a href="{% url 'invest' %}" class="sidebar-link"><span class="icon">💰</span><span>Invest</span></a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link"><span class="icon">💳</span><span>Add Funds</span></a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link"><span class="icon">💸</span><span>Withdraw</span></a>
+                <a href="{% url 'loans' %}" class="sidebar-link"><span class="icon">🏦</span><span>Get Loan</span></a>
+                <a href="{% url 'cards' %}" class="sidebar-link"><span class="icon">💎</span><span>Virtual Cards</span></a>
+                <a href="{% url 'transactions' %}" class="sidebar-link active"><span class="icon">📝</span><span>Transactions</span></a>
+                <a href="{% url 'dispute' %}" class="sidebar-link"><span class="icon">⚠️</span><span>Disputes & Support</span></a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link"><span class="icon">⚙️</span><span>Account Settings</span></a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link"><span class="icon">⭐</span><span>Upgrade</span></a>
+                <a href="{% url 'agent_application' %}" class="sidebar-link"><span class="icon">🤝</span><span>Become Agent</span></a>
+            </nav>
+        </aside>
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>Transaction History</h1>
+                <p>View all your deposits, withdrawals, and investments</p>
+            </div>
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>All Transactions</h3>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <select id="filterType"
+                            style="padding: 0.5rem; background: #1e293b; border: 1px solid #334155; color: #fff; border-radius: 0.5rem;">
+                            <option value="all">All Types</option>
+                            <option value="deposit">Deposits</option>
+                            <option value="withdrawal">Withdrawals</option>
+                            <option value="investment">Investments</option>
+                        </select>
+                        <a href="{% url 'export_transactions' %}?type=all" class="btn-secondary" style="padding: 0.5rem 1rem; text-decoration: none; font-size: 0.875rem;">
+                            📥 Export CSV
+                        </a>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                                <th>Receipt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTable">
+                            <!-- Deposits -->
+                            {% for dep in deposits %}
+                            <tr>
+                                <td>{{ dep.created_at|date:"M d, Y H:i" }}</td>
+                                <td><span class="badge badge-deposit" style="background: #10B981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">Deposit</span></td>
+                                <td style="color: #10B981;">+${{ dep.amount|floatformat:2 }}</td>
+                                <td>
+                                    <span class="status-badge" style="
+                                        {% if dep.status == 'confirmed' %}background: rgba(16, 185, 129, 0.2); color: #10B981;
+                                        {% elif dep.status == 'pending' %}background: rgba(245, 158, 11, 0.2); color: #F59E0B;
+                                        {% else %}background: rgba(239, 68, 68, 0.2); color: #EF4444;{% endif %}
+                                        padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        {{ dep.status|title }}
+                                    </span>
+                                </td>
+                                <td>{{ dep.crypto_type|upper }} deposit</td>
+                                <td>
+                                    {% if dep.status == 'confirmed' %}
+                                    <a href="{% url 'download_receipt' 'deposit' dep.id %}" 
+                                       class="btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; text-decoration: none; background: var(--gold); color: var(--navy); border-radius: 4px;">
+                                        📄 Receipt
+                                    </a>
+                                    {% else %}
+                                    <span style="color: #64748b; font-size: 0.8rem;">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                            <!-- Withdrawals -->
+                            {% for wd in withdrawals %}
+                            <tr>
+                                <td>{{ wd.created_at|date:"M d, Y H:i" }}</td>
+                                <td><span class="badge badge-withdrawal" style="background: #EF4444; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">Withdrawal</span></td>
+                                <td style="color: #EF4444;">-${{ wd.amount|floatformat:2 }}</td>
+                                <td>
+                                    <span class="status-badge" style="
+                                        {% if wd.status == 'completed' %}background: rgba(16, 185, 129, 0.2); color: #10B981;
+                                        {% elif wd.status == 'approved' %}background: rgba(59, 130, 246, 0.2); color: #3B82F6;
+                                        {% elif wd.status == 'pending' %}background: rgba(245, 158, 11, 0.2); color: #F59E0B;
+                                        {% else %}background: rgba(239, 68, 68, 0.2); color: #EF4444;{% endif %}
+                                        padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        {{ wd.status|title }}
+                                    </span>
+                                </td>
+                                <td>{{ wd.crypto_type|upper }} to {{ wd.wallet_address|truncatechars:20 }}</td>
+                                <td>
+                                    {% if wd.status == 'completed' or wd.status == 'approved' %}
+                                    <a href="{% url 'download_receipt' 'withdrawal' wd.id %}" 
+                                       class="btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; text-decoration: none; background: var(--gold); color: var(--navy); border-radius: 4px;">
+                                        📄 Receipt
+                                    </a>
+                                    {% else %}
+                                    <span style="color: #64748b; font-size: 0.8rem;">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                            <!-- Investments -->
+                            {% for inv in investments %}
+                            <tr>
+                                <td>{{ inv.start_date|date:"M d, Y H:i" }}</td>
+                                <td><span class="badge badge-investment" style="background: #3B82F6; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">Investment</span></td>
+                                <td style="color: #3B82F6;">-${{ inv.amount|floatformat:2 }}</td>
+                                <td>
+                                    <span class="status-badge" style="
+                                        {% if inv.status == 'active' %}background: rgba(16, 185, 129, 0.2); color: #10B981;
+                                        {% elif inv.status == 'completed' %}background: rgba(59, 130, 246, 0.2); color: #3B82F6;
+                                        {% else %}background: rgba(245, 158, 11, 0.2); color: #F59E0B;{% endif %}
+                                        padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        {{ inv.status|title }}
+                                    </span>
+                                </td>
+                                <td>{{ inv.plan.name }} ({{ inv.plan.daily_roi }}% daily)</td>
+                                <td>
+                                    {% if inv.status == 'active' or inv.status == 'completed' %}
+                                    <a href="{% url 'download_receipt' 'investment' inv.id %}" 
+                                       class="btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; text-decoration: none; background: var(--gold); color: var(--navy); border-radius: 4px;">
+                                        📄 Receipt
+                                    </a>
+                                    {% else %}
+                                    <span style="color: #64748b; font-size: 0.8rem;">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                            {% if not deposits and not withdrawals and not investments %}
+                            <tr>
+                                <td colspan="6" style="text-align:center; color: #64748b; padding: 2rem;">No transactions found</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+        <script src="{% static 'js/main.js?v=20260308' %}"></script>
+        <script src="{% static 'js/dashboard.js?v=20260308' %}"></script>
+
+    
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="nav-items">
+            <a href="{% url 'dashboard' %}">
+                <span class="icon">📊</span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'invest' %}">
+                <span class="icon">💰</span>
+                <span>Invest</span>
+            </a>
+            <a href="{% url 'add_funds' %}">
+                <span class="icon">💳</span>
+                <span>Deposit</span>
+            </a>
+            <a href="{% url 'withdraw' %}">
+                <span class="icon">💸</span>
+                <span>Withdraw</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+</body>
+
+</html>
+

@@ -1,0 +1,333 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Start investing with Elite Wealth Capital. Choose from various investment plans with competitive returns.">
+    <title>Make Investment - Elite Wealth Capital</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script async type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal" style="top: 60px;">
+        <div class="ticker-track"></div>
+    </div>
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand"
+                style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital"
+                    style="height: 40px; width: auto; object-fit: contain;">
+                <div class="logo-placeholder" style="background: none; border: none; padding: 0;">
+                    <span class="logo-text">ELITE</span>
+                    <span class="logo-subtext">WEALTH CAPITA</span>
+                </div>
+            </a>
+            <div class="nav-user">
+                <span class="user-name" id="userName">{{ user.full_name }}</span>
+                <button class="btn-secondary" onclick="logout()" aria-label="Log out of your account">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'invest' %}" class="sidebar-link active">
+                    <span class="icon">💰</span>
+                    <span>Invest</span>
+                </a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link">
+                    <span class="icon">💳</span>
+                    <span>Add Funds</span>
+                </a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link">
+                    <span class="icon">💸</span>
+                    <span>Withdraw</span>
+                </a>
+                <a href="{% url 'loans' %}" class="sidebar-link">
+                    <span class="icon">🏦</span>
+                    <span>Get Loan</span>
+                </a>
+                <a href="{% url 'cards' %}" class="sidebar-link">
+                    <span class="icon">💳</span>
+                    <span>Virtual Cards</span>
+                </a>
+                <a href="{% url 'transactions' %}" class="sidebar-link">
+                    <span class="icon">📝</span>
+                    <span>Transactions</span>
+                </a>
+                <a href="{% url 'dispute' %}" class="sidebar-link">
+                    <span class="icon">⚠️</span>
+                    <span>Disputes & Support</span>
+                </a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link">
+                    <span class="icon">⚙️</span>
+                    <span>Account Settings</span>
+                </a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link">
+                    <span class="icon">⭐</span>
+                    <span>Upgrade</span>
+                </a>
+                <a href="{% url 'agent_application' %}" class="sidebar-link">
+                    <span class="icon">🤝</span>
+                    <span>Become Agent</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>Make Investment</h1>
+                <p>Choose a plan and start earning daily returns</p>
+            </div>
+
+            <div style="max-width: 600px;">
+                <div class="card">
+                    <h2 style="margin-bottom: 2rem;">Investment Details</h2>
+                    <form id="investmentForm" method="POST" action="{% url 'investments:create_investment' %}" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        {% csrf_token %}
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Available
+                                Balance</label>
+                            <div
+                                style="padding: 1rem; background: rgba(31, 41, 55, 0.5); border-radius: 0.5rem; font-size: 1.25rem; font-weight: 600; color: #10B981;">
+                                $<span id="balanceDisplay">{{ user.balance|floatformat:2 }}</span></div>
+                        </div>
+
+                        <div>
+                            <label for="investAmount"
+                                style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Investment Amount
+                                ($)</label>
+                            <input type="number" id="investAmount" name="amount" placeholder="Enter amount" min="50"
+                                step="10" required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid rgba(31, 41, 55, 0.5); border-radius: 0.5rem; font-size: 1rem;">
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Select Plan</label>
+                            <select id="investPlan" name="plan" required
+                                style="width: 100%; padding: 0.75rem; border: 1px solid rgba(31, 41, 55, 0.5); border-radius: 0.5rem; font-size: 1rem;">
+                                <option value="">Choose a plan...</option>
+                                {% for plan in plans %}
+                                <option value="{{ plan.id }}" data-roi="{{ plan.daily_roi }}" data-duration="{{ plan.duration_days }}" data-min="{{ plan.min_amount }}" data-max="{{ plan.max_amount }}">
+                                    {{ plan.name }} ({{ plan.daily_roi }}% daily for {{ plan.duration_days }} days) - ${{ plan.min_amount }} - ${{ plan.max_amount }}
+                                </option>
+                                {% empty %}
+                                <option value="">No plans available</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div
+                            style="padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 0.5rem; border-left: 4px solid #F59E0B;">
+                            <p style="margin: 0; font-weight: 600; color: #F59E0B;">Expected Profit</p>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 1.5rem; font-weight: 700;">$<span
+                                    id="expectedProfit">0.00</span></p>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem; color: var(--text-secondary);">Credited
+                                in 24 hours</p>
+                        </div>
+
+                        <button type="submit" class="btn-primary"
+                            style="padding: 0.75rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">Create
+                            Investment</button>
+                    </form>
+                </div>
+
+                <!-- COMPOUND CALCULATOR -->
+                <div class="card" style="margin-top: 2rem;">
+                    <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem;">📈 Compound Growth Simulator</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                        Project your earnings if you reinvest your daily profits.
+                    </p>
+
+                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="font-size: 0.8rem; margin-bottom: 0.4rem; display: block;">Start Amount
+                                ($)</label>
+                            <input type="number" id="simAmount" value="1000"
+                                style="width: 100%; padding: 0.5rem; border: 1px solid rgba(31, 41, 55, 0.5); border-radius: 0.4rem; background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; margin-bottom: 0.4rem; display: block;">Days to
+                                Reinvest</label>
+                            <input type="number" id="simDays" value="7" min="1" max="365"
+                                style="width: 100%; padding: 0.5rem; border: 1px solid rgba(31, 41, 55, 0.5); border-radius: 0.4rem; background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                    </div>
+
+                    <div
+                        style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.9rem;">Total Return</span>
+                            <span id="simTotal" style="font-weight: 700; color: #10B981;">$0.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.9rem;">Net Profit</span>
+                            <span id="simProfit" style="font-weight: 700; color: #34D399;">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+        <script src="{% static 'js/main.js?v=20260308' %}"></script>
+        <script src="{% static 'js/dashboard.js?v=20260308' %}"></script>
+    <script src="{% static 'js/charts.js?v=20260308' %}"></script>
+    <script>
+        // User balance from Django template
+        const userBalance = {{ user.balance|default:0 }};
+
+        // Investment calculator - updates expected profit based on amount and plan
+        document.getElementById('investAmount').addEventListener('input', calculateProfit);
+        document.getElementById('investPlan').addEventListener('change', calculateProfit);
+
+        // Simulator Logic
+        const simInputs = ['simAmount', 'simDays'];
+        simInputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateCompound);
+        });
+
+        function calculateCompound() {
+            const principal = parseFloat(document.getElementById('simAmount').value) || 0;
+            const days = parseInt(document.getElementById('simDays').value) || 0;
+            const rate = 0.30; // 30% daily rate
+
+            let currentBalance = principal;
+            for (let i = 0; i < days; i++) {
+                currentBalance += (currentBalance * rate);
+            }
+
+            const total = currentBalance;
+            const profit = total - principal;
+
+            document.getElementById('simTotal').textContent = '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('simProfit').textContent = '+$' + profit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Run once on load
+        calculateCompound();
+
+        function calculateProfit() {
+            const amount = parseFloat(document.getElementById('investAmount').value) || 0;
+            const select = document.getElementById('investPlan');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (!selectedOption || !selectedOption.dataset.roi) {
+                document.getElementById('expectedProfit').textContent = '0.00';
+                return;
+            }
+            
+            const dailyRoi = parseFloat(selectedOption.dataset.roi) / 100;
+            const durationDays = parseInt(selectedOption.dataset.duration);
+            const totalProfit = amount * dailyRoi * durationDays;
+            document.getElementById('expectedProfit').textContent = totalProfit.toFixed(2);
+        }
+
+        // Form validation before submit
+        document.getElementById('investmentForm').addEventListener('submit', function(e) {
+            const amount = parseFloat(document.getElementById('investAmount').value);
+            const plan = document.getElementById('investPlan').value;
+
+            if (!plan) {
+                e.preventDefault();
+                alert('Please select an investment plan');
+                return false;
+            }
+
+            if (amount < 50) {
+                e.preventDefault();
+                alert('Minimum investment amount is $50');
+                return false;
+            }
+
+            if (amount > userBalance) {
+                e.preventDefault();
+                alert('Insufficient balance for this investment. Your balance is $' + userBalance.toFixed(2));
+                return false;
+            }
+
+            // Add expected profit to form as hidden field
+            const profitInput = document.createElement('input');
+            profitInput.type = 'hidden';
+            profitInput.name = 'expected_profit';
+            profitInput.value = document.getElementById('expectedProfit').textContent;
+            this.appendChild(profitInput);
+
+            // Show loading state
+            const submitBtn = document.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+            
+            return true;
+        });
+
+        // Logout function
+        function logout() {
+            window.location.href = '/logout/';
+        }
+    </script>
+
+    
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="nav-items">
+            <a href="{% url 'dashboard' %}">
+                <span class="icon">📊</span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'invest' %}" class="active">
+                <span class="icon">💰</span>
+                <span>Invest</span>
+            </a>
+            <a href="{% url 'add_funds' %}">
+                <span class="icon">💳</span>
+                <span>Deposit</span>
+            </a>
+            <a href="{% url 'withdraw' %}">
+                <span class="icon">💸</span>
+                <span>Withdraw</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+</body>
+
+</html>

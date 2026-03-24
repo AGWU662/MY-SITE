@@ -1,0 +1,869 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a1628">
+    <meta name="description"
+        content="Access your Elite Wealth Capital investment dashboard. Monitor portfolio performance, track returns, and manage your premium investments.">
+    <title>Dashboard - Elite Wealth Capital</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+
+    <!-- Cookiebot by Usercentrics -->
+    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="c6f2d439-7c21-4f56-82e0-6d32f277c067"
+        type="text/javascript" async></script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L35DKWMCL2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-L35DKWMCL2');
+    </script>
+
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+    <!-- Defer non-critical CSS using media=print + onload trick -->
+    <link rel="preload" as="style" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}"></noscript>
+
+    <!-- Language selector handled by site settings -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Preconnect for chart library -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <!-- Defer chart libraries for performance -->
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+    <!-- Auth Guard - MUST be before stylesheets to prevent flash -->
+    <!-- Removed - Using Django session auth now -->
+</head>
+
+<body class="dashboard-site">
+    <!-- Loading overlay added by auth-guard.js -->
+
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal" style="top: 0;">
+        <div class="ticker-track"></div>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay" onclick="closeMobileDrawer()"></div>
+    <aside class="mobile-drawer" id="mobileDrawer">
+        <div class="mobile-drawer-header">
+            <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="35" style="height: 35px;">
+            <button class="mobile-drawer-close" onclick="closeMobileDrawer()" aria-label="Close navigation menu">&times;</button>
+        </div>
+        <div class="mobile-drawer-user">
+            <span class="drawer-user-name">{{ user.full_name }}</span>
+            <span class="drawer-user-badge">{{ account_type }}</span>
+        </div>
+        <nav class="mobile-drawer-nav">
+            <a href="{% url 'dashboard' %}" class="mobile-drawer-link active">
+                <span class="drawer-icon">📊</span> Dashboard
+            </a>
+            <a href="{% url 'invest' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">💼</span> Invest
+            </a>
+            <a href="{% url 'add_funds' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">➕</span> Add Funds
+            </a>
+            <a href="{% url 'withdraw' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">💸</span> Withdraw
+            </a>
+            <a href="{% url 'transactions' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">📋</span> Transactions
+            </a>
+            <a href="{% url 'cards' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">💳</span> Cards
+            </a>
+            <a href="{% url 'loans' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">🏦</span> Loans
+            </a>
+            <a href="{% url 'investment_plans' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">📈</span> Plans
+            </a>
+            <a href="{% url 'upgrade' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">⬆️</span> Upgrade
+            </a>
+            <a href="{% url 'referrals' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">👥</span> Referrals
+            </a>
+            <a href="{% url 'accounts:profile' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">⚙️</span> Settings
+            </a>
+            <a href="{% url 'notifications:list' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">🔔</span> Notifications
+            </a>
+            <a href="{% url 'referral_leaderboard' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">🏆</span> Leaderboard
+            </a>
+            <a href="{% url 'activity_log' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">🕐</span> Activity Log
+            </a>
+            <a href="{% url 'dispute' %}" class="mobile-drawer-link">
+                <span class="drawer-icon">📝</span> Dispute
+            </a>
+        </nav>
+        <div class="mobile-drawer-footer">
+            <a href="{% url 'accounts:logout' %}" class="mobile-drawer-link logout">
+                <span class="drawer-icon">🚪</span> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Dashboard Navigation -->
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <!-- Hamburger Menu for Mobile -->
+            <button class="hamburger-menu" id="hamburgerMenu" onclick="openMobileDrawer()" aria-label="Open navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            
+            <a href="{% url 'dashboard' %}" class="nav-brand"
+                style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital"
+                    style="height: 40px; width: auto; object-fit: contain;">
+                <div class="logo-placeholder" style="background: none; border: none; padding: 0;">
+                    <span class="logo-text">ELITE</span>
+                    <span class="logo-subtext">WEALTH CAPITA</span>
+                </div>
+            </a>
+            <div class="nav-user">
+                <!-- Google Translate Widget -->
+                <div id="google_translate_element" style="margin-right: 15px;"></div>
+
+                <!-- Theme Toggle -->
+                <div class="theme-switch-wrapper">
+                    <label class="theme-switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" onchange="toggleTheme(this)"
+                            aria-label="Toggle dark/light theme">
+                        <div class="slider-theme">
+                            <span class="icon sun" role="img" aria-label="Light mode">☀️</span>
+                            <span class="icon moon" role="img" aria-label="Dark mode">🌙</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Add Funds Button (Visible Header) -->
+                <a href="{% url 'add_funds' %}" class="btn-primary add-funds-btn" aria-label="Add funds to your account"
+                    style="padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; margin-right: 15px; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: #0f172a; font-weight: 600;">Add
+                    Funds</a>
+
+                <div class="user-info" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <!-- Profile Image / Avatar -->
+                    {% if user.profile_image %}
+                    <a href="{% url 'accounts:profile' %}" style="text-decoration: none; flex-shrink: 0;" aria-label="View your profile">
+                        <img src="{{ user.profile_image.url }}" alt="{{ user.full_name }}'s profile photo"
+                            style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #F59E0B;">
+                    </a>
+                    {% else %}
+                    <a href="{% url 'accounts:profile' %}" style="text-decoration: none; flex-shrink: 0;" aria-label="View your profile">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #F59E0B, #D97706); display: flex; align-items: center; justify-content: center; color: #0f172a; font-weight: 700; font-size: 0.9rem; border: 2px solid rgba(245,158,11,0.5);" aria-hidden="true">
+                            {{ user.full_name|first|upper }}
+                        </div>
+                    </a>
+                    {% endif %}
+                    <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                        <span class="user-name" id="userName">{{ user.full_name }}</span>
+                        <span class="user-badge" id="accountType">{{ account_type }}</span>
+                    </div>
+                    {% if user.kyc_status == 'verified' %}
+                    <span class="verified-badge" id="verifiedBadge" role="img" aria-label="Verified account" title="KYC Verified">✓</span>
+                    {% endif %}
+                </div>
+
+                <!-- Notification Bell -->
+                <div class="notification-wrapper" style="position: relative; margin-right: 1rem; cursor: pointer;"
+                    onclick="toggleNotifications()" role="button" aria-label="View notifications" aria-expanded="false"
+                    tabindex="0">
+                    <span style="font-size: 1.5rem;" role="img" aria-hidden="true">🔔</span>
+                    {% if unread_notifications > 0 %}
+                    <span class="notification-badge" id="notifCount" aria-live="polite"
+                        style="position: absolute; top: 0; right: 0; background: red; color: white; border-radius: 50%; width: 15px; height: 15px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center;">{{ unread_notifications }}</span>
+                    {% endif %}
+                    <!-- Dropdown -->
+                    <div id="notifDropdown" role="menu" aria-label="Notifications menu"
+                        style="display: none; position: absolute; top: 100%; right: 0; width: 320px; background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); max-height: 400px; overflow-y: auto;">
+                        <div style="padding: 1rem; border-bottom: 1px solid #334155; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
+                            <span>Your Notifications</span>
+                            <a href="{% url 'notifications:list' %}" style="font-size: 0.8rem; color: #F59E0B;">View All</a>
+                        </div>
+                        <div id="notifList" role="list">
+                            {% if recent_notifications %}
+                                {% for notif in recent_notifications %}
+                                <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #334155; {% if not notif.is_read %}background: rgba(245, 158, 11, 0.1);{% endif %}">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                        <span>{% if notif.notification_type == 'success' %}✅{% elif notif.notification_type == 'warning' %}⚠️{% elif notif.notification_type == 'error' %}❌{% else %}ℹ️{% endif %}</span>
+                                        <strong style="font-size: 0.9rem; color: #fff;">{{ notif.title }}</strong>
+                                    </div>
+                                    <p style="margin: 0; font-size: 0.8rem; color: #94a3b8;">{{ notif.message|truncatewords:15 }}</p>
+                                    <span style="font-size: 0.7rem; color: #64748b;">{{ notif.created_at|timesince }} ago</span>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div style="padding: 2rem; text-align: center; color: #64748b;">
+                                    <span style="font-size: 2rem;">🔔</span>
+                                    <p style="margin: 0.5rem 0 0;">No notifications yet</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{% url 'logout' %}" class="btn-secondary" aria-label="Log out of account">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <!-- Crypto Ticker Widget (Vertical) -->
+                <div class="crypto-ticker-vertical" id="cryptoTicker">
+                    <div
+                        style="padding: 10px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(245, 158, 11, 0.1); text-align: center;">
+                        Live Market</div>
+                    <div id="tickerContent">
+                        <!-- Content Injected via JS -->
+                    </div>
+                </div>
+
+                <a href="{% url 'dashboard' %}" class="sidebar-link active">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'invest' %}" class="sidebar-link">
+                    <span class="icon">💰</span>
+                    <span>Invest</span>
+                </a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link">
+                    <span class="icon">💳</span>
+                    <span>Add Funds</span>
+                </a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link">
+                    <span class="icon">💸</span>
+                    <span>Withdraw</span>
+                </a>
+                <a href="{% url 'loans' %}" class="sidebar-link">
+                    <span class="icon">🏦</span>
+                    <span>Get Loan</span>
+                </a>
+                <a href="{% url 'cards' %}" class="sidebar-link">
+                    <span class="icon">💳</span>
+                    <span>Virtual Cards</span>
+                </a>
+                <a href="{% url 'transactions' %}" class="sidebar-link">
+                    <span class="icon">📝</span>
+                    <span>Transactions</span>
+                </a>
+                <a href="{% url 'referrals' %}" class="sidebar-link">
+                    <span class="icon">👥</span>
+                    <span>Referrals</span>
+                </a>
+                <a href="{% url 'referral_leaderboard' %}" class="sidebar-link">
+                    <span class="icon">🏆</span>
+                    <span>Leaderboard</span>
+                </a>
+                <a href="{% url 'activity_log' %}" class="sidebar-link">
+                    <span class="icon">🕐</span>
+                    <span>Activity Log</span>
+                </a>
+                <a href="{% url 'notifications:list' %}" class="sidebar-link">
+                    <span class="icon">🔔</span>
+                    <span>Notifications</span>
+                </a>
+                <a href="{% url 'dispute' %}" class="sidebar-link">
+                    <span class="icon">⚠️</span>
+                    <span>Disputes & Support</span>
+                </a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link">
+                    <span class="icon">⚙️</span>
+                    <span>Account Settings</span>
+                </a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link">
+                    <span class="icon">⭐</span>
+                    <span>Upgrade</span>
+                </a>
+                <a href="{% url 'agent_application' %}" class="sidebar-link">
+                    <span class="icon">🤝</span>
+                    <span>Become Agent</span>
+                </a>
+
+                <!-- US Services Section -->
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div
+                        style="padding: 0.5rem 1rem; font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">
+                        🇺🇸 US Services</div>
+
+                    <a href="{% url 'us_services' %}" class="sidebar-link">
+                        <span class="icon">🏛️</span>
+                        <span>US Services Hub</span>
+                    </a>
+                    <a href="{% url 'us_services' %}#irs" class="sidebar-link">
+                        <span class="icon">🏦</span>
+                        <span>IRS Tax Services</span>
+                    </a>
+                    <a href="{% url 'us_services' %}#idme" class="sidebar-link">
+                        <span class="icon">🔐</span>
+                        <span>ID.me Verify</span>
+                    </a>
+                    <a href="{% url 'us_services' %}#employment" class="sidebar-link">
+                        <span class="icon">💼</span>
+                        <span>Employment</span>
+                    </a>
+                    <a href="{% url 'us_services' %}#ssa" class="sidebar-link">
+                        <span class="icon">👴</span>
+                        <span>Social Security</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1 id="welcomeHeading">Welcome back, {{ user.full_name }}!</h1>
+                <p id="welcomeSubtext">Here's your investment summary.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-icon">💵</span>
+                        <span class="stat-label">Available Balance</span>
+                    </div>
+                    <div class="stat-value" id="totalBalance">${{ balance|floatformat:2 }}</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-icon">📈</span>
+                        <span class="stat-label">Total Invested</span>
+                    </div>
+                    <div class="stat-value" id="totalInvested">${{ total_invested|floatformat:2 }}</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-icon">💎</span>
+                        <span class="stat-label">Total Profit</span>
+                    </div>
+                    <div class="stat-value profit" id="totalProfit">${{ total_profit|floatformat:2 }}</div>
+                    <div class="stat-change positive">
+                        Earned
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-icon">💸</span>
+                        <span class="stat-label">Total Withdrawn</span>
+                    </div>
+                    <div class="stat-value" id="totalWithdrawn">${{ total_withdrawn|floatformat:2 }}</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-icon">👥</span>
+                        <span class="stat-label">Referral Bonus</span>
+                    </div>
+                    <div class="stat-value" id="referralBonus">${{ referral_bonus|floatformat:2 }}</div>
+                    <div class="stat-change positive">
+                        {{ referral_count }} referrals
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referral Code Section -->
+            <div class="stat-card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%); border: 1px solid rgba(245, 158, 11, 0.3);">
+                <div class="stat-header" style="margin-bottom: 1rem;">
+                    <span class="stat-icon" style="background: rgba(245, 158, 11, 0.2); color: #F59E0B;">🎁</span>
+                    <span class="stat-label" style="font-size: 1.1rem; font-weight: 600;">Your Referral Code</span>
+                </div>
+                <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem;">
+                    Share your code with friends! They get <strong style="color: #10B981;">$20</strong> signup bonus, you earn <strong style="color: #F59E0B;">$30</strong> for each referral.
+                </p>
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="display: flex; align-items: center; background: rgba(15, 23, 42, 0.8); border: 2px dashed #F59E0B; border-radius: 8px; padding: 0.75rem 1rem;">
+                            <span id="referralCode" style="font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #F59E0B; letter-spacing: 2px; flex: 1;">{{ referral_code }}</span>
+                            <button onclick="copyReferralCode()" aria-label="Copy referral code to clipboard" style="background: #F59E0B; color: #0f172a; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                                <span id="copyIcon" aria-hidden="true">📋</span> Copy
+                            </button>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="shareReferral('whatsapp')" aria-label="Share referral code on WhatsApp" style="background: #25D366; color: white; border: none; padding: 0.6rem; border-radius: 8px; cursor: pointer; font-size: 1.2rem;"><span aria-hidden="true">💬</span></button>
+                        <button onclick="shareReferral('twitter')" aria-label="Share referral code on Twitter" style="background: #1DA1F2; color: white; border: none; padding: 0.6rem; border-radius: 8px; cursor: pointer; font-size: 1.2rem;"><span aria-hidden="true">🐦</span></button>
+                        <button onclick="shareReferral('email')" aria-label="Share referral code via Email" style="background: #6366F1; color: white; border: none; padding: 0.6rem; border-radius: 8px; cursor: pointer; font-size: 1.2rem;"><span aria-hidden="true">✉️</span></button>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <span style="color: #94a3b8; font-size: 0.85rem;">
+                        <span id="referralCount">{{ referral_count }}</span> people joined using your code
+                    </span>
+                    <span style="color: #10B981; font-size: 0.9rem; font-weight: 500;">
+                        Total earned: <span id="referralEarnings">${{ referral_bonus|floatformat:2 }}</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <h3 class="section-title">Quick Actions</h3>
+            <div class="action-grid">
+                <a href="{% url 'add_funds' %}" class="action-card">
+                    <div class="action-icon">➕</div>
+                    <div class="action-label">Add Funds</div>
+                </a>
+                <a href="{% url 'withdraw' %}" class="action-card">
+                    <div class="action-icon">💸</div>
+                    <div class="action-label">Withdraw</div>
+                </a>
+                <a href="{% url 'invest' %}" class="action-card">
+                    <div class="action-icon">📈</div>
+                    <div class="action-label">Asset Allocation</div>
+                </a>
+                <a href="{% url 'transactions' %}" class="action-card">
+                    <div class="action-icon">📝</div>
+                    <div class="action-label">Transactions</div>
+                </a>
+            </div>
+            <!-- US Services Widget -->
+            <h3 class="section-title">🇺🇸 US Services & Programs</h3>
+            <div class="us-services-grid">
+                <a href="{% url 'us_services' %}#irs" class="us-service-card us-service-card--blue">
+                    <div class="us-service-icon">🏦</div>
+                    <div class="us-service-name">IRS</div>
+                    <div class="us-service-desc">Tax Compliance</div>
+                </a>
+                <a href="{% url 'us_services' %}#idme" class="us-service-card us-service-card--green">
+                    <div class="us-service-icon">🔐</div>
+                    <div class="us-service-name">ID.me</div>
+                    <div class="us-service-desc">Identity Verify</div>
+                </a>
+                <a href="{% url 'us_services' %}#ssa" class="us-service-card us-service-card--purple">
+                    <div class="us-service-icon">👴</div>
+                    <div class="us-service-name">SSA</div>
+                    <div class="us-service-desc">Social Security</div>
+                </a>
+                <a href="{% url 'us_services' %}#sec" class="us-service-card us-service-card--gold">
+                    <div class="us-service-icon">⚖️</div>
+                    <div class="us-service-name">SEC</div>
+                    <div class="us-service-desc">Securities</div>
+                </a>
+                <a href="{% url 'us_services' %}#fdic" class="us-service-card us-service-card--pink">
+                    <div class="us-service-icon">🛡️</div>
+                    <div class="us-service-name">FDIC</div>
+                    <div class="us-service-desc">Deposit Insurance</div>
+                </a>
+                <a href="{% url 'us_services' %}#employment" class="us-service-card us-service-card--sky">
+                    <div class="us-service-icon">💼</div>
+                    <div class="us-service-name">Jobs</div>
+                    <div class="us-service-desc">Employment</div>
+                </a>
+            </div>
+
+            <!-- Crypto Market Charts - Bybit API -->
+            <div class="charts-row" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                <!-- Bitcoin Chart -->
+                <div class="chart-card" style="flex: 1; min-width: 300px;">
+                    <h3>📊 Bitcoin (BTC/USDT)</h3>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="btcChart"></canvas>
+                        <div id="btcPrice" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; color: #10B981; font-weight: 600; font-size: 1.1rem;">Loading...</div>
+                    </div>
+                </div>
+                <!-- Ethereum Chart -->
+                <div class="chart-card" style="flex: 1; min-width: 300px;">
+                    <h3>📊 Ethereum (ETH/USDT)</h3>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="ethChart"></canvas>
+                        <div id="ethPrice" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; color: #10B981; font-weight: 600; font-size: 1.1rem;">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Market Overview -->
+            <div class="chart-card" style="margin-bottom: 2rem;">
+                <h3>📈 Live Crypto Market Overview</h3>
+                <div id="marketOverview" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; padding: 1rem;">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            {% if upcoming_maturities %}
+            <!-- Upcoming Maturities Alert -->
+            <div class="stats-card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(245, 158, 11, 0.3);">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <span style="font-size: 2rem;">⏰</span>
+                    <div>
+                        <h3 style="margin: 0; color: #F59E0B;">Investments Maturing Soon!</h3>
+                        <p style="margin: 0; color: #94a3b8; font-size: 0.875rem;">These investments will complete within 3 days</p>
+                    </div>
+                </div>
+                <div style="display: grid; gap: 0.75rem;">
+                    {% for inv in upcoming_maturities %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.5); padding: 0.75rem 1rem; border-radius: 0.5rem;">
+                        <div>
+                            <span style="color: #fff;">{{ inv.plan.name }}</span>
+                            <span style="color: #94a3b8; font-size: 0.875rem; margin-left: 0.5rem;">${{ inv.amount|floatformat:2 }}</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="color: #10B981; font-weight: 600;">+${{ inv.expected_profit|floatformat:2 }}</span>
+                            <span style="color: #F59E0B; font-size: 0.75rem; display: block;">{{ inv.days_remaining }} day{{ inv.days_remaining|pluralize }} left</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Active Investments -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>Active Investments</h3>
+                    <a href="{% url 'invest' %}" class="btn-primary">New Investment</a>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Investment ID</th>
+                                <th>Amount</th>
+                                <th>Expected Profit</th>
+                                <th>Status</th>
+                                <th>Maturity Date</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody id="investmentsTable">
+                            {% if recent_investments %}
+                                {% for inv in recent_investments %}
+                                <tr>
+                                    <td>#{{ inv.id|stringformat:"s"|slice:":8" }}</td>
+                                    <td>${{ inv.amount|floatformat:2 }}</td>
+                                    <td>${{ inv.expected_profit|floatformat:2 }}</td>
+                                    <td>
+                                        <span class="badge {% if inv.status == 'active' %}badge-success{% elif inv.status == 'completed' %}badge-info{% elif inv.status == 'pending' %}badge-warning{% else %}badge-danger{% endif %}">
+                                            {{ inv.status|title }}
+                                        </span>
+                                    </td>
+                                    <td>{{ inv.end_date|date:"M d, Y" }}</td>
+                                    <td>
+                                        {% if inv.status == 'active' %}
+                                            <div class="progress-bar" style="width: 100%; background: #1e293b; border-radius: 4px; height: 8px;">
+                                                <div style="width: {{ inv.progress_percentage|default:0|floatformat:1 }}%; background: linear-gradient(90deg, #F59E0B, #3B82F6); height: 100%; border-radius: 4px;"></div>
+                                            </div>
+                                        {% elif inv.status == 'completed' %}
+                                            <span class="text-success">✓ Complete</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center" style="padding: 3rem 1rem;">
+                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                                            <div style="font-size: 3rem; opacity: 0.5;">📊</div>
+                                            <div style="color: #94a3b8; font-size: 1rem;">No active investments yet</div>
+                                            <p style="color: #64748b; font-size: 0.875rem; margin: 0; max-width: 300px;">
+                                                Start your wealth journey today with our premium investment plans
+                                            </p>
+                                            <a href="{% url 'invest' %}" class="btn btn-primary" style="margin-top: 0.5rem; background: linear-gradient(135deg, #F59E0B, #D97706); border: none; padding: 0.75rem 1.5rem; border-radius: 8px; color: white; text-decoration: none; font-weight: 600;">
+                                                🚀 Start Investing
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pending Withdrawals -->
+            <div class="table-card" id="pendingWithdrawalsCard" style="display: none;">
+                <div class="table-header">
+                    <h3>Pending Withdrawals</h3>
+                    <span class="badge badge-warning" id="pendingWithdrawalsCount">0</span>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Requested</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingWithdrawalsTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Main JS -->
+        <script defer src="{% static 'js/main.js' %}"></script>
+    <script defer src="{% static 'js/dashboard.js' %}"></script>
+    <script defer src="{% static 'js/charts.js' %}"></script>
+    <script>
+        // Notification toggle (also defined in dashboard.js, kept here as fallback for non-deferred context)
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notifDropdown');
+            if (dropdown) {
+                dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+    </script>
+    
+    
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="nav-items">
+            <a href="{% url 'dashboard' %}" class="active">
+                <span class="icon">📊</span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'invest' %}">
+                <span class="icon">💰</span>
+                <span>Invest</span>
+            </a>
+            <a href="{% url 'add_funds' %}">
+                <span class="icon">💳</span>
+                <span>Deposit</span>
+            </a>
+            <a href="{% url 'withdraw' %}">
+                <span class="icon">💸</span>
+                <span>Withdraw</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Bybit API Crypto Charts -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Bybit API configuration
+        const BYBIT_API = 'https://api.bybit.com/v5/market/kline';
+        
+        // Fetch kline data from Bybit
+        async function fetchKlineData(symbol, interval = '60', limit = 50) {
+            try {
+                const response = await fetch(`${BYBIT_API}?category=spot&symbol=${symbol}&interval=${interval}&limit=${limit}`);
+                const data = await response.json();
+                if (data.retCode === 0) {
+                    return data.result.list.reverse(); // Oldest first
+                }
+            } catch (error) {
+                console.log('Using fallback data');
+            }
+            return null;
+        }
+        
+        // Fetch ticker for current price
+        async function fetchTicker(symbol) {
+            try {
+                const response = await fetch(`https://api.bybit.com/v5/market/tickers?category=spot&symbol=${symbol}`);
+                const data = await response.json();
+                if (data.retCode === 0 && data.result.list.length > 0) {
+                    return data.result.list[0];
+                }
+            } catch (error) {
+                console.log('Ticker fetch error');
+            }
+            return null;
+        }
+        
+        // Create chart with Chart.js
+        async function createCryptoChart(canvasId, priceId, symbol, color) {
+            const canvas = document.getElementById(canvasId);
+            const priceDiv = document.getElementById(priceId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const klineData = await fetchKlineData(symbol);
+            const ticker = await fetchTicker(symbol);
+            
+            // Update price display
+            if (ticker && priceDiv) {
+                const price = parseFloat(ticker.lastPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                const change = parseFloat(ticker.price24hPcnt) * 100;
+                const changeColor = change >= 0 ? '#10B981' : '#EF4444';
+                const changeSign = change >= 0 ? '+' : '';
+                priceDiv.innerHTML = `$${price} <span style="color: ${changeColor}; font-size: 0.85rem;">${changeSign}${change.toFixed(2)}%</span>`;
+            }
+            
+            // Prepare chart data
+            let labels = [];
+            let prices = [];
+            
+            if (klineData) {
+                klineData.forEach(k => {
+                    labels.push(new Date(parseInt(k[0])));
+                    prices.push(parseFloat(k[4])); // Close price
+                });
+            } else {
+                // Fallback data
+                for (let i = 0; i < 50; i++) {
+                    labels.push(new Date(Date.now() - (50-i) * 3600000));
+                    prices.push(symbol === 'BTCUSDT' ? 97000 + Math.random() * 2000 : 2600 + Math.random() * 100);
+                }
+            }
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: prices,
+                        borderColor: color,
+                        backgroundColor: color + '20',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            display: true,
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: '#94a3b8', callback: v => '$' + v.toLocaleString() }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+        
+        // Market overview
+        async function loadMarketOverview() {
+            const container = document.getElementById('marketOverview');
+            if (!container) return;
+            
+            const symbols = [
+                { symbol: 'BTCUSDT', name: 'Bitcoin', icon: '₿' },
+                { symbol: 'ETHUSDT', name: 'Ethereum', icon: 'Ξ' },
+                { symbol: 'BNBUSDT', name: 'BNB', icon: '🔶' },
+                { symbol: 'SOLUSDT', name: 'Solana', icon: '◎' },
+                { symbol: 'XRPUSDT', name: 'XRP', icon: '✕' },
+                { symbol: 'ADAUSDT', name: 'Cardano', icon: '₳' }
+            ];
+            
+            let html = '';
+            for (const s of symbols) {
+                const ticker = await fetchTicker(s.symbol);
+                if (ticker) {
+                    const price = parseFloat(ticker.lastPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    const change = (parseFloat(ticker.price24hPcnt) * 100).toFixed(2);
+                    const changeColor = parseFloat(change) >= 0 ? '#10B981' : '#EF4444';
+                    const changeSign = parseFloat(change) >= 0 ? '+' : '';
+                    
+                    html += `
+                    <div style="background: rgba(30, 41, 59, 0.5); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.5rem;">${s.icon}</span>
+                            <span style="color: #fff; font-weight: 600;">${s.name}</span>
+                        </div>
+                        <div style="color: #F59E0B; font-size: 1.1rem; font-weight: 600;">$${price}</div>
+                        <div style="color: ${changeColor}; font-size: 0.85rem;">${changeSign}${change}%</div>
+                    </div>`;
+                }
+            }
+            container.innerHTML = html || '<p style="color: #94a3b8;">Loading market data...</p>';
+        }
+        
+        // Initialize charts
+        createCryptoChart('btcChart', 'btcPrice', 'BTCUSDT', '#F7931A');
+        createCryptoChart('ethChart', 'ethPrice', 'ETHUSDT', '#627EEA');
+        loadMarketOverview();
+        
+        // Refresh every 60 seconds
+        setInterval(() => {
+            loadMarketOverview();
+        }, 60000);
+    });
+    </script>
+
+    <!-- Mobile Drawer & Theme Toggle Scripts -->
+    <script>
+    // Mobile Drawer Functions
+    function openMobileDrawer() {
+        document.getElementById('mobileDrawer').classList.add('active');
+        document.getElementById('mobileDrawerOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileDrawer() {
+        document.getElementById('mobileDrawer').classList.remove('active');
+        document.getElementById('mobileDrawerOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Close drawer on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeMobileDrawer();
+        }
+    });
+
+    // Theme Toggle Function
+    function toggleTheme(checkbox) {
+        if (checkbox.checked) {
+            document.body.classList.add('light-theme');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.body.classList.remove('light-theme');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    // Load saved theme on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme');
+        const checkbox = document.getElementById('checkbox');
+        if (savedTheme === 'light' && checkbox) {
+            checkbox.checked = true;
+            document.body.classList.add('light-theme');
+        }
+    });
+    </script>
+</body>
+
+</html>

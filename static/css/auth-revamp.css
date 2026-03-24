@@ -1,0 +1,382 @@
+/* ============================================
+   ELITE WEALTH CAPITA - AUTH REVAMP STYLES
+   Modern Split-Screen Layout
+   ============================================ */
+
+:root {
+     --auth-bg-dark: #0f172a;
+     --auth-bg-card: rgba(30, 41, 59, 0.7);
+     --auth-input-bg: rgba(255, 255, 255, 0.05);
+     --auth-input-border: rgba(255, 255, 255, 0.1);
+     --auth-primary: #F59E0B;
+     /* Gold */
+}
+
+/* Base Override for Auth Pages */
+body.auth-page-revamped {
+     padding-top: 0 !important;
+     background: var(--auth-bg-dark);
+     height: 100vh;
+     overflow: hidden;
+}
+
+/* Split Container */
+.auth-split-container {
+     display: grid;
+     grid-template-columns: 45% 55%;
+     height: 100vh;
+     width: 100vw;
+}
+
+/* Left Side - Visuals */
+.auth-visual-side {
+     position: relative;
+     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     padding: 4rem;
+     color: white;
+     border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Fallback image if hero-bg doesn't exist, try common pattern or just gradient */
+.auth-visual-side::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.15), transparent 70%);
+     pointer-events: none;
+}
+
+.auth-brand-large {
+     margin-bottom: 2rem;
+}
+
+.auth-brand-large img {
+     height: 60px;
+     margin-bottom: 1rem;
+}
+
+.auth-brand-large h1 {
+     font-size: 3rem;
+     font-weight: 800;
+     line-height: 1.1;
+     margin-bottom: 1rem;
+     background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+     -webkit-background-clip: text;
+     -webkit-text-fill-color: transparent;
+}
+
+.auth-quote {
+     font-size: 1.25rem;
+     color: rgba(255, 255, 255, 0.8);
+     font-style: italic;
+     border-left: 3px solid var(--auth-primary);
+     padding-left: 1.5rem;
+     margin-top: 2rem;
+}
+
+.auth-quote-author {
+     display: block;
+     margin-top: 1rem;
+     font-size: 0.9rem;
+     font-style: normal;
+     font-weight: 600;
+     color: var(--auth-primary);
+}
+
+/* Right Side - Form */
+.auth-form-side {
+     position: relative;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     padding: 2rem 10%;
+     overflow-y: auto;
+     background: var(--auth-bg-dark);
+}
+
+/* Mobile Header (Only visible on mobile) */
+.mobile-brand {
+     display: none;
+     text-align: center;
+     margin-bottom: 2rem;
+}
+
+.auth-form-container {
+     width: 100%;
+     max-width: 480px;
+     margin: 0 auto;
+}
+
+.auth-header-revamp {
+     margin-bottom: 2.5rem;
+}
+
+.auth-header-revamp h2 {
+     font-size: 2rem;
+     font-weight: 700;
+     color: white;
+     margin-bottom: 0.5rem;
+}
+
+.auth-header-revamp p {
+     color: rgba(255, 255, 255, 0.6);
+}
+
+/* Modern Input Groups */
+.form-group-modern {
+     margin-bottom: 1.5rem;
+     position: relative;
+}
+
+.form-group-modern label {
+     display: block;
+     margin-bottom: 0.5rem;
+     color: rgba(255, 255, 255, 0.9);
+     font-size: 0.9rem;
+     font-weight: 500;
+}
+
+.input-wrapper-modern {
+     position: relative;
+}
+
+.input-wrapper-modern input {
+     width: 100%;
+     padding: 1rem 1rem 1rem 3rem;
+     /* Left padding for icon */
+     background: var(--auth-input-bg);
+     border: 1px solid var(--auth-input-border);
+     border-radius: 12px;
+     color: white;
+     font-size: 1rem;
+     transition: all 0.3s ease;
+}
+
+.input-wrapper-modern input:focus {
+     background: rgba(255, 255, 255, 0.08);
+     border-color: var(--auth-primary);
+     outline: none;
+     box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+}
+
+.input-icon {
+     position: absolute;
+     left: 1rem;
+     top: 50%;
+     transform: translateY(-50%);
+     color: rgba(255, 255, 255, 0.4);
+     pointer-events: none;
+}
+
+.password-toggle {
+     position: absolute;
+     right: 1rem;
+     top: 50%;
+     transform: translateY(-50%);
+     color: rgba(255, 255, 255, 0.4);
+     cursor: pointer;
+     background: none;
+     border: none;
+     padding: 0;
+}
+
+.password-toggle:hover {
+     color: white;
+}
+
+/* Actions Row */
+.form-actions-row {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 2rem;
+     font-size: 0.9rem;
+}
+
+.checkbox-custom-group {
+     display: flex;
+     align-items: center;
+     cursor: pointer;
+}
+
+.checkbox-custom-group input {
+     display: none;
+}
+
+.checkbox-box {
+     width: 20px;
+     height: 20px;
+     border: 2px solid rgba(255, 255, 255, 0.3);
+     border-radius: 6px;
+     margin-right: 0.75rem;
+     transition: all 0.2s ease;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+}
+
+.checkbox-custom-group input:checked+.checkbox-box {
+     background: var(--auth-primary);
+     border-color: var(--auth-primary);
+}
+
+.checkbox-box::after {
+     content: '✓';
+     color: white;
+     font-size: 12px;
+     opacity: 0;
+}
+
+.checkbox-custom-group input:checked+.checkbox-box::after {
+     opacity: 1;
+}
+
+.link-gold {
+     color: var(--auth-primary);
+     text-decoration: none;
+     font-weight: 500;
+     transition: 0.2s;
+}
+
+.link-gold:hover {
+     text-decoration: underline;
+     filter: brightness(1.1);
+}
+
+/* Buttons */
+.btn-modern-full {
+     width: 100%;
+     padding: 1rem;
+     background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+     border: none;
+     border-radius: 12px;
+     color: white;
+     font-weight: 600;
+     font-size: 1rem;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     gap: 0.5rem;
+}
+
+.btn-modern-full:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
+}
+
+.btn-modern-full:disabled {
+     opacity: 0.7;
+     cursor: not-allowed;
+     transform: none;
+}
+
+/* Footer */
+.auth-footer-revamp {
+     margin-top: 2rem;
+     text-align: center;
+     color: rgba(255, 255, 255, 0.6);
+     padding-bottom: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+     .auth-split-container {
+          grid-template-columns: 1fr;
+          width: 100%; /* Fix horizontal overflow */
+     }
+
+     .auth-visual-side {
+          display: none;
+     }
+
+     .auth-form-side {
+          padding: 2rem;
+          justify-content: flex-start;
+     }
+
+     .mobile-brand {
+          display: block;
+     }
+
+     body.auth-page-revamped {
+          overflow-y: auto;
+          height: auto;
+          min-height: 100vh;
+     }
+
+     /* Add a subtle top sticky header on mobile */
+     .mobile-brand img {
+          height: 48px;
+     }
+}
+
+/* Mobile phones - extra small */
+@media (max-width: 576px) {
+     .auth-form-side {
+          padding: 1.5rem 1rem;
+     }
+
+     .auth-card-modern {
+          padding: 1.5rem;
+          border-radius: 16px;
+     }
+
+     .auth-card-modern h2 {
+          font-size: 1.5rem;
+     }
+
+     .auth-card-modern p {
+          font-size: 0.9rem;
+     }
+
+     .form-group-modern label {
+          font-size: 0.85rem;
+     }
+
+     .input-wrapper-modern input {
+          padding: 0.875rem 0.875rem 0.875rem 2.75rem;
+          font-size: 16px; /* Prevents iOS zoom on focus */
+          min-height: 48px; /* Touch-friendly height */
+     }
+
+     .btn-modern-full {
+          padding: 0.875rem;
+          font-size: 0.95rem;
+          min-height: 48px; /* Touch-friendly height */
+     }
+
+     .mobile-brand img {
+          height: 40px;
+     }
+
+     .auth-footer-revamp {
+          font-size: 0.85rem;
+     }
+
+     .form-actions-row {
+          flex-direction: column;
+          gap: 0.75rem;
+          align-items: flex-start;
+     }
+
+     /* Touch-friendly password toggle */
+     .password-toggle {
+          padding: 0.5rem;
+          min-width: 44px;
+          min-height: 44px;
+     }
+
+     /* Touch-friendly checkbox */
+     .checkbox-custom-group {
+          padding: 0.5rem 0;
+          min-height: 44px;
+     }
+}

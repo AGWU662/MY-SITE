@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+        .error-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+        .error-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        .error-message {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            max-width: 500px;
+            margin-bottom: 2rem;
+        }
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4);
+        }
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .btn-home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .error-illustration {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .logo-link {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+        }
+        .logo-link img {
+            height: 50px;
+        }
+        .support-note {
+            margin-top: 2rem;
+            padding: 1rem 1.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            color: #fca5a5;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'home' %}" class="logo-link">
+        <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="40">
+    </a>
+
+    <div class="error-container">
+        <div class="error-illustration">⚠️</div>
+        <div class="error-code">500</div>
+        <h1 class="error-title">Server Error</h1>
+        <p class="error-message">
+            Something went wrong on our end. Our team has been notified and is working to fix it.
+            Please try again in a few moments.
+        </p>
+        
+        <div class="error-actions">
+            <a href="javascript:history.back()" class="btn-back">
+                ← Go Back
+            </a>
+            <a href="{% url 'home' %}" class="btn-home">
+                🏠 Home Page
+            </a>
+        </div>
+        <div class="support-note">
+            💬 Need immediate help? Our live chat support is available 24/7.
+        </div>
+    </div>
+        <script defer src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

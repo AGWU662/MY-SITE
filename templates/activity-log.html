@@ -1,0 +1,283 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Log - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+    <link rel="preload" as="style" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .log-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.2s;
+        }
+        .log-item:last-child { border-bottom: none; }
+        .log-item:hover { background: rgba(255,255,255,0.03); }
+        .log-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .log-icon.login    { background: rgba(16,185,129,0.15); }
+        .log-icon.logout   { background: rgba(100,116,139,0.15); }
+        .log-icon.deposit  { background: rgba(59,130,246,0.15); }
+        .log-icon.withdraw { background: rgba(245,158,11,0.15); }
+        .log-icon.invest   { background: rgba(168,85,247,0.15); }
+        .log-icon.kyc      { background: rgba(236,72,153,0.15); }
+        .log-icon.password { background: rgba(239,68,68,0.15); }
+        .log-icon.default  { background: rgba(148,163,184,0.15); }
+        .log-action {
+            font-weight: 600;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .log-desc {
+            color: #94a3b8;
+            font-size: 0.82rem;
+            margin-top: 0.15rem;
+        }
+        .log-meta {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .pagination-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .page-btn {
+            padding: 0.4rem 0.9rem;
+            border-radius: 0.4rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .page-btn:hover, .page-btn.active {
+            background: #F59E0B;
+            border-color: #F59E0B;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body class="dashboard-site">
+    <div class="crypto-ticker-horizontal" style="top: 0;">
+        <div class="ticker-track"></div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay" onclick="closeMobileDrawer()"></div>
+    <aside class="mobile-drawer" id="mobileDrawer">
+        <div class="mobile-drawer-header">
+            <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="35">
+            <button class="mobile-drawer-close" onclick="closeMobileDrawer()" aria-label="Close menu">&times;</button>
+        </div>
+        <nav class="mobile-drawer-nav">
+            <a href="{% url 'dashboard' %}" class="mobile-drawer-link"><span class="drawer-icon">📊</span> Dashboard</a>
+            <a href="{% url 'invest' %}" class="mobile-drawer-link"><span class="drawer-icon">💼</span> Invest</a>
+            <a href="{% url 'add_funds' %}" class="mobile-drawer-link"><span class="drawer-icon">➕</span> Add Funds</a>
+            <a href="{% url 'withdraw' %}" class="mobile-drawer-link"><span class="drawer-icon">💸</span> Withdraw</a>
+            <a href="{% url 'transactions' %}" class="mobile-drawer-link"><span class="drawer-icon">📋</span> Transactions</a>
+            <a href="{% url 'referrals' %}" class="mobile-drawer-link"><span class="drawer-icon">👥</span> Referrals</a>
+            <a href="{% url 'activity_log' %}" class="mobile-drawer-link active"><span class="drawer-icon">🕐</span> Activity Log</a>
+            <a href="{% url 'accounts:profile' %}" class="mobile-drawer-link"><span class="drawer-icon">⚙️</span> Settings</a>
+        </nav>
+        <div class="mobile-drawer-footer">
+            <a href="{% url 'logout' %}" class="mobile-drawer-link logout"><span class="drawer-icon">🚪</span> Logout</a>
+        </div>
+    </aside>
+
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <button class="hamburger-menu" id="hamburgerMenu" onclick="openMobileDrawer()" aria-label="Open menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <a href="{% url 'dashboard' %}" class="nav-brand" style="text-decoration:none;display:flex;align-items:center;gap:0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" style="height:40px;width:auto;object-fit:contain;">
+                <div class="logo-placeholder" style="background:none;border:none;padding:0;">
+                    <span class="logo-text">ELITE</span>
+                    <span class="logo-subtext">WEALTH CAPITA</span>
+                </div>
+            </a>
+            <div class="nav-user">
+                {% if user.profile_image %}
+                <a href="{% url 'accounts:profile' %}" style="text-decoration:none;" aria-label="Profile">
+                    <img src="{{ user.profile_image.url }}" alt="{{ user.full_name }}"
+                        style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #F59E0B;">
+                </a>
+                {% else %}
+                <a href="{% url 'accounts:profile' %}" style="text-decoration:none;" aria-label="Profile">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:0.9rem;">
+                        {{ user.full_name|first|upper }}
+                    </div>
+                </a>
+                {% endif %}
+                <span class="user-name">{{ user.full_name }}</span>
+                <a href="{% url 'logout' %}" class="btn-secondary" style="font-size:0.85rem;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link"><span class="icon">📊</span><span>Dashboard</span></a>
+                <a href="{% url 'invest' %}" class="sidebar-link"><span class="icon">💰</span><span>Invest</span></a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link"><span class="icon">💳</span><span>Add Funds</span></a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link"><span class="icon">💸</span><span>Withdraw</span></a>
+                <a href="{% url 'loans' %}" class="sidebar-link"><span class="icon">🏦</span><span>Get Loan</span></a>
+                <a href="{% url 'cards' %}" class="sidebar-link"><span class="icon">💎</span><span>Virtual Cards</span></a>
+                <a href="{% url 'transactions' %}" class="sidebar-link"><span class="icon">📝</span><span>Transactions</span></a>
+                <a href="{% url 'referrals' %}" class="sidebar-link"><span class="icon">👥</span><span>Referrals</span></a>
+                <a href="{% url 'activity_log' %}" class="sidebar-link active"><span class="icon">🕐</span><span>Activity Log</span></a>
+                <a href="{% url 'dispute' %}" class="sidebar-link"><span class="icon">⚠️</span><span>Support</span></a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link"><span class="icon">⚙️</span><span>Settings</span></a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link"><span class="icon">⭐</span><span>Upgrade</span></a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>🕐 Activity Log</h1>
+                <p>Complete history of actions on your account</p>
+            </div>
+
+            {% if messages %}
+            <div style="margin-bottom:1.5rem;">
+                {% for message in messages %}
+                <div style="padding:1rem;border-radius:0.5rem;margin-bottom:0.5rem;
+                    {% if message.tags == 'success' %}background:rgba(16,185,129,0.2);border:1px solid #10B981;color:#10B981;
+                    {% elif message.tags == 'error' %}background:rgba(239,68,68,0.2);border:1px solid #EF4444;color:#EF4444;
+                    {% else %}background:rgba(59,130,246,0.2);border:1px solid #3B82F6;color:#3B82F6;{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Stats bar -->
+            <div class="stats-grid" style="margin-bottom:2rem;">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ total_logs }}</span>
+                        <span class="stat-label">Total Events</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log List -->
+            <div class="glass-card" style="padding:0;overflow:hidden;">
+                <div style="padding:1.25rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="margin:0;font-size:1rem;">Account Events</h3>
+                    <span style="color:#64748b;font-size:0.82rem;">Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </div>
+
+                {% for log in logs %}
+                <div class="log-item">
+                    {% with action=log.action %}
+                    <div class="log-icon {% if 'login' in action %}login{% elif 'logout' in action %}logout{% elif 'deposit' in action %}deposit{% elif 'withdraw' in action %}withdraw{% elif 'invest' in action %}invest{% elif 'kyc' in action or 'email_verif' in action %}kyc{% elif 'password' in action %}password{% else %}default{% endif %}">
+                        {% if 'login' in action %}🔑
+                        {% elif 'logout' in action %}🚪
+                        {% elif 'deposit' in action %}💳
+                        {% elif 'withdraw' in action %}💸
+                        {% elif 'invest' in action %}📈
+                        {% elif 'kyc' in action %}🪪
+                        {% elif 'email_verif' in action %}✉️
+                        {% elif 'password' in action %}🔒
+                        {% elif 'registration' in action %}👤
+                        {% else %}📌
+                        {% endif %}
+                    </div>
+                    {% endwith %}
+                    <div style="flex:1;min-width:0;">
+                        <div class="log-action">{{ log.action|title|cut:"_" }}</div>
+                        {% if log.description %}
+                        <div class="log-desc">{{ log.description }}</div>
+                        {% endif %}
+                        <div class="log-meta">
+                            <span>🕐 {{ log.created_at|date:"M d, Y H:i" }}</span>
+                            {% if log.ip_address %}
+                            <span>🌐 {{ log.ip_address }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="padding:3rem;text-align:center;color:#64748b;">
+                    <div style="font-size:3rem;margin-bottom:1rem;">📋</div>
+                    <p>No activity recorded yet.</p>
+                </div>
+                {% endfor %}
+
+                <!-- Pagination -->
+                {% if page_obj.paginator.num_pages > 1 %}
+                <div class="pagination-wrap">
+                    {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">← Prev</a>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <span class="page-btn active">{{ num }}</span>
+                        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                        <a href="?page={{ num }}" class="page-btn">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="page-btn">Next →</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-bottom-nav">
+        <a href="{% url 'dashboard' %}" class="bottom-nav-item"><span class="nav-icon">📊</span><span class="nav-label">Home</span></a>
+        <a href="{% url 'invest' %}" class="bottom-nav-item"><span class="nav-icon">💰</span><span class="nav-label">Invest</span></a>
+        <a href="{% url 'add_funds' %}" class="bottom-nav-item"><span class="nav-icon">💳</span><span class="nav-label">Deposit</span></a>
+        <a href="{% url 'withdraw' %}" class="bottom-nav-item"><span class="nav-icon">💸</span><span class="nav-label">Withdraw</span></a>
+        <a href="{% url 'accounts:profile' %}" class="bottom-nav-item"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></a>
+    </nav>
+
+    <script src="{% static 'js/main.js?v=20260308' %}"></script>
+    <script>
+        function openMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.add('open');
+            document.getElementById('mobileDrawerOverlay').classList.add('active');
+        }
+        function closeMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.remove('open');
+            document.getElementById('mobileDrawerOverlay').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

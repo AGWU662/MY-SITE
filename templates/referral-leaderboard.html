@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Leaderboard - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+    <link rel="preload" as="style" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .leaderboard-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.2s;
+        }
+        .leaderboard-row:hover { background: rgba(255,255,255,0.03); }
+        .leaderboard-row:last-child { border-bottom: none; }
+        .rank-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #0f172a; box-shadow: 0 0 12px rgba(255,215,0,0.4); }
+        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A8A9AD); color: #0f172a; }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #A0522D); color: #fff; }
+        .rank-other { background: rgba(255,255,255,0.08); color: #94a3b8; }
+        .referrer-name {
+            font-weight: 600;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+        }
+        .referrer-count {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .count-pill {
+            background: rgba(245,158,11,0.15);
+            border: 1px solid rgba(245,158,11,0.3);
+            color: #F59E0B;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .active-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10B981;
+            flex-shrink: 0;
+        }
+        .your-rank-banner {
+            background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body class="dashboard-site">
+    <div class="crypto-ticker-horizontal" style="top:0;"><div class="ticker-track"></div></div>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay" onclick="closeMobileDrawer()"></div>
+    <aside class="mobile-drawer" id="mobileDrawer">
+        <div class="mobile-drawer-header">
+            <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="35">
+            <button class="mobile-drawer-close" onclick="closeMobileDrawer()" aria-label="Close menu">&times;</button>
+        </div>
+        <nav class="mobile-drawer-nav">
+            <a href="{% url 'dashboard' %}" class="mobile-drawer-link"><span class="drawer-icon">📊</span> Dashboard</a>
+            <a href="{% url 'referrals' %}" class="mobile-drawer-link"><span class="drawer-icon">👥</span> My Referrals</a>
+            <a href="{% url 'referral_leaderboard' %}" class="mobile-drawer-link active"><span class="drawer-icon">🏆</span> Leaderboard</a>
+            <a href="{% url 'activity_log' %}" class="mobile-drawer-link"><span class="drawer-icon">🕐</span> Activity Log</a>
+            <a href="{% url 'accounts:profile' %}" class="mobile-drawer-link"><span class="drawer-icon">⚙️</span> Settings</a>
+        </nav>
+        <div class="mobile-drawer-footer">
+            <a href="{% url 'logout' %}" class="mobile-drawer-link logout"><span class="drawer-icon">🚪</span> Logout</a>
+        </div>
+    </aside>
+
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <button class="hamburger-menu" id="hamburgerMenu" onclick="openMobileDrawer()" aria-label="Open menu">
+                <span class="hamburger-line"></span><span class="hamburger-line"></span><span class="hamburger-line"></span>
+            </button>
+            <a href="{% url 'dashboard' %}" class="nav-brand" style="text-decoration:none;display:flex;align-items:center;gap:0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" style="height:40px;width:auto;object-fit:contain;">
+                <div class="logo-placeholder" style="background:none;border:none;padding:0;">
+                    <span class="logo-text">ELITE</span><span class="logo-subtext">WEALTH CAPITA</span>
+                </div>
+            </a>
+            <div class="nav-user">
+                {% if user.profile_image %}
+                <a href="{% url 'accounts:profile' %}" aria-label="Profile">
+                    <img src="{{ user.profile_image.url }}" alt="{{ user.full_name }}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #F59E0B;">
+                </a>
+                {% else %}
+                <a href="{% url 'accounts:profile' %}" aria-label="Profile">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#F59E0B,#D97706);display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:700;font-size:0.9rem;">
+                        {{ user.full_name|first|upper }}
+                    </div>
+                </a>
+                {% endif %}
+                <span class="user-name">{{ user.full_name }}</span>
+                <a href="{% url 'logout' %}" class="btn-secondary" style="font-size:0.85rem;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link"><span class="icon">📊</span><span>Dashboard</span></a>
+                <a href="{% url 'invest' %}" class="sidebar-link"><span class="icon">💰</span><span>Invest</span></a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link"><span class="icon">💳</span><span>Add Funds</span></a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link"><span class="icon">💸</span><span>Withdraw</span></a>
+                <a href="{% url 'loans' %}" class="sidebar-link"><span class="icon">🏦</span><span>Get Loan</span></a>
+                <a href="{% url 'cards' %}" class="sidebar-link"><span class="icon">💎</span><span>Virtual Cards</span></a>
+                <a href="{% url 'transactions' %}" class="sidebar-link"><span class="icon">📝</span><span>Transactions</span></a>
+                <a href="{% url 'referrals' %}" class="sidebar-link"><span class="icon">👥</span><span>Referrals</span></a>
+                <a href="{% url 'referral_leaderboard' %}" class="sidebar-link active"><span class="icon">🏆</span><span>Leaderboard</span></a>
+                <a href="{% url 'activity_log' %}" class="sidebar-link"><span class="icon">🕐</span><span>Activity Log</span></a>
+                <a href="{% url 'dispute' %}" class="sidebar-link"><span class="icon">⚠️</span><span>Support</span></a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link"><span class="icon">⚙️</span><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>🏆 Referral Leaderboard</h1>
+                <p>Top referrers this month — compete and earn more!</p>
+            </div>
+
+            <!-- Your Stats -->
+            <div class="your-rank-banner">
+                <div style="font-size:2rem;margin-bottom:0.5rem;">🎯</div>
+                <h3 style="color:#F59E0B;margin-bottom:0.25rem;">Your Referral Stats</h3>
+                <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:1rem;">
+                    Your code: <strong style="color:#F59E0B;">{{ referral_code }}</strong>
+                </p>
+                <div style="display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;">
+                    <div>
+                        <div style="font-size:2rem;font-weight:800;color:#e2e8f0;">{{ user_ref_count }}</div>
+                        <div style="color:#64748b;font-size:0.85rem;">Active Referrals</div>
+                    </div>
+                    <div>
+                        <div style="font-size:2rem;font-weight:800;color:#10B981;">${{ referral_bonus|floatformat:2 }}</div>
+                        <div style="color:#64748b;font-size:0.85rem;">Total Earned</div>
+                    </div>
+                </div>
+                <div style="margin-top:1rem;">
+                    <a href="{% url 'referrals' %}" class="btn-primary" style="padding:0.6rem 1.5rem;border-radius:0.5rem;text-decoration:none;display:inline-block;margin-top:0.5rem;">
+                        Share My Link →
+                    </a>
+                </div>
+            </div>
+
+            <!-- How Referrals Work -->
+            <div class="glass-card" style="padding:1.5rem;margin-bottom:2rem;">
+                <h4 style="color:#F59E0B;margin-bottom:1rem;">💡 How It Works</h4>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;">
+                    <div style="text-align:center;padding:1rem;background:rgba(255,255,255,0.04);border-radius:0.75rem;">
+                        <div style="font-size:2rem;">🔗</div>
+                        <div style="font-weight:600;color:#e2e8f0;margin:0.5rem 0 0.25rem;">Share Your Link</div>
+                        <div style="color:#64748b;font-size:0.8rem;">Give friends your unique referral URL</div>
+                    </div>
+                    <div style="text-align:center;padding:1rem;background:rgba(255,255,255,0.04);border-radius:0.75rem;">
+                        <div style="font-size:2rem;">👤</div>
+                        <div style="font-weight:600;color:#e2e8f0;margin:0.5rem 0 0.25rem;">They Sign Up</div>
+                        <div style="color:#64748b;font-size:0.8rem;">Friend creates an account using your link</div>
+                    </div>
+                    <div style="text-align:center;padding:1rem;background:rgba(255,255,255,0.04);border-radius:0.75rem;">
+                        <div style="font-size:2rem;">💰</div>
+                        <div style="font-weight:600;color:#e2e8f0;margin:0.5rem 0 0.25rem;">Both Earn $</div>
+                        <div style="color:#64748b;font-size:0.8rem;">You get $30, they get $20 signup bonus</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Table -->
+            <div class="glass-card" style="padding:0;overflow:hidden;">
+                <div style="padding:1.25rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;">
+                    <h3 style="margin:0;font-size:1rem;">🏅 Top Referrers</h3>
+                    <span style="color:#64748b;font-size:0.82rem;">Updated in real-time</span>
+                </div>
+
+                {% if top_referrers %}
+                {% for referrer in top_referrers %}
+                <div class="leaderboard-row {% if referrer == user %}" style="background:rgba(245,158,11,0.07);border-left:3px solid #F59E0B;{% endif %}">
+                    <div class="rank-badge rank-{% if forloop.counter <= 3 %}{{ forloop.counter }}{% else %}other{% endif %}">
+                        {% if forloop.counter == 1 %}🥇
+                        {% elif forloop.counter == 2 %}🥈
+                        {% elif forloop.counter == 3 %}🥉
+                        {% else %}{{ forloop.counter }}{% endif %}
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="referrer-name">
+                            {{ referrer.full_name|truncatechars:25 }}
+                            {% if referrer == user %}<span style="color:#F59E0B;font-size:0.75rem;"> ← You</span>{% endif %}
+                        </div>
+                        <div style="color:#64748b;font-size:0.75rem;margin-top:0.15rem;">
+                            ${{ referrer.referral_bonus|floatformat:2 }} earned
+                        </div>
+                    </div>
+                    <div class="referrer-count">
+                        <div class="active-dot"></div>
+                        <span class="count-pill">{{ referrer.ref_count }} referral{{ referrer.ref_count|pluralize }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div style="padding:3rem;text-align:center;color:#64748b;">
+                    <div style="font-size:3rem;margin-bottom:1rem;">🏆</div>
+                    <h3 style="color:#e2e8f0;margin-bottom:0.5rem;">Be the First!</h3>
+                    <p>No one has made referrals yet. Share your link and claim the #1 spot!</p>
+                    <a href="{% url 'referrals' %}" class="btn-primary" style="display:inline-block;padding:0.75rem 2rem;border-radius:0.5rem;text-decoration:none;margin-top:1rem;">
+                        Start Referring →
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-bottom-nav">
+        <a href="{% url 'dashboard' %}" class="bottom-nav-item"><span class="nav-icon">📊</span><span class="nav-label">Home</span></a>
+        <a href="{% url 'invest' %}" class="bottom-nav-item"><span class="nav-icon">💰</span><span class="nav-label">Invest</span></a>
+        <a href="{% url 'add_funds' %}" class="bottom-nav-item"><span class="nav-icon">💳</span><span class="nav-label">Deposit</span></a>
+        <a href="{% url 'referrals' %}" class="bottom-nav-item"><span class="nav-icon">👥</span><span class="nav-label">Referrals</span></a>
+        <a href="{% url 'accounts:profile' %}" class="bottom-nav-item"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></a>
+    </nav>
+
+    <script src="{% static 'js/main.js?v=20260308' %}"></script>
+    <script>
+        function openMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.add('open');
+            document.getElementById('mobileDrawerOverlay').classList.add('active');
+        }
+        function closeMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.remove('open');
+            document.getElementById('mobileDrawerOverlay').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

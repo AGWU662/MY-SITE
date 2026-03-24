@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Elite Wealth Capital</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" class="logo" width="40" height="40">
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'investment_plans' %}">Plans</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero-section">
+            <h1>Privacy Policy</h1>
+            <p>Last updated: [Date]</p>
+        </section>
+
+        <section class="privacy-content">
+            <div class="privacy-section">
+                <h2>1. Information We Collect</h2>
+                <p>We collect information necessary to provide our investment services and comply with regulatory requirements.</p>
+                
+                <h3>Personal Information</h3>
+                <ul>
+                    <li>Name, address, phone number, and email address</li>
+                    <li>Date of birth and government-issued identification</li>
+                    <li>Financial information and investment experience</li>
+                    <li>Employment and income details</li>
+                </ul>
+
+                <h3>Technical Information</h3>
+                <ul>
+                    <li>IP address, browser type, and device information</li>
+                    <li>Login times and platform usage patterns</li>
+                    <li>Cookies and similar tracking technologies</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h2>2. How We Use Your Information</h2>
+                <p>Your information is used to provide, maintain, and improve our services:</p>
+                <ul>
+                    <li>Account creation and identity verification</li>
+                    <li>Processing investments, deposits, and withdrawals</li>
+                    <li>Regulatory compliance and anti-money laundering checks</li>
+                    <li>Customer support and communication</li>
+                    <li>Platform security and fraud prevention</li>
+                    <li>Service improvements and analytics</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h2>3. Information Sharing</h2>
+                <p>We do not sell your personal information. We may share information in limited circumstances:</p>
+                <ul>
+                    <li>With regulatory authorities as required by law</li>
+                    <li>With service providers who assist in our operations</li>
+                    <li>In case of business transfers or mergers</li>
+                    <li>To protect our rights or prevent fraud</li>
+                    <li>With your explicit consent</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h2>4. Data Security</h2>
+                <p>We implement comprehensive security measures to protect your information:</p>
+                <ul>
+                    <li>256-bit SSL encryption for all data transmission</li>
+                    <li>Multi-factor authentication for account access</li>
+                    <li>Regular security audits and penetration testing</li>
+                    <li>Secure data centers with physical access controls</li>
+                    <li>Employee background checks and confidentiality agreements</li>
+                    <li>Incident response procedures for security breaches</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h2>5. Data Retention</h2>
+                <p>We retain your information for as long as necessary to provide services and comply with legal obligations:</p>
+                <ul>
+                    <li>Account information: Duration of relationship plus 7 years</li>
+                    <li>Transaction records: 7 years from transaction date</li>
+                    <li>Communication records: 3 years from last contact</li>
+                    <li>Marketing preferences: Until you opt out</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h2>6. Your Rights</h2>
+                <p>You have certain rights regarding your personal information:</p>
+                <ul>
+                    <li>Access: Request copies of your personal data</li>
+                    <li>Correction: Update inaccurate or incomplete information</li>
+                    <li>Deletion: Request deletion of your data (subject to legal requirements)</li>
+                    <li>Portability: Receive your data in a structured format</li>
+                    <li>Objection: Object to certain processing activities</li>
+                    <li>Restriction: Request limitation of processing</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h2>7. Cookies and Tracking</h2>
+                <p>We use cookies and similar technologies to enhance your experience:</p>
+                <ul>
+                    <li>Essential cookies for platform functionality</li>
+                    <li>Analytics cookies to understand usage patterns</li>
+                    <li>Preference cookies to remember your settings</li>
+                    <li>Security cookies for fraud prevention</li>
+                </ul>
+                <p>You can manage cookie preferences through your browser settings.</p>
+            </div>
+
+            <div class="privacy-section">
+                <h2>8. International Transfers</h2>
+                <p>Your information may be transferred to and processed in countries where we operate. We ensure appropriate safeguards are in place for international transfers.</p>
+            </div>
+
+            <div class="privacy-section">
+                <h2>9. Children's Privacy</h2>
+                <p>Our services are not intended for individuals under 18 years of age. We do not knowingly collect personal information from children.</p>
+            </div>
+
+            <div class="privacy-section">
+                <h2>10. Changes to This Policy</h2>
+                <p>We may update this privacy policy periodically. We will notify you of significant changes through email or platform notifications.</p>
+            </div>
+
+            <div class="privacy-section">
+                <h2>11. Contact Us</h2>
+                <p>For privacy-related questions or to exercise your rights, contact us:</p>
+                <ul>
+                    <li>Email: privacy@elitewealthcapita.uk</li>
+                    <li>Phone: +44 20 7946 0958</li>
+                    <li>Address: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+        <script src="{% static 'js/main.js' %}"></script>
+    
+</body>
+</html>

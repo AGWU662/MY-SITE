@@ -1,0 +1,960 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appeal Center - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .appeal-container { max-width: 1000px; margin: 0 auto; }
+        
+        /* Tabs Navigation */
+        .appeal-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .appeal-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            color: #94A3B8;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .appeal-tab:hover { color: #F59E0B; }
+        .appeal-tab.active {
+            color: #F59E0B;
+            border-bottom-color: #F59E0B;
+        }
+        .tab-count {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Appeal Type Cards */
+        .appeal-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .appeal-type-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .appeal-type-card:hover {
+            border-color: #F59E0B;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.15);
+        }
+        .appeal-type-card.selected {
+            border-color: #F59E0B;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(15, 23, 42, 0.9) 100%);
+        }
+        .appeal-type-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .appeal-type-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        .appeal-type-desc {
+            font-size: 0.8rem;
+            color: #64748B;
+        }
+
+        /* Appeal Form */
+        .appeal-form-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        .form-label .required {
+            color: #EF4444;
+            margin-left: 0.25rem;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #F59E0B;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        .form-textarea { min-height: 120px; resize: vertical; }
+        .form-hint {
+            font-size: 0.8rem;
+            color: #64748B;
+            margin-top: 0.35rem;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(15, 23, 42, 0.4);
+        }
+        .file-upload-area:hover {
+            border-color: #F59E0B;
+            background: rgba(245, 158, 11, 0.05);
+        }
+        .file-upload-area.has-file {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+        .upload-icon { font-size: 2.5rem; margin-bottom: 0.75rem; color: #64748B; }
+        .upload-text { color: #94A3B8; margin-bottom: 0.5rem; }
+        .upload-hint { font-size: 0.8rem; color: #64748B; }
+        .uploaded-files { margin-top: 1rem; }
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+        .uploaded-file i { color: #10B981; }
+        .uploaded-file .file-name { flex: 1; font-size: 0.9rem; }
+        .uploaded-file .remove-file {
+            color: #EF4444;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        /* Appeal List Table */
+        .appeal-list {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        .appeal-list-header {
+            display: grid;
+            grid-template-columns: 120px 1fr 150px 120px 100px;
+            padding: 1rem 1.25rem;
+            background: rgba(15, 23, 42, 0.8);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #94A3B8;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .appeal-list-item {
+            display: grid;
+            grid-template-columns: 120px 1fr 150px 120px 100px;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .appeal-list-item:hover { background: rgba(245, 158, 11, 0.05); }
+        .appeal-list-item:last-child { border-bottom: none; }
+        .appeal-id { color: #F59E0B; font-weight: 500; font-size: 0.9rem; }
+        .appeal-subject {
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .appeal-category { color: #94A3B8; font-size: 0.85rem; }
+        .appeal-date { color: #64748B; font-size: 0.85rem; }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+        }
+        .status-processing {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3B82F6;
+        }
+        .status-resolved {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+        }
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.15);
+            color: #EF4444;
+        }
+        .status-closed {
+            background: rgba(100, 116, 139, 0.15);
+            color: #64748B;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: #000;
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        .btn-submit:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748B;
+        }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        .empty-state h4 { color: #94A3B8; margin-bottom: 0.5rem; }
+
+        /* Appeal Detail Modal */
+        .appeal-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .appeal-modal.show { display: flex; }
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+        }
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 { margin: 0; }
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94A3B8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+        .modal-body { padding: 1.5rem; }
+        .detail-row {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .detail-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .detail-label { min-width: 100px; width: 120px; color: #64748B; font-size: 0.9rem; flex-shrink: 0; }
+        .detail-value { flex: 1; font-weight: 500; }
+
+        /* Timeline */
+        .appeal-timeline { margin-top: 1.5rem; }
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            position: relative;
+        }
+        .timeline-item:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 11px;
+            top: 26px;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+        .timeline-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #F59E0B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #000;
+            flex-shrink: 0;
+        }
+        .timeline-content { flex: 1; }
+        .timeline-title { font-weight: 500; margin-bottom: 0.25rem; }
+        .timeline-time { font-size: 0.8rem; color: #64748B; }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+        .info-box i { color: #3B82F6; margin-top: 0.1rem; }
+        .info-box-content { flex: 1; }
+        .info-box-title { font-weight: 600; margin-bottom: 0.25rem; }
+        .info-box-text { font-size: 0.9rem; color: #94A3B8; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .appeal-list-header { display: none; }
+            .appeal-list-item {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+            .appeal-tabs { gap: 0; }
+            .appeal-tab { padding: 0.75rem 1rem; font-size: 0.9rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .modal-content { max-width: 100%; border-radius: 12px; max-height: 90vh; }
+            .appeal-modal { padding: 0.5rem; align-items: flex-end; }
+        }
+
+        @media (max-width: 480px) {
+            .appeal-container { padding: 0; }
+            .modal-header { padding: 1rem; }
+            .modal-body { padding: 1rem; }
+            .detail-row { flex-direction: column; gap: 0.25rem; }
+            .detail-label { width: auto; min-width: unset; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+            .appeal-modal { padding: 0; align-items: flex-end; }
+            .modal-content { border-bottom-left-radius: 0; border-bottom-right-radius: 0; max-height: 85vh; }
+        }
+    </style>
+</head>
+
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal">
+        <div class="ticker-track"></div>
+    </div>
+
+    <!-- Dashboard Navigation -->
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" style="height: 40px; width: auto; object-fit: contain;">
+                <div class="logo-placeholder" style="background: none; border: none; padding: 0;">
+                    <span class="logo-text">ELITE</span>
+                    <span class="logo-subtext">WEALTH CAPITA</span>
+                </div>
+            </a>
+            <div class="nav-user">
+                <div class="user-info">
+                    <span class="user-name">{% if user.is_authenticated %}{{ user.full_name }}{% else %}Guest{% endif %}</span>
+                    <span class="user-badge">{% if user.is_authenticated %}{{ user.get_account_type_display }}{% endif %}</span>
+                </div>
+                <a href="{% url 'logout' %}" class="btn-secondary">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link"><span class="icon">📊</span><span>Dashboard</span></a>
+                <a href="{% url 'invest' %}" class="sidebar-link"><span class="icon">💰</span><span>Invest</span></a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link"><span class="icon">💳</span><span>Add Funds</span></a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link"><span class="icon">💸</span><span>Withdraw</span></a>
+                <a href="{% url 'loans' %}" class="sidebar-link"><span class="icon">🏦</span><span>Get Loan</span></a>
+                <a href="{% url 'cards' %}" class="sidebar-link"><span class="icon">💳</span><span>Virtual Cards</span></a>
+                <a href="{% url 'transactions' %}" class="sidebar-link"><span class="icon">📝</span><span>Transactions</span></a>
+                <a href="{% url 'dispute' %}" class="sidebar-link active"><span class="icon">⚠️</span><span>Appeal Center</span></a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link"><span class="icon">⚙️</span><span>Account Settings</span></a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link"><span class="icon">⭐</span><span>Upgrade</span></a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-gavel" style="color: #F59E0B; margin-right: 0.5rem;"></i> Appeal Center</h1>
+                <p>Submit appeals, track dispute status, and get help with transaction issues</p>
+            </div>
+
+            <div class="appeal-container">
+                <!-- Django Messages -->
+                {% if messages %}
+                <div style="margin-bottom: 1.5rem;">
+                    {% for message in messages %}
+                    <div style="background: {% if message.tags == 'success' %}rgba(16,185,129,0.15){% else %}rgba(239,68,68,0.15){% endif %}; border: 1px solid {% if message.tags == 'success' %}rgba(16,185,129,0.4){% else %}rgba(239,68,68,0.4){% endif %}; border-radius: 10px; padding: 1rem 1.5rem; color: {% if message.tags == 'success' %}#10b981{% else %}#ef4444{% endif %}; font-weight: 600;">
+                        {% if message.tags == 'success' %}✓{% else %}⚠{% endif %} {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Tabs -->
+                <div class="appeal-tabs">
+                    <div class="appeal-tab active" data-tab="submit">
+                        <i class="fas fa-plus-circle"></i>
+                        Submit Appeal
+                    </div>
+                    <div class="appeal-tab" data-tab="pending">
+                        <i class="fas fa-clock"></i>
+                        Pending
+                        <span class="tab-count" id="pendingCount">{{ pending_dispute_count }}</span>
+                    </div>
+                    <div class="appeal-tab" data-tab="processing">
+                        <i class="fas fa-spinner"></i>
+                        Processing
+                        <span class="tab-count" id="processingCount">0</span>
+                    </div>
+                    <div class="appeal-tab" data-tab="completed">
+                        <i class="fas fa-check-circle"></i>
+                        Completed
+                    </div>
+                </div>
+
+                <!-- Tab: Submit Appeal -->
+                <div class="tab-content active" id="tab-submit">
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="info-box-content">
+                            <div class="info-box-title">Before Submitting an Appeal</div>
+                            <div class="info-box-text">Please ensure you have all relevant transaction details and supporting documents ready. Our team typically responds within 24-48 hours.</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Select Appeal Type -->
+                    <div class="appeal-form-section" style="margin-bottom: 1.5rem;">
+                        <div class="form-section-title">
+                            <span style="background: #F59E0B; color: #000; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">1</span>
+                            Select Appeal Type
+                        </div>
+                        <div class="appeal-types">
+                            <div class="appeal-type-card" data-type="deposit" onclick="selectAppealType(this)">
+                                <div class="appeal-type-icon">💰</div>
+                                <div class="appeal-type-title">Deposit Issue</div>
+                                <div class="appeal-type-desc">Funds not credited, delayed deposit</div>
+                            </div>
+                            <div class="appeal-type-card" data-type="withdrawal" onclick="selectAppealType(this)">
+                                <div class="appeal-type-icon">💸</div>
+                                <div class="appeal-type-title">Withdrawal Issue</div>
+                                <div class="appeal-type-desc">Pending, delayed, or rejected</div>
+                            </div>
+                            <div class="appeal-type-card" data-type="investment" onclick="selectAppealType(this)">
+                                <div class="appeal-type-icon">📈</div>
+                                <div class="appeal-type-title">Investment Issue</div>
+                                <div class="appeal-type-desc">ROI, maturity, or profit disputes</div>
+                            </div>
+                            <div class="appeal-type-card" data-type="account" onclick="selectAppealType(this)">
+                                <div class="appeal-type-icon">👤</div>
+                                <div class="appeal-type-title">Account Issue</div>
+                                <div class="appeal-type-desc">Access, verification, security</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Appeal Details -->
+                    <div class="appeal-form-section">
+                        <div class="form-section-title">
+                            <span style="background: #F59E0B; color: #000; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">2</span>
+                            Appeal Details
+                        </div>
+
+                        <form id="appealForm" method="POST" action="{% url 'dispute' %}" onsubmit="submitAppeal(event)">
+                            {% csrf_token %}
+                            <input type="hidden" id="appealType" name="appeal_type" value="">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Appeal Category <span class="required">*</span></label>
+                                    <select class="form-select" id="appealCategory" name="category" required>
+                                        <option value="">Select category...</option>
+                                        <option value="not_received">Funds Not Received</option>
+                                        <option value="wrong_amount">Incorrect Amount</option>
+                                        <option value="delayed">Transaction Delayed</option>
+                                        <option value="rejected">Transaction Rejected</option>
+                                        <option value="duplicate">Duplicate Transaction</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Transaction ID</label>
+                                    <input type="text" class="form-input" id="transactionId" name="transaction_id" placeholder="e.g., TXN-12345 or 0x...">
+                                    <div class="form-hint">Enter the transaction hash or order ID if available</div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Amount Involved <span class="required">*</span></label>
+                                    <input type="number" class="form-input" id="appealAmount" name="amount" step="0.01" min="0" placeholder="0.00" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Currency / Crypto</label>
+                                    <select class="form-select" id="appealCurrency" name="currency">
+                                        <option value="USD">USD</option>
+                                        <option value="BTC">Bitcoin (BTC)</option>
+                                        <option value="ETH">Ethereum (ETH)</option>
+                                        <option value="USDT">Tether (USDT)</option>
+                                        <option value="USDC">USD Coin (USDC)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Subject <span class="required">*</span></label>
+                                <input type="text" class="form-input" id="appealSubject" name="subject" placeholder="Brief summary of your issue" required maxlength="100">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Detailed Description <span class="required">*</span></label>
+                                <textarea class="form-textarea" id="appealDescription" name="description" placeholder="Please provide complete details about your issue including:&#10;• What happened&#10;• When it occurred&#10;• What you expected to happen&#10;• Any error messages received" required minlength="50"></textarea>
+                                <div class="form-hint">Minimum 50 characters. Be as detailed as possible to help us resolve your issue quickly.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Supporting Documents</label>
+                                <div class="file-upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                                    <input type="file" id="fileInput" multiple accept="image/*,.pdf" style="display: none;" onchange="handleFiles(this.files)">
+                                    <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                                    <div class="upload-text">Click to upload or drag and drop</div>
+                                    <div class="upload-hint">PNG, JPG, PDF up to 10MB each (max 5 files)</div>
+                                </div>
+                                <div class="uploaded-files" id="uploadedFiles"></div>
+                            </div>
+
+                            <button type="submit" class="btn-submit" id="submitBtn">
+                                <i class="fas fa-paper-plane"></i> Submit Appeal
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab: Pending Appeals -->
+                <div class="tab-content" id="tab-pending">
+                    <div class="appeal-list">
+                        <div class="appeal-list-header">
+                            <div>Appeal ID</div>
+                            <div>Subject</div>
+                            <div>Category</div>
+                            <div>Submitted</div>
+                            <div>Status</div>
+                        </div>
+                        <div id="pendingList">
+                            {% for d in user_disputes %}
+                            {% if d.status == 'pending' or d.status == 'under_review' %}
+                            <div class="appeal-list-item">
+                                <div class="appeal-id">{{ d.reference }}</div>
+                                <div class="appeal-subject">{{ d.subject }}</div>
+                                <div class="appeal-category">{{ d.get_appeal_type_display }}</div>
+                                <div class="appeal-date">{{ d.created_at|date:"M j, Y" }}</div>
+                                <span class="status-badge status-{% if d.status == 'under_review' %}processing{% else %}pending{% endif %}">
+                                    <i class="fas fa-{% if d.status == 'under_review' %}spinner{% else %}clock{% endif %}"></i>
+                                    {{ d.get_status_display }}
+                                </span>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% if pending_dispute_count == 0 %}
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h4>No Pending Appeals</h4>
+                                <p>You don't have any pending appeals at the moment.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Processing Appeals -->
+                <div class="tab-content" id="tab-processing">
+                    <div class="appeal-list">
+                        <div class="appeal-list-header">
+                            <div>Appeal ID</div>
+                            <div>Subject</div>
+                            <div>Category</div>
+                            <div>Updated</div>
+                            <div>Status</div>
+                        </div>
+                        <div id="processingList">
+                            {% for d in user_disputes %}
+                            {% if d.status == 'under_review' %}
+                            <div class="appeal-list-item">
+                                <div class="appeal-id">{{ d.reference }}</div>
+                                <div class="appeal-subject">{{ d.subject }}</div>
+                                <div class="appeal-category">{{ d.get_appeal_type_display }}</div>
+                                <div class="appeal-date">{{ d.updated_at|date:"M j, Y" }}</div>
+                                <span class="status-badge status-processing">
+                                    <i class="fas fa-spinner"></i> Under Review
+                                </span>
+                            </div>
+                            {% endif %}
+                            {% empty %}
+                            <div class="empty-state">
+                                <i class="fas fa-spinner"></i>
+                                <h4>No Appeals in Processing</h4>
+                                <p>There are no appeals currently being processed.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Completed Appeals -->
+                <div class="tab-content" id="tab-completed">
+                    <div class="appeal-list">
+                        <div class="appeal-list-header">
+                            <div>Appeal ID</div>
+                            <div>Subject</div>
+                            <div>Category</div>
+                            <div>Resolved</div>
+                            <div>Status</div>
+                        </div>
+                        <div id="completedList">
+                            {% for d in user_disputes %}
+                            {% if d.status == 'resolved' or d.status == 'closed' %}
+                            <div class="appeal-list-item">
+                                <div class="appeal-id">{{ d.reference }}</div>
+                                <div class="appeal-subject">{{ d.subject }}</div>
+                                <div class="appeal-category">{{ d.get_appeal_type_display }}</div>
+                                <div class="appeal-date">{% if d.resolved_at %}{{ d.resolved_at|date:"M j, Y" }}{% else %}{{ d.updated_at|date:"M j, Y" }}{% endif %}</div>
+                                <span class="status-badge status-resolved">
+                                    <i class="fas fa-check"></i> {{ d.get_status_display }}
+                                </span>
+                            </div>
+                            {% endif %}
+                            {% empty %}
+                            <div class="empty-state">
+                                <i class="fas fa-check-circle"></i>
+                                <h4>No Completed Appeals</h4>
+                                <p>You don't have any completed appeals yet.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Appeal Detail Modal -->
+    <div class="appeal-modal" id="appealModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-alt" style="color: #F59E0B; margin-right: 0.5rem;"></i> Appeal Details</h3>
+                <button class="modal-close" onclick="closeModal()" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+        <script src="{% static 'js/main.js?v=20260308' %}"></script>
+    <script>
+        let selectedType = '';
+        let uploadedFilesList = [];
+
+        // Tab switching
+        document.querySelectorAll('.appeal-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.appeal-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Select appeal type
+        function selectAppealType(card) {
+            document.querySelectorAll('.appeal-type-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedType = card.dataset.type;
+            document.getElementById('appealType').value = selectedType;
+        }
+
+        // Handle file uploads
+        function handleFiles(files) {
+            const maxFiles = 5;
+            const maxSize = 10 * 1024 * 1024; // 10MB
+
+            for (let file of files) {
+                if (uploadedFilesList.length >= maxFiles) {
+                    alert('Maximum 5 files allowed');
+                    break;
+                }
+                if (file.size > maxSize) {
+                    alert(`File "${file.name}" exceeds 10MB limit`);
+                    continue;
+                }
+                uploadedFilesList.push(file);
+            }
+            updateFileList();
+        }
+
+        function updateFileList() {
+            const container = document.getElementById('uploadedFiles');
+            const uploadArea = document.getElementById('uploadArea');
+            
+            if (uploadedFilesList.length > 0) {
+                uploadArea.classList.add('has-file');
+                container.innerHTML = uploadedFilesList.map((file, idx) => `
+                    <div class="uploaded-file">
+                        <i class="fas fa-file"></i>
+                        <span class="file-name">${file.name}</span>
+                        <span class="remove-file" onclick="removeFile(${idx})"><i class="fas fa-times"></i></span>
+                    </div>
+                `).join('');
+            } else {
+                uploadArea.classList.remove('has-file');
+                container.innerHTML = '';
+            }
+        }
+
+        function removeFile(idx) {
+            uploadedFilesList.splice(idx, 1);
+            updateFileList();
+        }
+
+        // Submit appeal
+        function submitAppeal(e) {
+            e.preventDefault();
+            
+            if (!selectedType) {
+                alert('Please select an appeal type');
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+            const form = document.getElementById('appealForm');
+            const data = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: data,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(function(response) {
+                // The view redirects on success; follow as normal page load
+                if (response.redirected || response.ok) {
+                    window.location.href = response.url || form.action;
+                } else {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Appeal';
+                    alert('Submission failed. Please try again.');
+                }
+            })
+            .catch(function() {
+                // Fall back to normal form submit
+                form.removeEventListener('submit', submitAppeal);
+                form.submit();
+            });
+        }
+
+        // Show appeal detail modal
+        function showAppealDetail(id) {
+            const modal = document.getElementById('appealModal');
+            const body = document.getElementById('modalBody');
+            
+            body.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Appeal ID</div>
+                    <div class="detail-value" style="color: #F59E0B;">#${id}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value"><span class="status-badge status-resolved"><i class="fas fa-check"></i> Resolved</span></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Category</div>
+                    <div class="detail-value">Account Issue</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Subject</div>
+                    <div class="detail-value">Account Verification Delay</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Submitted</div>
+                    <div class="detail-value">March 1, 2026 at 14:32</div>
+                </div>
+                
+                <div class="appeal-timeline">
+                    <h4 style="margin-bottom: 1rem; color: #94A3B8; font-size: 0.9rem;">Activity Timeline</h4>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"><i class="fas fa-check"></i></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Appeal Resolved</div>
+                            <div class="timeline-time">March 3, 2026 at 09:15</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"><i class="fas fa-comment"></i></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Support Response</div>
+                            <div class="timeline-time">March 2, 2026 at 16:42</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"><i class="fas fa-eye"></i></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Under Review</div>
+                            <div class="timeline-time">March 1, 2026 at 15:00</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"><i class="fas fa-paper-plane"></i></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Appeal Submitted</div>
+                            <div class="timeline-time">March 1, 2026 at 14:32</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('appealModal').classList.remove('show');
+        }
+
+        // Close modal on outside click
+        document.getElementById('appealModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#F59E0B';
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '';
+            handleFiles(e.dataTransfer.files);
+        });
+    </script>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="{% url 'dashboard' %}" class="bottom-nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'invest' %}" class="bottom-nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Invest</span>
+        </a>
+        <a href="{% url 'add_funds' %}" class="bottom-nav-item">
+            <i class="fas fa-plus-circle"></i>
+            <span>Deposit</span>
+        </a>
+        <a href="{% url 'withdraw' %}" class="bottom-nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>Withdraw</span>
+        </a>
+        <a href="{% url 'accounts:profile' %}" class="bottom-nav-item">
+            <i class="fas fa-user-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+</body>
+</html>

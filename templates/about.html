@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Elite Wealth Capital</title>
+    <meta name="description" content="Learn about Elite Wealth Capital — a multinational investment corporation specialising in cryptocurrency, real estate, agriculture, and forensic asset recovery.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css' %}">
+
+    <style>
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; color: #f1f5f9; }
+
+        /* ---- NAVBAR ---- */
+        .navbar { position: sticky; top: 0; z-index: 1000; background: rgba(10,22,40,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(245,158,11,0.25); }
+        .navbar-container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 70px; }
+        .navbar-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .navbar-logo img { height: 40px; width: 40px; object-fit: contain; }
+        .navbar-logo-text { display: flex; flex-direction: column; line-height: 1; }
+        .navbar-logo-text span:first-child { font-size: 1.15rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .navbar-logo-text span:last-child { font-size: 0.55rem; font-weight: 700; color: #F59E0B; letter-spacing: 2px; }
+        .navbar-links { display: flex; gap: 0.25rem; align-items: center; }
+        .nav-link { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem; font-weight: 500; padding: 0.5rem 0.75rem; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+        .nav-link:hover, .nav-link.active { color: #fff; background: rgba(255,255,255,0.08); }
+        .navbar-actions { display: flex; gap: 0.75rem; align-items: center; }
+        .btn-nav-login { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 0.5rem 1.1rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s; }
+        .btn-nav-login:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-nav-signup { background: linear-gradient(135deg,#F59E0B,#D97706); color: #0f172a; text-decoration: none; font-size: 0.9rem; font-weight: 700; padding: 0.5rem 1.25rem; border-radius: 6px; transition: opacity 0.2s; }
+        .btn-nav-signup:hover { opacity: 0.9; }
+        .mobile-menu-btn { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+        .mobile-menu-btn span { display: block; width: 24px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.3s; }
+        .mobile-nav { display: none; background: rgba(10,22,40,0.98); padding: 1rem 1.5rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); }
+        .mobile-nav a { display: block; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 1rem; font-weight: 500; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .mobile-nav a:last-child { border-bottom: none; }
+        .mobile-nav a:hover { color: #F59E0B; }
+        .mobile-nav .mobile-btns { display: flex; gap: 0.75rem; margin-top: 1rem; }
+        .mobile-nav .mobile-btns a { border: none; padding: 0.75rem 1rem; border-radius: 8px; text-align: center; font-weight: 700; font-size: 0.95rem; flex: 1; }
+        .mobile-nav .mobile-btns .mb-login { background: rgba(255,255,255,0.1); color: #fff; }
+        .mobile-nav .mobile-btns .mb-signup { background: linear-gradient(135deg,#F59E0B,#D97706); color: #0f172a; }
+
+        @media (max-width: 900px) {
+            .navbar-links, .navbar-actions { display: none; }
+            .mobile-menu-btn { display: flex; }
+            .mobile-nav.open { display: block; }
+        }
+
+        /* ---- HERO ---- */
+        .about-hero { text-align: center; padding: 5rem 1.5rem 3rem; }
+        .about-hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; color: #fff; margin-bottom: 1rem; }
+        .about-hero p { font-size: 1.1rem; color: rgba(255,255,255,0.7); max-width: 620px; margin: 0 auto; }
+
+        /* ---- CARDS GRID ---- */
+        .about-section { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+        .about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .about-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; backdrop-filter: blur(10px); transition: transform 0.2s, border-color 0.2s; }
+        .about-card:hover { transform: translateY(-4px); border-color: rgba(245,158,11,0.4); }
+        .about-card h2 { font-size: 1.2rem; font-weight: 700; color: #F59E0B; margin-bottom: 1rem; }
+        .about-card p, .about-card li { color: rgba(255,255,255,0.8); line-height: 1.7; font-size: 0.95rem; }
+        .about-card ul { list-style: none; padding: 0; }
+        .about-card ul li { padding: 0.35rem 0; }
+        .locations { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .location { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); color: #F59E0B; padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+        .mission-vision { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem; }
+        .mission-vision h3 { font-size: 0.95rem; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 0.4rem; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem; }
+        .stat { text-align: center; background: rgba(255,255,255,0.04); border-radius: 10px; padding: 1rem 0.5rem; }
+        .stat h3 { font-size: 1.6rem; font-weight: 800; color: #F59E0B; margin-bottom: 0.25rem; }
+        .stat p { font-size: 0.8rem; color: rgba(255,255,255,0.6); }
+
+        @media (max-width: 600px) {
+            .mission-vision { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* ---- FOOTER ---- */
+        .site-footer { background: rgba(5,10,20,0.98); border-top: 1px solid rgba(245,158,11,0.2); padding: 3rem 1.5rem 1.5rem; }
+        .footer-inner { max-width: 1100px; margin: 0 auto; }
+        .footer-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; }
+        .footer-col h4 { color: #F59E0B; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 1rem; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 0.5rem; }
+        .footer-col ul li a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+        .footer-col ul li a:hover { color: #F59E0B; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 1.5rem; text-align: center; color: rgba(255,255,255,0.4); font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'home' %}" class="navbar-logo">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital logo">
+                <div class="navbar-logo-text">
+                    <span>ELITE</span>
+                    <span>WEALTH CAPITAL</span>
+                </div>
+            </a>
+
+            <div class="navbar-links">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'about' %}" class="nav-link active">About</a>
+                <a href="{% url 'investment_plans' %}" class="nav-link">Plans</a>
+                <a href="{% url 'reviews' %}" class="nav-link">Reviews</a>
+                <a href="{% url 'faq' %}" class="nav-link">FAQ</a>
+                <a href="{% url 'contact' %}" class="nav-link">Contact</a>
+            </div>
+
+            <div class="navbar-actions">
+                <a href="{% url 'login' %}" class="btn-nav-login">Login</a>
+                <a href="{% url 'signup' %}" class="btn-nav-signup">Get Started →</a>
+            </div>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleAboutMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <!-- Mobile Nav Drawer -->
+        <div class="mobile-nav" id="mobileNav">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'investment_plans' %}">Plans</a>
+            <a href="{% url 'reviews' %}">Reviews</a>
+            <a href="{% url 'faq' %}">FAQ</a>
+            <a href="{% url 'contact' %}">Contact</a>
+            <div class="mobile-btns">
+                <a href="{% url 'login' %}" class="mb-login">Login</a>
+                <a href="{% url 'signup' %}" class="mb-signup">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="about-hero">
+        <h1>About Elite Wealth Capital</h1>
+        <p>Your trusted partner in global investment solutions — operating in 85+ countries with Fortune 500 partnerships.</p>
+    </section>
+
+    <!-- Content -->
+    <section class="about-section">
+        <div class="about-grid">
+            <div class="about-card">
+                <h2>🌍 Company Overview</h2>
+                <p>Elite Wealth Capital operates across three major financial hubs: United Kingdom, United States, and Norway. Our global presence ensures 24/7 market coverage and diverse investment opportunities for our clients worldwide.</p>
+                <div class="locations">
+                    <span class="location">🇬🇧 London, UK</span>
+                    <span class="location">🇺🇸 New York, USA</span>
+                    <span class="location">🇳🇴 Oslo, Norway</span>
+                </div>
+            </div>
+
+            <div class="about-card">
+                <h2>🎯 Mission &amp; Vision</h2>
+                <div class="mission-vision">
+                    <div>
+                        <h3>Our Mission</h3>
+                        <p>To democratize wealth creation through innovative investment solutions and expert financial guidance.</p>
+                    </div>
+                    <div>
+                        <h3>Our Vision</h3>
+                        <p>To become the world's most trusted investment platform, empowering individuals to achieve financial freedom.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-card">
+                <h2>✅ Why Choose Us</h2>
+                <ul>
+                    <li>✓ Expert portfolio management with 15+ years of experience</li>
+                    <li>✓ Diversified investment options across global markets</li>
+                    <li>✓ Advanced security protocols and regulatory compliance</li>
+                    <li>✓ 24/7 customer support and dedicated account managers</li>
+                </ul>
+            </div>
+
+            <div class="about-card">
+                <h2>📊 Company Stats</h2>
+                <div class="stats-grid">
+                    <div class="stat"><h3>$127M+</h3><p>Total Payouts</p></div>
+                    <div class="stat"><h3>50,000+</h3><p>Active Investors</p></div>
+                    <div class="stat"><h3>15+</h3><p>Years Experience</p></div>
+                    <div class="stat"><h3>98%</h3><p>Client Satisfaction</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-cols">
+                <div class="footer-col">
+                    <h4>Elite Wealth Capital</h4>
+                    <ul>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                        <li><a href="{% url 'team' %}">Leadership Team</a></li>
+                        <li><a href="{% url 'partners' %}">Global Partners</a></li>
+                        <li><a href="{% url 'news' %}">Latest News</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="{% url 'investment_plans' %}">Investment Plans</a></li>
+                        <li><a href="{% url 'reviews' %}">Client Reviews</a></li>
+                        <li><a href="{% url 'faq' %}">FAQ</a></li>
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="{% url 'terms' %}">Terms of Service</a></li>
+                        <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Elite Wealth Capital Inc. All rights reserved.</p>
+                <p style="margin-top:0.5rem;">Investment involves risk. Past performance does not guarantee future results.</p>
+            </div>
+        </div>
+    </footer>
+
+        <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        function toggleAboutMenu() {
+            const nav = document.getElementById('mobileNav');
+            const btn = document.getElementById('mobileMenuBtn');
+            const isOpen = nav.classList.toggle('open');
+            btn.setAttribute('aria-expanded', isOpen);
+        }
+        // Close mobile menu when a link is clicked
+        document.getElementById('mobileNav').querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.getElementById('mobileNav').classList.remove('open');
+                document.getElementById('mobileMenuBtn').setAttribute('aria-expanded', 'false');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,344 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Loan - Elite Wealth Capital</title>
+    <meta name="description"
+        content="Apply for personal and investment loans at competitive rates. Elite Wealth Capital offers flexible loan terms up to $500,000 with quick approval for qualified investors.">
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        .loan-metric-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loan-metric-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+
+        .limit-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #F59E0B;
+            margin: 0.5rem 0;
+        }
+
+        .range-slider {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #F59E0B;
+            cursor: pointer;
+            border: 2px solid #1e293b;
+        }
+
+        .calculator-box {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .locked-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 1rem;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal" style="top: 60px;">
+        <div class="ticker-track"></div>
+    </div>
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand"
+                style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital"
+                    style="height: 40px; width: auto; object-fit: contain;">
+                <div class="logo-placeholder" style="background: none; border: none; padding: 0;">
+                    <span class="logo-text">ELITE</span>
+                    <span class="logo-subtext">WEALTH CAPITA</span>
+                </div>
+            </a>
+            <div class="nav-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">User</span>
+                    <span class="user-badge" id="accountBadge">Unverified</span>
+                </div>
+                <!-- Notification Bell -->
+                <div class="notification-wrapper" style="position: relative; margin-left: 1rem; cursor: pointer;"
+                    onclick="toggleNotifications()">
+                    <span style="font-size: 1.5rem;">🔔</span>
+                    <span class="notification-badge" id="notifCount"
+                        style="position: absolute; top: 0; right: 0; background: red; color: white; border-radius: 50%; width: 15px; height: 15px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center;">2</span>
+                    <!-- Dropdown -->
+                    <div id="notifDropdown"
+                        style="display: none; position: absolute; top: 100%; right: 0; width: 300px; background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);">
+                        <div style="padding: 1rem; border-bottom: 1px solid #334155; font-weight: 600;">Your
+                            Notifications</div>
+                        <div id="notifList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'invest' %}" class="sidebar-link">
+                    <span class="icon">💰</span>
+                    <span>Invest</span>
+                </a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link">
+                    <span class="icon">💳</span>
+                    <span>Add Funds</span>
+                </a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link">
+                    <span class="icon">💸</span>
+                    <span>Withdraw</span>
+                </a>
+                <a href="{% url 'loans' %}" class="sidebar-link active">
+                    <span class="icon">🏦</span>
+                    <span>Get Loan</span>
+                </a>
+                <a href="{% url 'cards' %}" class="sidebar-link">
+                    <span class="icon">💳</span>
+                    <span>Virtual Cards</span>
+                </a>
+                <a href="{% url 'transactions' %}" class="sidebar-link">
+                    <span class="icon">📝</span>
+                    <span>Transactions</span>
+                </a>
+                <a href="{% url 'dispute' %}" class="sidebar-link">
+                    <span class="icon">⚠️</span>
+                    <span>Disputes & Support</span>
+                </a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link">
+                    <span class="icon">⚙️</span>
+                    <span>Account Settings</span>
+                </a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link">
+                    <span class="icon">⭐</span>
+                    <span>Upgrade</span>
+                </a>
+                <a href="{% url 'agent_application' %}" class="sidebar-link">
+                    <span class="icon">🤝</span>
+                    <span>Become Agent</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>Credit & Loans</h1>
+                <p>Flexible financing solutions backed by your portfolio.</p>
+            </div>
+
+            <!-- Stats Row -->
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <!-- Total Limit -->
+                <div class="loan-metric-card">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Available Credit Limit</div>
+                    <div class="limit-display" id="creditLimit">$0.00</div>
+                    <div style="font-size: 0.8rem; color: #10B981;">Based on account verification level</div>
+                </div>
+
+                <!-- Active Loans -->
+                <div class="loan-metric-card" style="background: var(--bg-secondary);">
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Active Loans</div>
+                    <div class="limit-display" style="color: white;" id="activeLoans">$0.00</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Next payment due: --/--/--</div>
+                </div>
+            </div>
+
+            <!-- Main Loan Interface -->
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; position: relative;"
+                id="loanInterface">
+
+                <!-- Unverified Overlay (Injected by JS) -->
+                <div id="lockOverlay" class="locked-overlay" style="display: none;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+                    <h2 style="margin-bottom: 0.5rem;">Access Restricted</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem; text-align: center; max-width: 400px;">
+                        Access to our credit facilities is reserved for verified High Net Worth clients. Please complete
+                        your identity verification to unlock your credit limit.
+                    </p>
+                    <a href="{% url 'kyc:upload' %}" class="btn-primary">Verify Identity Now</a>
+                </div>
+
+                <!-- Calculator Form -->
+                <div class="calculator-box">
+                    <h3 style="margin-bottom: 1.5rem;">Request New Loan</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">Loan Amount ($)</label>
+                        <input type="number" id="loanAmount" class="form-input"
+                            style="font-size: 1.5rem; font-weight: bold; color: #F59E0B;" value="5000"
+                            oninput="updateCalculator()">
+                        <input type="range" class="range-slider" min="1000" max="50000" id="loanSlider"
+                            style="margin-top: 1rem;" oninput="syncAmount(this.value)">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label">Duration (Months)</label>
+                            <select class="form-select" id="loanDuration" onchange="updateCalculator()">
+                                <option value="6">6 Months</option>
+                                <option value="12" selected>12 Months</option>
+                                <option value="24">24 Months</option>
+                                <option value="36">36 Months</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Collateral Asset</label>
+                            <select class="form-select">
+                                <option>BTC Wallet</option>
+                                <option>ETH Wallet</option>
+                                <option>USDT Earnings</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Purpose of Loan</label>
+                        <select class="form-select">
+                            <option>Investment Leverage</option>
+                            <option>Personal Liquidity</option>
+                            <option>Business Expansion</option>
+                            <option>Real Estate</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;"
+                        onclick="submitLoanRequest()">Submit Application</button>
+                    <p style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary); text-align: center;">By
+                        submitting, you agree to the Terms of Lending Service.</p>
+                </div>
+
+                <!-- Loan Summary -->
+                <div class="calculator-box" style="height: fit-content;">
+                    <h3 style="margin-bottom: 1.5rem;">Repayment Summary</h3>
+
+                    <div class="summary-row">
+                        <span style="color: var(--text-secondary);">Principal Amount</span>
+                        <span style="font-weight: 600;" id="sumPrincipal">$5,000.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span style="color: var(--text-secondary);">Interest Rate (APR)</span>
+                        <span style="font-weight: 600; color: #10B981;">4.5%</span>
+                    </div>
+                    <div class="summary-row">
+                        <span style="color: var(--text-secondary);">Monthly Payment</span>
+                        <span style="font-weight: 600; color: white;" id="sumMonthly">$426.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span style="color: var(--text-secondary);">Total Repayment</span>
+                        <span style="font-weight: 600; color: #F59E0B;" id="sumTotal">$5,112.00</span>
+                    </div>
+
+                    <div
+                        style="margin-top: 2rem; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 0.5rem; text-align: center;">
+                        <div style="font-size: 0.8rem; color: #F59E0B; margin-bottom: 0.5rem;">Admin Status</div>
+                        <div style="font-weight: bold;">Approval Required</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+        <script src="{% static 'js/loans.js?v=20260308' %}"></script>
+        <script src="{% static 'js/main.js?v=20260308' %}"></script>
+
+    
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="nav-items">
+            <a href="{% url 'dashboard' %}">
+                <span class="icon">📊</span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'invest' %}">
+                <span class="icon">💰</span>
+                <span>Invest</span>
+            </a>
+            <a href="{% url 'add_funds' %}">
+                <span class="icon">💳</span>
+                <span>Deposit</span>
+            </a>
+            <a href="{% url 'withdraw' %}">
+                <span class="icon">💸</span>
+                <span>Withdraw</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+</body>
+
+</html>
+

@@ -1,0 +1,782 @@
+/**
+ * Elite Wealth Capital - Mobile & Responsive Enhancements
+ * Improves UI/UX on Android, iOS, and all mobile devices
+ */
+
+/* =================== MOBILE-FIRST BASE =================== */
+
+/* Improve touch targets - minimum 44x44px for accessibility */
+button,
+.btn,
+.btn-primary,
+.btn-secondary,
+a.btn,
+input[type="submit"],
+input[type="button"],
+.nav-link,
+.navbar-link {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 20px;
+}
+
+/* Improve tap highlight for Android */
+* {
+    -webkit-tap-highlight-color: rgba(245, 158, 11, 0.2);
+}
+
+/* Prevent text size adjustment on orientation change */
+html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* Smooth scrolling with momentum on iOS */
+body,
+.scrollable {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* =================== TYPOGRAPHY FOR MOBILE =================== */
+
+/* Base font sizes for readability */
+body {
+    font-size: 16px; /* Prevents iOS zoom on input focus */
+    line-height: 1.6;
+}
+
+/* Responsive typography scale */
+h1 {
+    font-size: clamp(1.75rem, 5vw, 3rem);
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    line-height: 1.25;
+}
+
+h3 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    line-height: 1.3;
+}
+
+p, li, td, th {
+    font-size: clamp(0.95rem, 2.5vw, 1rem);
+    line-height: 1.7;
+}
+
+/* =================== MOBILE FORM IMPROVEMENTS =================== */
+
+/* Prevent zoom on iOS when focusing inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+textarea,
+select {
+    font-size: 16px !important; /* Prevents iOS zoom */
+    padding: 14px 16px;
+    border-radius: 8px;
+    min-height: 48px;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Better select styling for mobile */
+select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23F59E0B' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+
+/* Form labels */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Form groups spacing */
+.form-group,
+.form-field {
+    margin-bottom: 1.25rem;
+}
+
+/* Error states */
+input.error,
+input.is-invalid,
+select.error,
+textarea.error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* Focus states for accessibility */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+    border-color: #F59E0B;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+}
+
+/* =================== MOBILE BUTTONS =================== */
+
+/* Touch-friendly button sizing */
+.btn,
+button,
+[type="submit"],
+[type="button"] {
+    touch-action: manipulation; /* Disable double-tap zoom */
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+/* Primary button */
+.btn-primary {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: #0a1628;
+    border: none;
+    padding: 14px 28px;
+    font-size: 1rem;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+    background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+}
+
+/* Secondary button */
+.btn-secondary {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #F59E0B;
+    padding: 12px 26px;
+}
+
+.btn-secondary:active {
+    background: rgba(245, 158, 11, 0.1);
+}
+
+/* Full-width button on mobile */
+@media (max-width: 480px) {
+    .btn-block-mobile,
+    .hero-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* =================== MOBILE NAVIGATION =================== */
+
+/* Hamburger menu improvements */
+.mobile-menu-toggle,
+.hamburger-menu,
+.navbar-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1010;
+}
+
+.hamburger-bar {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: #fff;
+    margin: 5px 0;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Mobile drawer navigation */
+.mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 85%;
+    max-width: 320px;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+    padding: 20px;
+    padding-top: 60px;
+}
+
+.mobile-drawer.active {
+    left: 0;
+}
+
+.mobile-drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 9998;
+    transition: all 0.3s ease;
+}
+
+.mobile-drawer-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Mobile nav links */
+.mobile-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: background 0.2s ease;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link:active {
+    background: rgba(245, 158, 11, 0.1);
+    color: #F59E0B;
+}
+
+.mobile-nav-link.active {
+    background: rgba(245, 158, 11, 0.2);
+    color: #F59E0B;
+}
+
+/* =================== MOBILE CARDS =================== */
+
+/* Card touch improvements */
+.card,
+.investment-card,
+.plan-card,
+.news-card,
+.review-card {
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Card responsive sizing */
+@media (max-width: 768px) {
+    .card,
+    .investment-card {
+        margin: 0 0 1rem 0;
+        border-radius: 12px;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+}
+
+/* =================== MOBILE TABLES =================== */
+
+/* Responsive tables */
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    /* Stack table on mobile */
+    table.mobile-stack thead {
+        display: none;
+    }
+    
+    table.mobile-stack tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        background: rgba(20, 30, 50, 0.8);
+        border-radius: 12px;
+        padding: 1rem;
+    }
+    
+    table.mobile-stack tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    table.mobile-stack tbody td:last-child {
+        border-bottom: none;
+    }
+    
+    table.mobile-stack tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #F59E0B;
+    }
+}
+
+/* =================== MOBILE MODALS =================== */
+
+/* Full-screen modals on mobile */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0;
+        max-width: 100%;
+        height: 100%;
+    }
+    
+    .modal-content {
+        border-radius: 0;
+        height: 100%;
+        border: none;
+    }
+    
+    .modal-body {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* =================== MOBILE SPACING =================== */
+
+@media (max-width: 768px) {
+    /* Reduce section padding on mobile */
+    section,
+    .section {
+        padding: 3rem 0;
+    }
+    
+    /* Tighter container padding */
+    .container {
+        padding: 0 16px;
+    }
+    
+    /* Grid gaps */
+    .row {
+        margin: 0 -8px;
+    }
+    
+    .row > [class*="col-"] {
+        padding: 0 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    section,
+    .section {
+        padding: 2rem 0;
+    }
+    
+    .container {
+        padding: 0 12px;
+    }
+}
+
+/* =================== MOBILE HERO SECTION =================== */
+
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: auto;
+        padding: 80px 16px 60px;
+    }
+    
+    .hero-title {
+        font-size: 1.75rem !important;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .hero-buttons .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .hero-stats {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .hero-stat {
+        flex: 1 1 45%;
+        min-width: 140px;
+    }
+}
+
+/* =================== MOBILE DASHBOARD =================== */
+
+@media (max-width: 768px) {
+    /* Dashboard grid */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Balance cards */
+    .balance-card {
+        padding: 1.25rem;
+    }
+    
+    .balance-amount {
+        font-size: 1.75rem;
+    }
+    
+    /* Quick actions */
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .quick-action-btn {
+        padding: 1rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Transaction list */
+    .transaction-item {
+        padding: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .transaction-amount {
+        width: 100%;
+        text-align: left;
+        margin-top: 8px;
+    }
+}
+
+/* =================== MOBILE INVESTMENT PLANS =================== */
+
+@media (max-width: 768px) {
+    .plans-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .plan-card {
+        padding: 1.5rem;
+    }
+    
+    .plan-price {
+        font-size: 2rem;
+    }
+    
+    .plan-features li {
+        padding: 10px 0;
+    }
+}
+
+/* =================== MOBILE FOOTER =================== */
+
+@media (max-width: 768px) {
+    .footer {
+        padding: 3rem 0 2rem;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .footer-links {
+        justify-content: center;
+    }
+    
+    .footer-social {
+        justify-content: center;
+    }
+}
+
+/* =================== ANDROID-SPECIFIC FIXES =================== */
+
+/* Fix for Android Chrome address bar */
+@supports (-webkit-touch-callout: none) {
+    .full-height {
+        min-height: -webkit-fill-available;
+    }
+}
+
+/* Android ripple effect */
+@media (hover: none) and (pointer: coarse) {
+    .btn:active,
+    button:active,
+    .card:active {
+        transform: scale(0.98);
+    }
+}
+
+/* Fix for Android input styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #fff;
+    -webkit-box-shadow: 0 0 0px 1000px #1a2744 inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* =================== iOS-SPECIFIC FIXES =================== */
+
+/* Fix for iOS bounce scroll */
+body.no-bounce {
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* iOS safe areas */
+@supports (padding: max(0px)) {
+    .safe-area-bottom {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+    
+    .safe-area-top {
+        padding-top: max(20px, env(safe-area-inset-top));
+    }
+}
+
+/* Fix iOS input zoom */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/* =================== LANDSCAPE ORIENTATION =================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-section {
+        min-height: auto;
+        padding: 40px 20px;
+    }
+    
+    .navbar {
+        padding: 8px 0;
+    }
+    
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* =================== HIGH CONTRAST / ACCESSIBILITY =================== */
+
+@media (prefers-contrast: high) {
+    .btn-primary {
+        border: 2px solid #fff;
+    }
+    
+    .card {
+        border: 2px solid rgba(255,255,255,0.5);
+    }
+    
+    input,
+    select,
+    textarea {
+        border: 2px solid rgba(255,255,255,0.5);
+    }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* =================== PRINT STYLES =================== */
+
+@media print {
+    .navbar,
+    .footer,
+    .mobile-drawer,
+    .btn,
+    button {
+        display: none !important;
+    }
+    
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+    
+    .card {
+        border: 1px solid #ccc;
+        box-shadow: none;
+    }
+}
+
+/* =================== ANDROID CHROME ENHANCEMENTS =================== */
+
+/* Dynamic viewport height for Android Chrome (handles the dynamic toolbar) */
+@supports (min-height: 100dvh) {
+    .full-height,
+    .hero-section {
+        min-height: 100dvh;
+    }
+
+    body.auth-page-revamped {
+        min-height: 100dvh;
+    }
+}
+
+/* Prevent overscroll / pull-to-refresh bouncing on Android */
+html {
+    overscroll-behavior-y: none;
+}
+
+/* Allow overscroll inside scrollable containers */
+.scrollable,
+.table-responsive,
+.overflow-auto,
+[class*="overflow-x"] {
+    overscroll-behavior-x: contain;
+}
+
+/* Improve text rendering on Android Chrome */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure fixed/sticky elements don't shift when Android Chrome URL bar resizes */
+.dashboard-nav,
+.navbar,
+.sticky-top,
+[style*="position: fixed"],
+[style*="position:fixed"] {
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* Fix for Android Chrome input with autofill yellow background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: #fff !important;
+    -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: #fff;
+}
+
+/* Safe area support for devices with notches (Android & iOS) */
+@supports (padding: env(safe-area-inset-bottom)) {
+    .mobile-bottom-nav {
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    }
+
+    .mobile-drawer {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .dashboard-nav,
+    .navbar.sticky-top {
+        padding-top: env(safe-area-inset-top);
+    }
+}
+
+/* Touch scroll momentum for all scrollable containers */
+.dashboard-main,
+.modal-body,
+.sidebar,
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent 300ms tap delay on Android (already done globally but re-enforce here) */
+a,
+button,
+input,
+select,
+textarea,
+label,
+[role="button"],
+[tabindex] {
+    touch-action: manipulation;
+}
+
+/* Fix blurry images/icons on high-DPI Android screens */
+img,
+svg {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* Improve scroll performance on lists/grids on Android */
+.news-grid,
+.dashboard-grid,
+.stats-grid,
+.plans-grid,
+.cards-grid {
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
+}
+
+/* Ensure buttons have proper active feedback on Android touch */
+@media (hover: none) and (pointer: coarse) {
+    .btn:active,
+    button:active,
+    .filter-btn:active,
+    .nav-link:active,
+    .sidebar-link:active,
+    .mobile-drawer-link:active {
+        opacity: 0.75;
+        transform: scale(0.97);
+    }
+
+    /* Remove hover effects that don't work on touch */
+    .news-card:hover {
+        transform: none;
+    }
+
+    .btn:hover {
+        transform: none;
+    }
+}

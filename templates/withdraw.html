@@ -1,0 +1,511 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Withdraw your investment profits securely. Fast processing and multiple payout methods available.">
+    <title>Withdraw Funds - Elite Wealth Capital</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script async type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        .withdraw-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .method-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .method-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .method-card:hover {
+            border-color: #F59E0B;
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .method-card.active {
+            border-color: #F59E0B;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .method-card.active::after {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #F59E0B;
+            font-weight: bold;
+        }
+
+        .withdraw-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-group-lg {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .currency-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #F59E0B;
+            font-weight: bold;
+        }
+
+        .amount-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.5rem;
+            font-size: 1.5rem;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: white;
+            border-radius: 0.5rem;
+        }
+
+        .security-pin-box {
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .min-amount-notice {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #60a5fa;
+        }
+
+        .pin-input-group {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .pin-digit {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .pin-digit:focus {
+            border-color: #F59E0B;
+            outline: none;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal" style="top: 60px;">
+        <div class="ticker-track"></div>
+    </div>
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand"
+                style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital"
+                    style="height: 40px; width: auto; object-fit: contain;">
+                <div class="logo-placeholder" style="background: none; border: none; padding: 0;">
+                    <span class="logo-text">ELITE</span>
+                    <span class="logo-subtext">WEALTH CAPITA</span>
+                </div>
+            </a>
+            <div class="nav-user">
+                <div class="user-info">
+                    <span class="user-name" id="userName">{{ user.full_name }}</span>
+                    <span class="user-badge" id="accountType">{{ user.get_account_type_display }}</span>
+                </div>
+                <!-- Notification Bell -->
+                <div class="notification-wrapper" style="position: relative; margin-left: 1rem; cursor: pointer;"
+                    onclick="toggleNotifications()">
+                    <span style="font-size: 1.5rem;">🔔</span>
+                    <span class="notification-badge" id="notifCount"
+                        style="position: absolute; top: 0; right: 0; background: red; color: white; border-radius: 50%; width: 15px; height: 15px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center;">2</span>
+                    <!-- Dropdown -->
+                    <div id="notifDropdown"
+                        style="display: none; position: absolute; top: 100%; right: 0; width: 300px; background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);">
+                        <div style="padding: 1rem; border-bottom: 1px solid #334155; font-weight: 600;">Your
+                            Notifications</div>
+                        <div id="notifList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'invest' %}" class="sidebar-link">
+                    <span class="icon">💰</span>
+                    <span>Invest</span>
+                </a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link">
+                    <span class="icon">💳</span>
+                    <span>Add Funds</span>
+                </a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link active">
+                    <span class="icon">💸</span>
+                    <span>Withdraw</span>
+                </a>
+                <a href="{% url 'loans' %}" class="sidebar-link">
+                    <span class="icon">🏦</span>
+                    <span>Get Loan</span>
+                </a>
+                <a href="{% url 'cards' %}" class="sidebar-link">
+                    <span class="icon">💳</span>
+                    <span>Virtual Cards</span>
+                </a>
+                <a href="{% url 'transactions' %}" class="sidebar-link">
+                    <span class="icon">📝</span>
+                    <span>Transactions</span>
+                </a>
+                <a href="{% url 'dispute' %}" class="sidebar-link">
+                    <span class="icon">⚠️</span>
+                    <span>Disputes & Support</span>
+                </a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link">
+                    <span class="icon">⚙️</span>
+                    <span>Account Settings</span>
+                </a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link">
+                    <span class="icon">⭐</span>
+                    <span>Upgrade</span>
+                </a>
+                <a href="{% url 'agent_application' %}" class="sidebar-link">
+                    <span class="icon">🤝</span>
+                    <span>Become Agent</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>Withdraw Funds</h1>
+                <p>Securely cash out your earnings to your preferred account.</p>
+            </div>
+
+            <div class="withdraw-container">
+
+                <!-- KYC Gate Banner -->
+                {% if not kyc_verified %}
+                <div style="background: rgba(245,158,11,0.15); border: 1px solid #F59E0B; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔒</div>
+                    <h3 style="color: #F59E0B; margin-bottom: 0.5rem;">Identity Verification Required</h3>
+                    <p style="color: #94a3b8; margin-bottom: 1rem;">
+                        You must complete KYC (identity verification) before you can withdraw funds.
+                        This protects your account and is required by our compliance policy.
+                    </p>
+                    {% if kyc_status == 'submitted' %}
+                    <div style="background: rgba(59,130,246,0.1); border: 1px solid #3B82F6; border-radius: 0.5rem; padding: 1rem; color: #93c5fd;">
+                        ⏳ Your KYC documents are <strong>under review</strong>. You'll be notified once approved.
+                    </div>
+                    {% else %}
+                    <a href="{% url 'kyc:upload' %}" class="btn-primary" style="display: inline-block; padding: 0.75rem 2rem; border-radius: 0.5rem; text-decoration: none; background: #F59E0B; color: #0f172a; font-weight: 700;">
+                        Verify Identity Now →
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Available Balance -->
+                <div class="balance-card">
+                    <div>
+                        <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">Available for Withdrawal</div>
+                        <div style="font-size: 2.5rem; font-weight: 800; color: white;" id="availBalance">${{ user.balance|floatformat:2 }}</div>
+                    </div>
+                    <a href="{% url 'transactions' %}" class="btn-secondary" style="font-size: 0.9rem; text-decoration: none;">View History</a>
+                </div>
+
+                <!-- Django Messages -->
+                {% if messages %}
+                <div style="margin-bottom: 1.5rem;">
+                    {% for message in messages %}
+                    <div style="padding: 1rem; border-radius: 0.5rem; margin-bottom: 0.5rem; {% if message.tags == 'success' %}background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; color: #10B981;{% elif message.tags == 'error' %}background: rgba(239, 68, 68, 0.2); border: 1px solid #EF4444; color: #EF4444;{% else %}background: rgba(59, 130, 246, 0.2); border: 1px solid #3B82F6; color: #3B82F6;{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Withdrawal Form -->
+                <div {% if not kyc_verified %}aria-hidden="true" style="opacity:0.4; pointer-events:none; user-select:none;"{% endif %}>
+                <form method="POST" action="{% url 'withdraw' %}">
+                    {% csrf_token %}
+                    <input type="hidden" id="withdrawMethod" name="withdraw_method" value="crypto">
+
+                <!-- Method Selector -->
+                <div class="method-selector">
+                    <div class="method-card active" onclick="selectMethod('crypto', this)" role="button" tabindex="0" onkeypress="if(event.key==='Enter')selectMethod('crypto', this)">
+                        <span class="withdraw-icon">₿</span>
+                        <strong>Crypto Wallet</strong>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">Instant
+                            Processing</div>
+                    </div>
+                    <div class="method-card" onclick="selectMethod('bank', this)" role="button" tabindex="0" onkeypress="if(event.key==='Enter')selectMethod('bank', this)">
+                        <span class="withdraw-icon">🏦</span>
+                        <strong>Bank Transfer</strong>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">2-3 Business
+                            Days</div>
+                    </div>
+                </div>
+
+                <!-- Minimum Amount Notice -->
+                <div class="min-amount-notice">
+                    💡 Minimum withdrawal amount: <strong>$10.00</strong>
+                </div>
+
+                <!-- Form Section -->
+                <div
+                    style="background: var(--bg-secondary); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border-color);">
+                    <h3 style="margin-bottom: 1.5rem;" id="methodTitle">Crypto Withdrawal Details</h3>
+
+                    <div class="input-group-lg">
+                        <span class="currency-prefix">$</span>
+                        <input type="number" name="amount" class="amount-input" placeholder="0.00" id="withdrawAmount" step="0.01" min="10" required>
+                    </div>
+
+                    <!-- Dynamic Fields -->
+                    <div id="cryptoFields">
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label style="display:block; margin-bottom:0.5rem; color: var(--text-secondary);">Select
+                                Coin</label>
+                            <select name="crypto_type" class="form-select"
+                                style="width: 100%; padding: 0.8rem; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 0.5rem;" required>
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="USDT">USDT (TRC20)</option>
+                                <option value="USDC">USDC</option>
+                                <option value="LTC">Litecoin (LTC)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label style="display:block; margin-bottom:0.5rem; color: var(--text-secondary);">Wallet
+                                Address</label>
+                            <input type="text" name="wallet_address" class="form-input wallet-address" placeholder="Paste your wallet address here"
+                                style="width: 100%; padding: 0.8rem; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 0.5rem; font-size: 0.9rem;" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Bank Transfer Fields (Hidden by default) -->
+                    <div id="bankFields" style="display: none;">
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="bankName" style="display:block; margin-bottom:0.5rem; color: var(--text-secondary);">Bank Name</label>
+                            <input type="text" id="bankName" name="bank_name" class="form-input" placeholder="Enter your bank name"
+                                style="width: 100%; padding: 0.8rem; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 0.5rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="accountNumber" style="display:block; margin-bottom:0.5rem; color: var(--text-secondary);">Account Number</label>
+                            <input type="text" id="accountNumber" name="account_number" class="form-input" placeholder="Enter your account number"
+                                style="width: 100%; padding: 0.8rem; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 0.5rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="routingNumber" style="display:block; margin-bottom:0.5rem; color: var(--text-secondary);">Routing Number / SWIFT Code</label>
+                            <input type="text" id="routingNumber" name="routing_number" class="form-input" placeholder="Enter routing/SWIFT code"
+                                style="width: 100%; padding: 0.8rem; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 0.5rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="accountHolder" style="display:block; margin-bottom:0.5rem; color: var(--text-secondary);">Account Holder Name</label>
+                            <input type="text" id="accountHolder" name="account_holder" class="form-input" placeholder="Name on the account"
+                                style="width: 100%; padding: 0.8rem; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 0.5rem;">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="withdrawSubmitBtn" style="width: 100%; padding: 1rem; margin-top: 2rem; font-size: 1.1rem;">
+                        <span id="withdrawBtnText">Request Withdrawal</span>
+                        <span id="withdrawSpinner" style="display: none;">⏳ Processing...</span>
+                    </button>
+                </div>
+                </form>
+                </div>{# end KYC-disabled wrapper #}
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Notification Toggle
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notifDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+
+    <!-- Bottom Nav (Mobile Only) -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="{% url 'dashboard' %}" class="bottom-nav-item">
+                <span class="bottom-nav-icon">🏠</span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'add_funds' %}" class="bottom-nav-item">
+                <span class="bottom-nav-icon">💳</span>
+                <span>Add Funds</span>
+            </a>
+            <a href="{% url 'cards' %}" class="bottom-nav-item">
+                <span class="bottom-nav-icon">💎</span>
+                <span>Cards</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}" class="bottom-nav-item">
+                <span class="bottom-nav-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+
+        <script src="{% static 'js/main.js?v=20260308' %}"></script>
+        <script src="{% static 'js/dashboard.js?v=20260308' %}"></script>
+    <script src="{% static 'js/charts.js?v=20260308' %}"></script>
+    
+    <script>
+        // Withdrawal method selection
+        function selectMethod(method, element) {
+            // Remove active from all cards
+            document.querySelectorAll('.method-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            // Add active to selected
+            element.classList.add('active');
+            
+            // Show/hide appropriate form fields
+            const cryptoFields = document.getElementById('cryptoFields');
+            const bankFields = document.getElementById('bankFields');
+            const methodInput = document.getElementById('withdrawMethod');
+            
+            if (method === 'crypto') {
+                if (cryptoFields) cryptoFields.style.display = 'block';
+                if (bankFields) bankFields.style.display = 'none';
+                if (methodInput) methodInput.value = 'crypto';
+            } else {
+                if (cryptoFields) cryptoFields.style.display = 'none';
+                if (bankFields) bankFields.style.display = 'block';
+                if (methodInput) methodInput.value = 'bank';
+            }
+        }
+        
+        // Mobile drawer functions
+        function openMobileDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            if (drawer) drawer.classList.add('open');
+            if (overlay) overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            if (drawer) drawer.classList.remove('open');
+            if (overlay) overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    </script>
+
+    
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="nav-items">
+            <a href="{% url 'dashboard' %}">
+                <span class="icon">📊</span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'invest' %}">
+                <span class="icon">💰</span>
+                <span>Invest</span>
+            </a>
+            <a href="{% url 'add_funds' %}">
+                <span class="icon">💳</span>
+                <span>Deposit</span>
+            </a>
+            <a href="{% url 'withdraw' %}" class="active">
+                <span class="icon">💸</span>
+                <span>Withdraw</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+</body>
+
+</html>

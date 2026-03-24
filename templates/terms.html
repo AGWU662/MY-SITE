@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions - Elite Wealth Capital</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" class="logo" width="40" height="40">
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'investment_plans' %}">Plans</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero-section">
+            <h1>Terms & Conditions</h1>
+            <p>Last updated: [Date]</p>
+        </section>
+
+        <section class="terms-content">
+            <div class="terms-section">
+                <h2>1. Acceptance of Terms</h2>
+                <p>By accessing and using Elite Wealth Capital's services, you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our services.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>2. Investment Services</h2>
+                <p>Elite Wealth Capital provides investment management services. All investments carry risk, and past performance does not guarantee future results. You may lose some or all of your invested capital.</p>
+                <ul>
+                    <li>Minimum investment amounts apply to each plan</li>
+                    <li>Investment terms vary by selected plan</li>
+                    <li>Returns are not guaranteed and depend on market conditions</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h2>3. Account Registration</h2>
+                <p>To use our services, you must create an account and provide accurate information. You are responsible for maintaining the confidentiality of your account credentials.</p>
+                <ul>
+                    <li>You must be at least 18 years old to register</li>
+                    <li>One account per person is permitted</li>
+                    <li>Account verification may be required</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h2>4. Deposits and Withdrawals</h2>
+                <p>Deposits and withdrawals are subject to our processing procedures and applicable fees. Processing times may vary based on payment method and verification requirements.</p>
+                <ul>
+                    <li>Minimum deposit and withdrawal amounts apply</li>
+                    <li>Processing fees may apply to transactions</li>
+                    <li>Anti-money laundering checks may delay transactions</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h2>5. Fees and Charges</h2>
+                <p>Our fee structure is transparent and disclosed before investment. Management fees, performance fees, and transaction fees may apply depending on your investment plan.</p>
+            </div>
+
+            <div class="terms-section risk-disclosure-section" style="background: rgba(245, 158, 11, 0.1); border: 2px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 20px; margin: 20px 0;">
+                <h2 style="color: #f59e0b;">⚠️ 6. Important Risk Disclosure</h2>
+                <p><strong>Investment in financial markets involves a significant degree of risk and is not suitable for all investors.</strong></p>
+                <p>You should carefully consider your investment objectives, level of experience, and risk appetite before investing. The possibility exists that you could sustain a loss of some or all of your initial investment.</p>
+                <ul>
+                    <li>Volatility in cryptocurrency and commodity markets can result in significant changes in the value of your investment</li>
+                    <li>Past performance is not indicative of future results</li>
+                    <li>You should only invest funds you can afford to lose</li>
+                    <li>Market volatility, economic conditions, and regulatory changes may affect investment performance</li>
+                    <li>Cryptocurrency investments are highly volatile and speculative</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>Consumer Protection:</strong> Clients may be protected by applicable investor compensation schemes in eligible cases. Please review your local regulations.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>7. Prohibited Activities</h2>
+                <p>The following activities are strictly prohibited:</p>
+                <ul>
+                    <li>Money laundering or terrorist financing</li>
+                    <li>Fraudulent or deceptive practices</li>
+                    <li>Violation of applicable laws or regulations</li>
+                    <li>Unauthorized access to other accounts</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h2>8. Limitation of Liability</h2>
+                <p>Elite Wealth Capital's liability is limited to the extent permitted by law. We are not liable for market losses, technical failures, or circumstances beyond our control.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>9. Termination</h2>
+                <p>Either party may terminate the agreement with appropriate notice. Upon termination, you may withdraw your funds subject to applicable terms and processing procedures.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>10. Governing Law</h2>
+                <p>These terms are governed by the laws of the jurisdiction where your account is held. Disputes will be resolved through binding arbitration where permitted by law.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>11. Changes to Terms</h2>
+                <p>We may update these terms from time to time. Continued use of our services after changes constitutes acceptance of the updated terms.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>12. Contact Information</h2>
+                <p>For questions about these terms, please contact our support team through the contact page or email support@elitewealthcapita.uk</p>
+            </div>
+        </section>
+    </main>
+
+        <script src="{% static 'js/main.js' %}"></script>
+    
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "elite-wealth-capita",
+  "version": "1.0.0",
+  "description": "🌍 **Global Investment Platform** serving clients across UK, USA, Norway, and worldwide.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AGWU662/elite-wealth-capita.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AGWU662/elite-wealth-capita/issues"
+  },
+  "homepage": "https://github.com/AGWU662/elite-wealth-capita#readme",
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}

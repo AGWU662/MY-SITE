@@ -1,0 +1,258 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Elite Wealth Capital</title>
+    <meta name="description" content="Get in touch with Elite Wealth Capital. Contact our 24/7 support team via email, phone, or our online form.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css' %}">
+
+    <style>
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; color: #f1f5f9; }
+
+        /* ---- NAVBAR (shared with about.html) ---- */
+        .navbar { position: sticky; top: 0; z-index: 1000; background: rgba(10,22,40,0.97); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(245,158,11,0.25); }
+        .navbar-container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 70px; }
+        .navbar-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .navbar-logo img { height: 40px; width: 40px; object-fit: contain; }
+        .navbar-logo-text { display: flex; flex-direction: column; line-height: 1; }
+        .navbar-logo-text span:first-child { font-size: 1.15rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .navbar-logo-text span:last-child { font-size: 0.55rem; font-weight: 700; color: #F59E0B; letter-spacing: 2px; }
+        .navbar-links { display: flex; gap: 0.25rem; align-items: center; }
+        .nav-link { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem; font-weight: 500; padding: 0.5rem 0.75rem; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+        .nav-link:hover, .nav-link.active { color: #fff; background: rgba(255,255,255,0.08); }
+        .navbar-actions { display: flex; gap: 0.75rem; align-items: center; }
+        .btn-nav-login { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 0.5rem 1.1rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s; }
+        .btn-nav-login:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-nav-signup { background: linear-gradient(135deg,#F59E0B,#D97706); color: #0f172a; text-decoration: none; font-size: 0.9rem; font-weight: 700; padding: 0.5rem 1.25rem; border-radius: 6px; transition: opacity 0.2s; }
+        .btn-nav-signup:hover { opacity: 0.9; }
+        .mobile-menu-btn { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+        .mobile-menu-btn span { display: block; width: 24px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.3s; }
+        .mobile-nav { display: none; background: rgba(10,22,40,0.98); padding: 1rem 1.5rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); }
+        .mobile-nav a { display: block; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 1rem; font-weight: 500; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .mobile-nav a:last-child { border-bottom: none; }
+        .mobile-nav a:hover { color: #F59E0B; }
+        .mobile-nav .mobile-btns { display: flex; gap: 0.75rem; margin-top: 1rem; }
+        .mobile-nav .mobile-btns a { border: none; padding: 0.75rem 1rem; border-radius: 8px; text-align: center; font-weight: 700; font-size: 0.95rem; flex: 1; }
+        .mobile-nav .mobile-btns .mb-login { background: rgba(255,255,255,0.1); color: #fff; }
+        .mobile-nav .mobile-btns .mb-signup { background: linear-gradient(135deg,#F59E0B,#D97706); color: #0f172a; }
+
+        @media (max-width: 900px) {
+            .navbar-links, .navbar-actions { display: none; }
+            .mobile-menu-btn { display: flex; }
+            .mobile-nav.open { display: block; }
+        }
+
+        /* ---- CONTACT PAGE ---- */
+        .contact-hero { text-align: center; padding: 4rem 1.5rem 2.5rem; }
+        .contact-hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; color: #fff; margin-bottom: 0.75rem; }
+        .contact-hero p { color: rgba(255,255,255,0.7); font-size: 1.05rem; }
+        .contact-section { max-width: 900px; margin: 0 auto; padding: 0 1.5rem 5rem; }
+        .contact-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem; }
+        .contact-info-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.5rem; text-align: center; }
+        .contact-info-card h3 { font-size: 1.1rem; color: #F59E0B; margin-bottom: 0.5rem; }
+        .contact-info-card p { color: rgba(255,255,255,0.75); font-size: 0.92rem; line-height: 1.5; }
+        .contact-form-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; }
+        .contact-form-card h3 { color: #fff; font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+        .form-group input, .form-group textarea { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 0.75rem 1rem; color: #fff; font-size: 0.95rem; font-family: inherit; box-sizing: border-box; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #F59E0B; background: rgba(255,255,255,0.08); }
+        .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.35); }
+        .btn-submit { background: linear-gradient(135deg,#F59E0B,#D97706); color: #0f172a; border: none; padding: 0.85rem 2.5rem; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* ---- FOOTER ---- */
+        .site-footer { background: rgba(5,10,20,0.98); border-top: 1px solid rgba(245,158,11,0.2); padding: 3rem 1.5rem 1.5rem; }
+        .footer-inner { max-width: 1100px; margin: 0 auto; }
+        .footer-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 2rem; margin-bottom: 2.5rem; }
+        .footer-col h4 { color: #F59E0B; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 1rem; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 0.5rem; }
+        .footer-col ul li a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+        .footer-col ul li a:hover { color: #F59E0B; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 1.5rem; text-align: center; color: rgba(255,255,255,0.4); font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'home' %}" class="navbar-logo">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital logo">
+                <div class="navbar-logo-text">
+                    <span>ELITE</span>
+                    <span>WEALTH CAPITAL</span>
+                </div>
+            </a>
+
+            <div class="navbar-links">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'about' %}" class="nav-link">About</a>
+                <a href="{% url 'investment_plans' %}" class="nav-link">Plans</a>
+                <a href="{% url 'reviews' %}" class="nav-link">Reviews</a>
+                <a href="{% url 'faq' %}" class="nav-link">FAQ</a>
+                <a href="{% url 'contact' %}" class="nav-link active">Contact</a>
+            </div>
+
+            <div class="navbar-actions">
+                <a href="{% url 'login' %}" class="btn-nav-login">Login</a>
+                <a href="{% url 'signup' %}" class="btn-nav-signup">Get Started →</a>
+            </div>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleContactMenu()" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <!-- Mobile Nav Drawer -->
+        <div class="mobile-nav" id="mobileNav">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'investment_plans' %}">Plans</a>
+            <a href="{% url 'reviews' %}">Reviews</a>
+            <a href="{% url 'faq' %}">FAQ</a>
+            <a href="{% url 'contact' %}">Contact</a>
+            <div class="mobile-btns">
+                <a href="{% url 'login' %}" class="mb-login">Login</a>
+                <a href="{% url 'signup' %}" class="mb-signup">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="contact-hero">
+        <h1>Contact Us</h1>
+        <p>Our 24/7 support team is always ready to help you.</p>
+    </section>
+
+    <!-- Django Messages -->
+    {% if messages %}
+    <div style="max-width: 900px; margin: 0 auto; padding: 0 1.5rem;">
+        {% for message in messages %}
+        <div style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); border-radius: 10px; padding: 1rem 1.5rem; color: #10b981; margin-bottom: 1rem; font-weight: 600;">
+            ✓ {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Content -->
+    <section class="contact-section">
+        <div class="contact-info-grid">
+            <div class="contact-info-card">
+                <h3>📧 Email</h3>
+                <p id="contact-email-display">support@elitewealthcapita.uk</p>
+            </div>
+            <div class="contact-info-card">
+                <h3>📞 Phone</h3>
+                <p id="contact-phone">+44 20 7946 0958</p>
+            </div>
+            <div class="contact-info-card">
+                <h3>📍 Address</h3>
+                <p id="contact-address">71-75 Shelton Street, Covent Garden, London WC2H 9JQ</p>
+            </div>
+        </div>
+
+        <div class="contact-form-card">
+            <h3>Send us a Message</h3>
+            <form id="contactForm" method="POST" action="{% url 'contact' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="contact-name">Name</label>
+                    <input type="text" id="contact-name" name="name" required placeholder="Your full name">
+                </div>
+                <div class="form-group">
+                    <label for="contact-email">Email</label>
+                    <input type="email" id="contact-email" name="email" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="contact-subject">Subject</label>
+                    <input type="text" id="contact-subject" name="subject" required placeholder="How can we help?">
+                </div>
+                <div class="form-group">
+                    <label for="contact-message">Message</label>
+                    <textarea id="contact-message" name="message" rows="5" required placeholder="Your message..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-cols">
+                <div class="footer-col">
+                    <h4>Elite Wealth Capital</h4>
+                    <ul>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                        <li><a href="{% url 'team' %}">Leadership Team</a></li>
+                        <li><a href="{% url 'partners' %}">Global Partners</a></li>
+                        <li><a href="{% url 'news' %}">Latest News</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="{% url 'investment_plans' %}">Investment Plans</a></li>
+                        <li><a href="{% url 'reviews' %}">Client Reviews</a></li>
+                        <li><a href="{% url 'faq' %}">FAQ</a></li>
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="{% url 'terms' %}">Terms of Service</a></li>
+                        <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Elite Wealth Capital Inc. All rights reserved.</p>
+                <p style="margin-top:0.5rem;">Investment involves risk. Past performance does not guarantee future results.</p>
+            </div>
+        </div>
+    </footer>
+
+        <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        function toggleContactMenu() {
+            var nav = document.getElementById('mobileNav');
+            var btn = document.getElementById('mobileMenuBtn');
+            var isOpen = nav.classList.toggle('open');
+            btn.setAttribute('aria-expanded', isOpen);
+        }
+        document.getElementById('mobileNav').querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.getElementById('mobileNav').classList.remove('open');
+                document.getElementById('mobileMenuBtn').setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // Show loading state on submit — form posts normally to server
+        document.getElementById('contactForm').addEventListener('submit', function() {
+            var btn = this.querySelector('.btn-submit');
+            btn.textContent = 'Sending…';
+            btn.disabled = true;
+        });
+    </script>
+</body>
+</html>

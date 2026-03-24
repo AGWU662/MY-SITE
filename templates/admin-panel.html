@@ -1,0 +1,959 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --gold: #F59E0B;
+            --gold-dark: #D97706;
+            --bg: #0a0f1e;
+            --bg2: #111827;
+            --card: rgba(17, 24, 39, 0.85);
+            --border: rgba(255,255,255,0.07);
+            --text: #e2e8f0;
+            --text2: #94a3b8;
+            --text3: #64748b;
+            --green: #10B981;
+            --red: #EF4444;
+            --blue: #3B82F6;
+            --purple: #8B5CF6;
+            --orange: #F59E0B;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ===== TOP NAV ===== */
+        .admin-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 15, 30, 0.95);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .admin-nav .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+        .admin-nav .brand-text { font-weight: 800; color: var(--gold); font-size: 1.1rem; }
+        .admin-nav .brand-sub { font-size: 0.7rem; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .admin-badge {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #0f172a;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .nav-link {
+            color: var(--text2);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.4rem;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+
+        /* ===== LAYOUT ===== */
+        .admin-body {
+            display: flex;
+            min-height: calc(100vh - 92px);
+            margin-top: 92px; /* ticker 36px + nav ~56px */
+        }
+
+        /* ===== SIDEBAR ===== */
+        .admin-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: rgba(10, 15, 30, 0.6);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0.75rem;
+            position: sticky;
+            top: 92px;
+            height: calc(100vh - 92px);
+            overflow-y: auto;
+        }
+        .sidebar-section {
+            font-size: 0.68rem;
+            color: var(--text3);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 0.5rem 0.75rem;
+            margin-top: 1rem;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.4rem;
+            color: var(--text2);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(245,158,11,0.1);
+            color: var(--gold);
+        }
+        .sidebar-badge {
+            margin-left: auto;
+            background: var(--red);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.1rem 0.4rem;
+            border-radius: 999px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .admin-main {
+            flex: 1;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+        .page-sub { color: var(--text2); font-size: 0.85rem; margin-bottom: 2rem; }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .stat-label { font-size: 0.75rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 1.75rem; font-weight: 800; line-height: 1; }
+        .stat-sub { font-size: 0.75rem; color: var(--text2); }
+        .stat-card.green .stat-value { color: var(--green); }
+        .stat-card.gold .stat-value { color: var(--gold); }
+        .stat-card.blue .stat-value { color: var(--blue); }
+        .stat-card.red .stat-value { color: var(--red); }
+        .stat-card.purple .stat-value { color: var(--purple); }
+
+        /* ===== SECTIONS ===== */
+        .section { margin-bottom: 2.5rem; }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-count {
+            background: rgba(245,158,11,0.15);
+            color: var(--gold);
+            border: 1px solid rgba(245,158,11,0.3);
+            padding: 0.15rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* ===== TABLE ===== */
+        .admin-table-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        table.admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .admin-table thead tr {
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid var(--border);
+        }
+        .admin-table th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text3);
+            font-weight: 600;
+        }
+        .admin-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            vertical-align: middle;
+        }
+        .admin-table tr:last-child td { border-bottom: none; }
+        .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .empty-row { padding: 2.5rem; text-align: center; color: var(--text3); }
+
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .badge-green  { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+        .badge-red    { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+        .badge-yellow { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+        .badge-blue   { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+        .badge-purple { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.2); }
+        .badge-gray   { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 0.4rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-approve { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+        .btn-approve:hover { background: rgba(16,185,129,0.25); }
+        .btn-reject  { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+        .btn-reject:hover  { background: rgba(239,68,68,0.25); }
+        .btn-primary { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #0f172a; }
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* ===== ACTION FORM ===== */
+        .action-form { display: inline; }
+
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 0.85rem 1.25rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+        .alert-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #34d399; }
+        .alert-error   { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #f87171; }
+        .alert-info    { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: #60a5fa; }
+
+        /* ===== AMOUNT ===== */
+        .amount-positive { color: var(--green); font-weight: 700; }
+        .amount-neutral  { color: var(--text); font-weight: 600; }
+
+        /* ===== KYC IMAGE ===== */
+        .kyc-thumb {
+            width: 48px;
+            height: 36px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        /* ===== AVATAR ===== */
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+        .user-initials {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .user-email  { font-weight: 600; font-size: 0.85rem; }
+        .user-name   { font-size: 0.75rem; color: var(--text2); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .admin-sidebar { display: none; }
+            .admin-main { padding: 1rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .hide-mobile { display: none; }
+        }
+        @media (max-width: 550px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Crypto Ticker -->
+<div class="crypto-ticker-horizontal" style="position:fixed;top:0;left:0;right:0;z-index:2000;background:rgba(10,15,30,0.98);border-bottom:1px solid rgba(255,255,255,0.07);padding:5px 0;height:36px;overflow:hidden;display:flex;align-items:center;">
+    <div class="ticker-track" style="display:flex;gap:3rem;white-space:nowrap;animation:ticker 30s linear infinite;"></div>
+</div>
+<style>
+    @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .ticker-item { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:#e2e8f0; }
+    .ticker-item .crypto-symbol { font-weight:700; color:#F59E0B; }
+    .ticker-item .crypto-change.positive { color:#10b981; }
+    .ticker-item .crypto-change.negative { color:#ef4444; }
+</style>
+
+<!-- Top Nav -->
+<nav class="admin-nav" style="top:36px;">
+    <a href="{% url 'admin_panel' %}" class="brand">
+        <img src="{% static 'images/logo.webp' %}" alt="Logo" style="height:32px;width:auto;">
+        <div>
+            <div class="brand-text">Elite Wealth</div>
+            <div class="brand-sub">Admin Panel</div>
+        </div>
+    </a>
+    <div class="nav-right">
+        <span class="admin-badge">Staff</span>
+        <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
+        <a href="/admin/" class="nav-link">Django Admin</a>
+        <a href="{% url 'logout' %}" class="nav-link" style="color:#f87171;">Logout</a>
+    </div>
+</nav>
+
+<div class="admin-body">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-section">Navigation</div>
+        <a href="#overview" class="sidebar-item active" onclick="scrollToSection('overview')">📊 Overview</a>
+        <a href="#withdrawals" class="sidebar-item" onclick="scrollToSection('withdrawals')">
+            💸 Withdrawals
+            {% if pending_withdrawals_count > 0 %}<span class="sidebar-badge">{{ pending_withdrawals_count }}</span>{% endif %}
+        </a>
+        <a href="#deposits" class="sidebar-item" onclick="scrollToSection('deposits')">
+            💳 Deposits
+            {% if pending_deposits_count > 0 %}<span class="sidebar-badge">{{ pending_deposits_count }}</span>{% endif %}
+        </a>
+        <a href="#kyc" class="sidebar-item" onclick="scrollToSection('kyc')">
+            🪪 KYC Review
+            {% if pending_kyc_count > 0 %}<span class="sidebar-badge">{{ pending_kyc_count }}</span>{% endif %}
+        </a>
+        <a href="#loans" class="sidebar-item" onclick="scrollToSection('loans')">
+            🏦 Loans
+            {% if pending_loans_count > 0 %}<span class="sidebar-badge">{{ pending_loans_count }}</span>{% endif %}
+        </a>
+        <a href="#users" class="sidebar-item" onclick="scrollToSection('users')">👥 Recent Users</a>
+        <a href="#investments" class="sidebar-item" onclick="scrollToSection('investments')">📈 Investments</a>
+        <a href="#referrals" class="sidebar-item" onclick="scrollToSection('referrals')">🏆 Referrals</a>
+        <div class="sidebar-section">Quick Links</div>
+        <a href="/admin/investments/deposit/" class="sidebar-item">All Deposits</a>
+        <a href="/admin/investments/withdrawal/" class="sidebar-item">All Withdrawals</a>
+        <a href="/admin/accounts/customuser/" class="sidebar-item">All Users</a>
+        <a href="/admin/kyc/kycdocument/" class="sidebar-item">All KYC Docs</a>
+    </aside>
+
+    <!-- Main content -->
+    <main class="admin-main">
+
+        <div class="page-title">🛡️ Admin Panel</div>
+        <div class="page-sub">Welcome back! Here's everything that needs your attention.</div>
+
+        <!-- Messages -->
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- ========== OVERVIEW STATS ========== -->
+        <div id="overview" class="section">
+            <div class="section-header">
+                <div class="section-title">📊 Platform Overview</div>
+                <small style="color:var(--text3);">Updated: {{ now|date:"M d, Y H:i" }}</small>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value">{{ total_users }}</div>
+                    <div class="stat-sub">+{{ new_users_7d }} this week</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-label">Total Balances</div>
+                    <div class="stat-value">${{ total_balance|floatformat:0 }}</div>
+                    <div class="stat-sub">Across all accounts</div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-label">Active Investments</div>
+                    <div class="stat-value">${{ total_invested|floatformat:0 }}</div>
+                    <div class="stat-sub">Currently deployed</div>
+                </div>
+                <div class="stat-card gold">
+                    <div class="stat-label">Profit Paid</div>
+                    <div class="stat-value">${{ total_profit_paid|floatformat:0 }}</div>
+                    <div class="stat-sub">All-time total</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-label">Deposits (30d)</div>
+                    <div class="stat-value">${{ confirmed_deposits_30d|floatformat:0 }}</div>
+                    <div class="stat-sub">Confirmed</div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-label">Pending Withdrawals</div>
+                    <div class="stat-value">${{ pending_withdrawals_amount|floatformat:0 }}</div>
+                    <div class="stat-sub">{{ pending_withdrawals_count }} request{{ pending_withdrawals_count|pluralize }}</div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-label">KYC Verified</div>
+                    <div class="stat-value">{{ kyc_verified_count }}</div>
+                    <div class="stat-sub">{{ pending_kyc_count }} pending review</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-label">Withdrawn (30d)</div>
+                    <div class="stat-value">${{ completed_withdrawals_30d|floatformat:0 }}</div>
+                    <div class="stat-sub">Completed payouts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== PENDING WITHDRAWALS ========== -->
+        <div id="withdrawals" class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    💸 Pending Withdrawals
+                    {% if pending_withdrawals_count > 0 %}<span class="section-count">{{ pending_withdrawals_count }}</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Amount</th>
+                            <th>Crypto</th>
+                            <th class="hide-mobile">Wallet Address</th>
+                            <th>Requested</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for w in pending_withdrawals %}
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    {% if w.user.profile_image %}
+                                    <img src="{{ w.user.profile_image.url }}" class="user-avatar" alt="">
+                                    {% else %}
+                                    <div class="user-initials">{{ w.user.full_name|first|upper }}</div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="user-email">{{ w.user.email|truncatechars:25 }}</div>
+                                        <div class="user-name">{{ w.user.full_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="amount-positive">${{ w.amount|floatformat:2 }}</span></td>
+                            <td><span class="badge badge-yellow">{{ w.crypto_type }}</span></td>
+                            <td class="hide-mobile" style="font-family:monospace;font-size:0.75rem;color:var(--text2);">
+                                {{ w.wallet_address|truncatechars:20 }}
+                            </td>
+                            <td style="color:var(--text2);font-size:0.8rem;">{{ w.created_at|date:"M d, H:i" }}</td>
+                            <td>
+                                <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                                    <form method="POST" action="{% url 'admin_approve_withdrawal' w.pk %}" class="action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-approve" onclick="return confirm('Approve this withdrawal?')">✓ Approve</button>
+                                    </form>
+                                    <form method="POST" action="{% url 'admin_reject_withdrawal' w.pk %}" class="action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-reject" onclick="return confirm('Reject and refund this withdrawal?')">✕ Reject</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6" class="empty-row">✅ No pending withdrawals</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========== PENDING DEPOSITS ========== -->
+        <div id="deposits" class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    💳 Pending Deposits
+                    {% if pending_deposits_count > 0 %}<span class="section-count">{{ pending_deposits_count }}</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Amount</th>
+                            <th>Crypto</th>
+                            <th class="hide-mobile">TX Hash</th>
+                            <th class="hide-mobile">Proof</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dep in pending_deposits %}
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    {% if dep.user.profile_image %}
+                                    <img src="{{ dep.user.profile_image.url }}" class="user-avatar" alt="">
+                                    {% else %}
+                                    <div class="user-initials">{{ dep.user.full_name|first|upper }}</div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="user-email">{{ dep.user.email|truncatechars:25 }}</div>
+                                        <div class="user-name">{{ dep.user.full_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="amount-positive">${{ dep.amount|floatformat:2 }}</span></td>
+                            <td><span class="badge badge-blue">{{ dep.crypto_type }}</span></td>
+                            <td class="hide-mobile" style="font-family:monospace;font-size:0.72rem;color:var(--text2);">
+                                {% if dep.tx_hash %}{{ dep.tx_hash|truncatechars:18 }}{% else %}<em>No hash</em>{% endif %}
+                            </td>
+                            <td class="hide-mobile">
+                                {% if dep.proof_image %}
+                                <a href="{{ dep.proof_image.url }}" target="_blank">
+                                    <img src="{{ dep.proof_image.url }}" class="kyc-thumb" alt="Proof">
+                                </a>
+                                {% else %}
+                                <span style="color:var(--text3);font-size:0.75rem;">No proof</span>
+                                {% endif %}
+                            </td>
+                            <td style="color:var(--text2);font-size:0.8rem;">{{ dep.created_at|date:"M d, H:i" }}</td>
+                            <td>
+                                <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                                    <form method="POST" action="{% url 'admin_confirm_deposit' dep.pk %}" class="action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-approve" onclick="return confirm('Confirm this deposit and credit the user?')">✓ Confirm</button>
+                                    </form>
+                                    <form method="POST" action="{% url 'admin_reject_deposit' dep.pk %}" class="action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-reject" onclick="return confirm('Reject this deposit?')">✕ Reject</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="7" class="empty-row">✅ No pending deposits</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========== KYC REVIEW ========== -->
+        <div id="kyc" class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    🪪 KYC Verification Queue
+                    {% if pending_kyc_count > 0 %}<span class="section-count">{{ pending_kyc_count }}</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Document Type</th>
+                            <th class="hide-mobile">Country</th>
+                            <th class="hide-mobile">ID Number</th>
+                            <th>Documents</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for kyc in pending_kyc %}
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    {% if kyc.user.profile_image %}
+                                    <img src="{{ kyc.user.profile_image.url }}" class="user-avatar" alt="">
+                                    {% else %}
+                                    <div class="user-initials">{{ kyc.user.full_name|first|upper }}</div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="user-email">{{ kyc.user.email|truncatechars:22 }}</div>
+                                        <div class="user-name">{{ kyc.user.full_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-blue">{{ kyc.get_document_type_display }}</span></td>
+                            <td class="hide-mobile" style="color:var(--text2);">{{ kyc.issuing_country }}</td>
+                            <td class="hide-mobile" style="font-family:monospace;font-size:0.8rem;">{{ kyc.document_number }}</td>
+                            <td>
+                                <div style="display:flex;gap:0.4rem;">
+                                    {% if kyc.front_image %}
+                                    <a href="{{ kyc.front_image.url }}" target="_blank" title="Front">
+                                        <img src="{{ kyc.front_image.url }}" class="kyc-thumb" alt="Front">
+                                    </a>
+                                    {% endif %}
+                                    {% if kyc.selfie_image %}
+                                    <a href="{{ kyc.selfie_image.url }}" target="_blank" title="Selfie">
+                                        <img src="{{ kyc.selfie_image.url }}" class="kyc-thumb" alt="Selfie">
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td style="color:var(--text2);font-size:0.8rem;">{{ kyc.submitted_at|date:"M d, H:i" }}</td>
+                            <td>
+                                <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                                    <form method="POST" action="{% url 'admin_approve_kyc' kyc.pk %}" class="action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-approve" onclick="return confirm('Approve KYC for {{ kyc.user.full_name }}?')">✓ Verify</button>
+                                    </form>
+                                    <form method="POST" action="{% url 'admin_reject_kyc' kyc.pk %}" class="action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-reject" onclick="return confirm('Reject this KYC submission?')">✕ Reject</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="7" class="empty-row">✅ No pending KYC submissions</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========== PENDING LOANS ========== -->
+        <div id="loans" class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    🏦 Pending Loan Applications
+                    {% if pending_loans_count > 0 %}<span class="section-count">{{ pending_loans_count }}</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Amount</th>
+                            <th>Duration</th>
+                            <th class="hide-mobile">Purpose</th>
+                            <th>Applied</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for loan in pending_loans %}
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    {% if loan.user.profile_image %}
+                                    <img src="{{ loan.user.profile_image.url }}" class="user-avatar" alt="">
+                                    {% else %}
+                                    <div class="user-initials">{{ loan.user.full_name|first|upper }}</div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="user-email">{{ loan.user.email|truncatechars:22 }}</div>
+                                        <div class="user-name">{{ loan.user.full_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="amount-positive">${{ loan.amount|floatformat:2 }}</span></td>
+                            <td><span class="badge badge-purple">{{ loan.duration_days }}d</span></td>
+                            <td class="hide-mobile" style="color:var(--text2);font-size:0.8rem;">{{ loan.purpose|truncatechars:35 }}</td>
+                            <td style="color:var(--text2);font-size:0.8rem;">{{ loan.created_at|date:"M d, H:i" }}</td>
+                            <td>
+                                <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                                    <form method="POST" action="{% url 'admin_approve_loan' loan.pk %}" class="action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-approve" onclick="return confirm('Approve and disburse loan?')">✓ Approve</button>
+                                    </form>
+                                    <form method="POST" action="{% url 'admin_reject_loan' loan.pk %}" class="action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-reject" onclick="return confirm('Reject this loan application?')">✕ Reject</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6" class="empty-row">✅ No pending loan applications</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========== RECENT USERS ========== -->
+        <div id="users" class="section">
+            <div class="section-header">
+                <div class="section-title">👥 Recent Users</div>
+                <a href="/admin/accounts/customuser/" class="btn btn-primary">View All →</a>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Balance</th>
+                            <th>KYC</th>
+                            <th class="hide-mobile">Account Tier</th>
+                            <th class="hide-mobile">Referral Code</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in recent_users %}
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    {% if u.profile_image %}
+                                    <img src="{{ u.profile_image.url }}" class="user-avatar" alt="">
+                                    {% else %}
+                                    <div class="user-initials">{{ u.full_name|first|upper }}</div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="user-email">{{ u.email|truncatechars:25 }}</div>
+                                        <div class="user-name">{{ u.full_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="amount-positive">${{ u.balance|floatformat:2 }}</span></td>
+                            <td>
+                                {% if u.kyc_status == 'verified' %}
+                                <span class="badge badge-green">Verified</span>
+                                {% elif u.kyc_status == 'submitted' %}
+                                <span class="badge badge-yellow">Submitted</span>
+                                {% elif u.kyc_status == 'rejected' %}
+                                <span class="badge badge-red">Rejected</span>
+                                {% else %}
+                                <span class="badge badge-gray">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="hide-mobile">
+                                {% if u.account_type == 'vip' %}
+                                <span class="badge badge-purple">VIP</span>
+                                {% elif u.account_type == 'advanced' %}
+                                <span class="badge badge-yellow">Advanced</span>
+                                {% elif u.account_type == 'intermediate' %}
+                                <span class="badge badge-blue">Intermediate</span>
+                                {% else %}
+                                <span class="badge badge-gray">Beginner</span>
+                                {% endif %}
+                            </td>
+                            <td class="hide-mobile" style="font-family:monospace;font-size:0.8rem;color:var(--gold);">{{ u.referral_code }}</td>
+                            <td style="color:var(--text2);font-size:0.8rem;">{{ u.date_joined|date:"M d, Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========== ACTIVE INVESTMENTS ========== -->
+        <div id="investments" class="section">
+            <div class="section-header">
+                <div class="section-title">📈 Active Investments (Latest 10)</div>
+                <a href="/admin/investments/investment/?status=active" class="btn btn-primary">View All →</a>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Plan</th>
+                            <th>Amount</th>
+                            <th>Expected Profit</th>
+                            <th class="hide-mobile">Start</th>
+                            <th>End</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inv in active_investments %}
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-initials">{{ inv.user.full_name|first|upper }}</div>
+                                    <div>
+                                        <div class="user-email">{{ inv.user.email|truncatechars:22 }}</div>
+                                        <div class="user-name">{{ inv.user.full_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-purple">{{ inv.plan.name|truncatechars:18 }}</span></td>
+                            <td><span class="amount-positive">${{ inv.amount|floatformat:2 }}</span></td>
+                            <td style="color:var(--green);">${{ inv.expected_profit|floatformat:2 }}</td>
+                            <td class="hide-mobile" style="color:var(--text2);font-size:0.8rem;">{{ inv.start_date|date:"M d, Y" }}</td>
+                            <td style="color:var(--text2);font-size:0.8rem;">{{ inv.end_date|date:"M d, Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6" class="empty-row">No active investments</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========== TOP REFERRERS ========== -->
+        <div id="referrals" class="section">
+            <div class="section-header">
+                <div class="section-title">🏆 Top Referrers</div>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User</th>
+                            <th>Referral Code</th>
+                            <th>Total Referrals</th>
+                            <th>Bonus Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ref in top_referrers %}
+                        <tr>
+                            <td style="font-weight:700;color:{% if forloop.counter == 1 %}#FFD700{% elif forloop.counter == 2 %}#C0C0C0{% elif forloop.counter == 3 %}#CD7F32{% else %}var(--text3){% endif %};">
+                                {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}{{ forloop.counter }}{% endif %}
+                            </td>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-initials">{{ ref.full_name|first|upper }}</div>
+                                    <div>
+                                        <div class="user-email">{{ ref.email|truncatechars:22 }}</div>
+                                        <div class="user-name">{{ ref.full_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="font-family:monospace;color:var(--gold);font-weight:700;">{{ ref.referral_code }}</td>
+                            <td>
+                                <span style="background:rgba(245,158,11,0.15);color:var(--gold);padding:0.2rem 0.6rem;border-radius:999px;font-weight:700;font-size:0.85rem;">
+                                    {{ ref.ref_count }} active
+                                </span>
+                            </td>
+                            <td style="color:var(--green);font-weight:700;">${{ ref.referral_bonus|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="empty-row">No referrals yet</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    function scrollToSection(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Crypto ticker for admin panel
+    (async function initAdminTicker() {
+        const track = document.querySelector('.ticker-track');
+        if (!track) return;
+        const coins = [
+            { s: 'BTC', n: 'Bitcoin',   b: 'BTCUSDT',   fp: 84000,  fc: 1.2  },
+            { s: 'ETH', n: 'Ethereum',  b: 'ETHUSDT',   fp: 2000,   fc: -0.8 },
+            { s: 'USDT',n: 'Tether',    b: null,        fp: 1,      fc: 0    },
+            { s: 'BNB', n: 'BNB',       b: 'BNBUSDT',   fp: 580,    fc: 0.9  },
+            { s: 'SOL', n: 'Solana',    b: 'SOLUSDT',   fp: 135,    fc: 2.1  },
+            { s: 'XRP', n: 'XRP',       b: 'XRPUSDT',   fp: 2.20,   fc: 1.3  },
+            { s: 'ADA', n: 'Cardano',   b: 'ADAUSDT',   fp: 0.72,   fc: -0.4 },
+            { s: 'DOGE',n: 'Dogecoin',  b: 'DOGEUSDT',  fp: 0.18,   fc: 3.2  },
+            { s: 'LTC', n: 'Litecoin',  b: 'LTCUSDT',   fp: 92,     fc: 0.6  },
+            { s: 'LINK',n: 'Chainlink', b: 'LINKUSDT',  fp: 13.5,   fc: 2.3  },
+        ];
+        let map = {};
+        try {
+            const r = await fetch('https://api.bybit.com/v5/market/tickers?category=spot');
+            if (r.ok) {
+                const j = await r.json();
+                if (j.retCode === 0) j.result.list.forEach(t => {
+                    map[t.symbol] = { price: parseFloat(t.lastPrice), change: parseFloat(t.price24hPcnt) * 100 };
+                });
+            }
+        } catch(_) {}
+        let html = '';
+        coins.forEach(c => {
+            const d = c.b ? (map[c.b] || { price: c.fp, change: c.fc }) : { price: c.fp, change: c.fc };
+            const ch = d.change.toFixed(2);
+            const cls = d.change >= 0 ? 'positive' : 'negative';
+            const sym = d.change >= 0 ? '+' : '';
+            html += `<span class="ticker-item"><span class="crypto-symbol">${c.s}</span><span class="crypto-price">$${d.price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:d.price<0.01?8:2})}</span><span class="crypto-change ${cls}">${sym}${ch}%</span></span>`;
+        });
+        track.innerHTML = html + html;
+    })();
+</script>
+
+</body>
+</html>

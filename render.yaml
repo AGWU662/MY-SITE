@@ -1,0 +1,66 @@
+# Render Blueprint for Elite Wealth Capital
+# Auto-deploy enabled with instant rollover
+
+databases:
+  - name: elite-wealth-db
+    databaseName: elite_wealth
+    user: elite_admin
+    plan: free
+
+services:
+  - type: web
+    name: elite-wealth-capita
+    runtime: docker
+    plan: starter
+    region: oregon
+    
+    # Auto-deploy on every git push
+    autoDeploy: true
+    
+    # Single instance - old deploy replaced instantly
+    numInstances: 1
+    
+    # Health check for zero-downtime deploys
+    healthCheckPath: /
+    
+    # Kill old instance quickly (5 seconds grace period)
+    maxShutdownDelaySeconds: 5
+    
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: elite-wealth-db
+          property: connectionString
+      - key: DJANGO_SETTINGS_MODULE
+        value: elite_wealth.settings
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,elite-wealth-capita.onrender.com,.elitewealthcapita.uk,elitewealthcapita.uk,www.elitewealthcapita.uk"
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      # Email settings (Zoho)
+      - key: EMAIL_HOST
+        value: smtp.zoho.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_HOST_USER
+        value: admin@elitewealthcapita.uk
+      - key: EMAIL_HOST_PASSWORD
+        sync: false  # Set in dashboard - your Zoho app password
+      - key: DEFAULT_FROM_EMAIL
+        value: noreply@elitewealthcapita.uk
+      - key: ADMIN_NOTIFICATION_EMAIL
+        value: admin@elitewealthcapita.uk
+      # Bybit API
+      - key: BYBIT_API_KEY
+        sync: false  # Set in dashboard
+      - key: BYBIT_API_SECRET
+        sync: false  # Set in dashboard
+      # Redis for Celery task queue
+      - key: CELERY_BROKER_URL
+        sync: false
+      - key: CELERY_RESULT_BACKEND
+        sync: false

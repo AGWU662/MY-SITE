@@ -1,0 +1,389 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade Account - Elite Wealth Capital</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal">
+        <div class="ticker-track"></div>
+    </div>
+    <nav class="dashboard-nav" style="top: 40px;">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand"
+                style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital"
+                    style="height: 40px; width: auto; object-fit: contain;">
+                <div class="logo-placeholder" style="background: none; border: none; padding: 0;">
+                    <span class="logo-text">ELITE</span>
+                    <span class="logo-subtext">WEALTH CAPITA</span>
+                </div>
+            </a>
+            <div class="nav-user">
+                <span class="user-name" id="userName">Loading...</span>
+                <button class="btn-secondary" onclick="logout()" aria-label="Log out of your account">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout" style="margin-top: 100px;">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'invest' %}" class="sidebar-link">
+                    <i data-lucide="trending-up"></i>
+                    <span>Invest</span>
+                </a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link">
+                    <i data-lucide="wallet"></i>
+                    <span>Add Funds</span>
+                </a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link">
+                    <i data-lucide="banknote"></i>
+                    <span>Withdraw</span>
+                </a>
+                <a href="{% url 'loans' %}" class="sidebar-link">
+                    <i data-lucide="landmark"></i>
+                    <span>Get Loan</span>
+                </a>
+                <a href="{% url 'transactions' %}" class="sidebar-link">
+                    <i data-lucide="receipt"></i>
+                    <span>Transactions</span>
+                </a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link active">
+                    <i data-lucide="crown"></i>
+                    <span>Upgrade</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1><i data-lucide="crown" style="color: #F59E0B;"></i> Upgrade Your Account</h1>
+                <p>Unlock premium features with higher investment limits and exclusive benefits</p>
+            </div>
+
+            <div class="plans-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+
+                <!-- Starter Plan -->
+                <div class="plan-card card" style="border: 2px solid #64748b; position: relative;">
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #94a3b8, #64748b); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                            <i data-lucide="leaf" style="width: 32px; height: 32px; color: white;"></i>
+                        </div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Starter</h3>
+                        <p style="color: #64748b; font-size: 0.9rem;">Perfect for beginners</p>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 2.5rem; font-weight: 700; color: #0f172a;">$30</span>
+                        <span style="color: #64748b;"> - $500</span>
+                    </div>
+                    <ul class="plan-features" style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10b981;"></i> Basic trading tools
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10b981;"></i> Email support
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10b981;"></i> 15% ROI potential
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10b981;"></i> 1 active investment
+                        </li>
+                    </ul>
+                    <button onclick="upgradePlan('starter', 30, 500)" class="btn btn-primary" style="width: 100%;">
+                        <i data-lucide="arrow-up-circle" style="width: 18px; height: 18px;"></i> Select Plan
+                    </button>
+                </div>
+
+                <!-- Silver Plan -->
+                <div class="plan-card card" style="border: 2px solid #94a3b8; position: relative;">
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #e2e8f0, #94a3b8); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                            <i data-lucide="star" style="width: 32px; height: 32px; color: #475569;"></i>
+                        </div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Silver</h3>
+                        <p style="color: #64748b; font-size: 0.9rem;">For growing investors</p>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 2.5rem; font-weight: 700; color: #0f172a;">$500</span>
+                        <span style="color: #64748b;"> - $1,000</span>
+                    </div>
+                    <ul class="plan-features" style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10b981;"></i> Advanced trading tools
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10b981;"></i> Priority support
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10b981;"></i> 20% ROI potential
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10b981;"></i> 5 active investments
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #10b981;"></i> Lower fees (1.5%)
+                        </li>
+                    </ul>
+                    <button onclick="upgradePlan('silver', 500, 1000)" class="btn btn-primary" style="width: 100%;">
+                        <i data-lucide="arrow-up-circle" style="width: 18px; height: 18px;"></i> Upgrade Now
+                    </button>
+                </div>
+
+                <!-- Gold Plan -->
+                <div class="plan-card card" style="border: 2px solid #F59E0B; position: relative;">
+                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #F59E0B, #D97706); color: white; padding: 0.25rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">POPULAR</div>
+                    <div style="text-align: center; margin-bottom: 1.5rem; margin-top: 0.5rem;">
+                        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #FCD34D, #F59E0B); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                            <i data-lucide="trophy" style="width: 32px; height: 32px; color: white;"></i>
+                        </div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #F59E0B;">Gold</h3>
+                        <p style="color: #64748b; font-size: 0.9rem;">For serious investors</p>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 2.5rem; font-weight: 700; color: #F59E0B;">$1,000</span>
+                        <span style="color: #64748b;"> - $5,000</span>
+                    </div>
+                    <ul class="plan-features" style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #F59E0B;"></i> All Silver features
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #F59E0B;"></i> Personal account manager
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #F59E0B;"></i> 25% ROI potential
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #F59E0B;"></i> 10 active investments
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #F59E0B;"></i> AI-powered signals
+                        </li>
+                    </ul>
+                    <button onclick="upgradePlan('gold', 1000, 5000)" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #F59E0B, #D97706);">
+                        <i data-lucide="arrow-up-circle" style="width: 18px; height: 18px;"></i> Upgrade Now
+                    </button>
+                </div>
+
+                <!-- Platinum Plan -->
+                <div class="plan-card card" style="border: 2px solid #6366f1; position: relative;">
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #818cf8, #6366f1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                            <i data-lucide="gem" style="width: 32px; height: 32px; color: white;"></i>
+                        </div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #6366f1;">Platinum</h3>
+                        <p style="color: #64748b; font-size: 0.9rem;">Premium experience</p>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 2.5rem; font-weight: 700; color: #6366f1;">$5,000</span>
+                        <span style="color: #64748b;"> - $25,000</span>
+                    </div>
+                    <ul class="plan-features" style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #6366f1;"></i> All Gold features
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #6366f1;"></i> Dedicated support team
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #6366f1;"></i> 30% ROI potential
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #6366f1;"></i> Unlimited investments
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #6366f1;"></i> Free withdrawals
+                        </li>
+                    </ul>
+                    <button onclick="upgradePlan('platinum', 5000, 25000)" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #6366f1, #4f46e5);">
+                        <i data-lucide="arrow-up-circle" style="width: 18px; height: 18px;"></i> Upgrade Now
+                    </button>
+                </div>
+
+                <!-- VIP Plan -->
+                <div class="plan-card card" style="border: 2px solid #8b5cf6; position: relative; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.05));">
+                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 0.25rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">EXCLUSIVE</div>
+                    <div style="text-align: center; margin-bottom: 1.5rem; margin-top: 0.5rem;">
+                        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #a855f7, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);">
+                            <i data-lucide="crown" style="width: 32px; height: 32px; color: white;"></i>
+                        </div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #8b5cf6;">VIP Elite</h3>
+                        <p style="color: #64748b; font-size: 0.9rem;">For high-net-worth investors</p>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 2.5rem; font-weight: 700; color: #8b5cf6;">$25,000</span>
+                        <span style="color: #64748b;"> - $100,000+</span>
+                    </div>
+                    <ul class="plan-features" style="list-style: none; padding: 0; margin-bottom: 1.5rem;">
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #8b5cf6;"></i> All Platinum features
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #8b5cf6;"></i> VIP-only investments
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #8b5cf6;"></i> 35%+ ROI potential
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #8b5cf6;"></i> Monthly bonuses
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #8b5cf6;"></i> Priority withdrawals
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; color: #334155;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #8b5cf6;"></i> Exclusive events access
+                        </li>
+                    </ul>
+                    <button onclick="upgradePlan('vip', 25000, 100000)" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        <i data-lucide="crown" style="width: 18px; height: 18px;"></i> Join VIP Elite
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="card" style="margin-top: 4rem; background: white; border-radius: 16px; padding: 2rem;">
+                <h2 style="margin-bottom: 2rem; color: #0f172a;"><i data-lucide="table" style="color: #6366f1;"></i> Feature Comparison</h2>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; text-align: center; border-collapse: collapse;">
+                        <thead style="background: #f1f5f9;">
+                            <tr>
+                                <th style="text-align: left; padding: 1rem; color: #0f172a;">Feature</th>
+                                <th style="padding: 1rem; color: #64748b;">Starter</th>
+                                <th style="padding: 1rem; color: #94a3b8;">Silver</th>
+                                <th style="padding: 1rem; color: #F59E0B;">Gold</th>
+                                <th style="padding: 1rem; color: #6366f1;">Platinum</th>
+                                <th style="padding: 1rem; color: #8b5cf6;">VIP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="text-align: left; padding: 1rem; color: #334155;">Investment Range</td>
+                                <td style="padding: 1rem; color: #64748b;">$30 - $500</td>
+                                <td style="padding: 1rem; color: #64748b;">$500 - $1K</td>
+                                <td style="padding: 1rem; color: #64748b;">$1K - $5K</td>
+                                <td style="padding: 1rem; color: #64748b;">$5K - $25K</td>
+                                <td style="padding: 1rem; color: #64748b;">$25K+</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="text-align: left; padding: 1rem; color: #334155;">ROI Potential</td>
+                                <td style="padding: 1rem; color: #64748b;">15%</td>
+                                <td style="padding: 1rem; color: #64748b;">20%</td>
+                                <td style="padding: 1rem; color: #64748b;">25%</td>
+                                <td style="padding: 1rem; color: #64748b;">30%</td>
+                                <td style="padding: 1rem; color: #64748b;">35%+</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="text-align: left; padding: 1rem; color: #334155;">Active Investments</td>
+                                <td style="padding: 1rem; color: #64748b;">1</td>
+                                <td style="padding: 1rem; color: #64748b;">5</td>
+                                <td style="padding: 1rem; color: #64748b;">10</td>
+                                <td style="padding: 1rem; color: #64748b;">Unlimited</td>
+                                <td style="padding: 1rem; color: #64748b;">Unlimited</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="text-align: left; padding: 1rem; color: #334155;">Support Level</td>
+                                <td style="padding: 1rem; color: #64748b;">Email</td>
+                                <td style="padding: 1rem; color: #64748b;">Priority</td>
+                                <td style="padding: 1rem; color: #64748b;">Personal Manager</td>
+                                <td style="padding: 1rem; color: #64748b;">Dedicated Team</td>
+                                <td style="padding: 1rem; color: #64748b;">24/7 VIP Line</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="text-align: left; padding: 1rem; color: #334155;">Withdrawal Fee</td>
+                                <td style="padding: 1rem; color: #64748b;">2.5%</td>
+                                <td style="padding: 1rem; color: #64748b;">1.5%</td>
+                                <td style="padding: 1rem; color: #64748b;">0.75%</td>
+                                <td style="padding: 1rem; color: #64748b;">Free</td>
+                                <td style="padding: 1rem; color: #64748b;">Free + Priority</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left; padding: 1rem; color: #334155;">AI Trading Signals</td>
+                                <td style="padding: 1rem;"><i data-lucide="x" style="width: 18px; height: 18px; color: #ef4444;"></i></td>
+                                <td style="padding: 1rem;"><i data-lucide="x" style="width: 18px; height: 18px; color: #ef4444;"></i></td>
+                                <td style="padding: 1rem;"><i data-lucide="check" style="width: 18px; height: 18px; color: #10b981;"></i></td>
+                                <td style="padding: 1rem;"><i data-lucide="check" style="width: 18px; height: 18px; color: #10b981;"></i></td>
+                                <td style="padding: 1rem;"><i data-lucide="check" style="width: 18px; height: 18px; color: #10b981;"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/config.js?v=20260308' %}"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        function upgradePlan(plan, minAmount, maxAmount) {
+            const confirmed = confirm(`Upgrade to ${plan.toUpperCase()} plan?\n\nInvestment Range: $${minAmount.toLocaleString()} - $${maxAmount.toLocaleString()}\n\nProceed to add funds for your upgrade?`);
+            if (confirmed) {
+                window.location.href = "{% url 'add_funds' %}?upgrade_plan=" + plan + "&min=" + minAmount + "&max=" + maxAmount;
+            }
+        }
+
+        // Load user name from Django context
+        document.getElementById('userName').textContent = '{{ request.user.first_name|default:request.user.username }}';
+    </script>
+
+        <script src="{% static 'js/main.js?v=20260308' %}"></script>
+
+    
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="nav-items">
+            <a href="{% url 'dashboard' %}">
+                <span class="icon">📊</span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'invest' %}">
+                <span class="icon">💰</span>
+                <span>Invest</span>
+            </a>
+            <a href="{% url 'add_funds' %}">
+                <span class="icon">💳</span>
+                <span>Deposit</span>
+            </a>
+            <a href="{% url 'withdraw' %}">
+                <span class="icon">💸</span>
+                <span>Withdraw</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+</body>
+
+</html>
+
+

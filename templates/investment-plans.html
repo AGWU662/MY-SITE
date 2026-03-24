@@ -1,0 +1,607 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Plans - Elite Wealth Capital | Premium Returns</title>
+    <meta name="description"
+        content="Choose from our premium investment plans. Earn up to 20% daily returns with Elite Wealth Capital's diverse portfolio of crypto, real estate, and agriculture investments.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/logo.webp' %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <!-- Defer non-critical CSS using media=print + onload trick -->
+    <link rel="preload" as="style" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}"></noscript>
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L35DKWMCL2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-L35DKWMCL2');
+    </script>
+
+    <style>
+        .plans-hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.8) 100%);
+            position: relative;
+        }
+
+        .plans-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at top center, rgba(245, 158, 11, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .plans-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .plans-hero p {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .trust-badge i {
+            color: #10B981;
+        }
+
+        .plans-section {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .plan-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(245, 158, 11, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.15);
+        }
+
+        .plan-card.featured {
+            border-color: rgba(245, 158, 11, 0.4);
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(245, 158, 11, 0.1) 100%);
+        }
+
+        .plan-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: 1.5rem;
+            right: -2rem;
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: #0f172a;
+            padding: 0.3rem 3rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transform: rotate(45deg);
+        }
+
+        .plan-card.vip {
+            border-color: rgba(147, 51, 234, 0.4);
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(147, 51, 234, 0.15) 100%);
+        }
+
+        .plan-card.vip::before {
+            content: '👑 VIP';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #9333EA 0%, #7C3AED 100%);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 2rem;
+        }
+
+        .plan-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .plan-card.vip .plan-icon {
+            background: rgba(147, 51, 234, 0.2);
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-range {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-card.vip .plan-range {
+            background: rgba(147, 51, 234, 0.2);
+            color: #A855F7;
+        }
+
+        .plan-roi {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #10B981;
+            margin-bottom: 0.25rem;
+        }
+
+        .plan-roi-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features li i {
+            color: #10B981;
+            font-size: 0.8rem;
+        }
+
+        .plan-cta {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .plan-cta:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.5);
+        }
+
+        .plan-card.vip .plan-cta {
+            background: linear-gradient(135deg, #9333EA 0%, #7C3AED 100%);
+            color: white;
+        }
+
+        .calculator-section {
+            padding: 4rem 2rem;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .calculator-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+        }
+
+        .calculator-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .calc-input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .calc-input-group label {
+            display: block;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .calc-input-group input,
+        .calc-input-group select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .calc-result {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .calc-result-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .calc-result-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #10B981;
+        }
+
+        @media (max-width: 768px) {
+            .plans-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body class="main-site">
+
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal">
+        <div class="ticker-track"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'home' %}" class="navbar-logo">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="40"
+                    style="height: 40px; width: 40px; object-fit: contain; margin-right: 0.5rem;">
+                <div style="display: flex; flex-direction: column; line-height: 1;">
+                    <span style="font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; color: white;">ELITE</span>
+                    <span style="font-size: 0.6rem; font-weight: 600; letter-spacing: 2px; color: #F59E0B;">WEALTH CAPITAL</span>
+                </div>
+            </a>
+
+            <div class="navbar-links">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/investment-plans" class="nav-link active">Plans</a>
+                <a href="/reviews" class="nav-link">Reviews</a>
+                <a href="/faq" class="nav-link">FAQ</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
+
+            <div class="navbar-actions">
+                <a href="{% url 'login' %}" class="btn-secondary"
+                    style="padding: 0.6rem 1.2rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.2); color: white;">Login</a>
+                <a href="{% url 'signup' %}" class="btn-primary"
+                    style="padding: 0.6rem 1.2rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: #0f172a;">Sign
+                    Up</a>
+            </div>
+
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="plans-hero">
+        <h1>Investment Plans</h1>
+        <p>Choose from our expertly curated investment portfolios. Earn consistent returns with our diversified strategies across crypto, real estate, and agriculture.</p>
+        <div class="trust-badges">
+            <div class="trust-badge">
+                <i class="fas fa-shield-halved"></i>
+                <span>Compliance Focused</span>
+            </div>
+            <div class="trust-badge">
+                <i class="fas fa-lock"></i>
+                <span>256-bit SSL Secured</span>
+            </div>
+            <div class="trust-badge">
+                <i class="fas fa-certificate"></i>
+                <span>ISO 27001 Certified</span>
+            </div>
+            <div class="trust-badge">
+                <i class="fas fa-star"></i>
+                <span>4.9/5 Rating</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans Grid -->
+    <section class="plans-section">
+        <div class="plans-grid">
+            <!-- Starter Plan -->
+            <div class="plan-card">
+                <div class="plan-icon">🚀</div>
+                <h3 class="plan-name">Starter Plan</h3>
+                <div class="plan-range">$100 - $999</div>
+                <div class="plan-roi">5%</div>
+                <div class="plan-roi-label">Daily Returns</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> 7 Days Investment Period</li>
+                    <li><i class="fas fa-check"></i> 35% Total Return</li>
+                    <li><i class="fas fa-check"></i> Basic Support (24/7)</li>
+                    <li><i class="fas fa-check"></i> Instant Withdrawals</li>
+                    <li><i class="fas fa-check"></i> Crypto & Bank Deposits</li>
+                </ul>
+                <a href="{% url 'signup' %}" class="plan-cta">Get Started</a>
+            </div>
+
+            <!-- Basic Plan -->
+            <div class="plan-card">
+                <div class="plan-icon">💼</div>
+                <h3 class="plan-name">Basic Plan</h3>
+                <div class="plan-range">$1,000 - $4,999</div>
+                <div class="plan-roi">7%</div>
+                <div class="plan-roi-label">Daily Returns</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> 14 Days Investment Period</li>
+                    <li><i class="fas fa-check"></i> 98% Total Return</li>
+                    <li><i class="fas fa-check"></i> Priority Support</li>
+                    <li><i class="fas fa-check"></i> Instant Withdrawals</li>
+                    <li><i class="fas fa-check"></i> Portfolio Dashboard</li>
+                </ul>
+                <a href="{% url 'signup' %}" class="plan-cta">Get Started</a>
+            </div>
+
+            <!-- Standard Plan (Featured) -->
+            <div class="plan-card featured">
+                <div class="plan-icon">⭐</div>
+                <h3 class="plan-name">Standard Plan</h3>
+                <div class="plan-range">$5,000 - $9,999</div>
+                <div class="plan-roi">10%</div>
+                <div class="plan-roi-label">Daily Returns</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> 21 Days Investment Period</li>
+                    <li><i class="fas fa-check"></i> 210% Total Return</li>
+                    <li><i class="fas fa-check"></i> Premium Support</li>
+                    <li><i class="fas fa-check"></i> Instant Withdrawals</li>
+                    <li><i class="fas fa-check"></i> Performance Analytics</li>
+                    <li><i class="fas fa-check"></i> Bonus Referral Rewards</li>
+                </ul>
+                <a href="{% url 'signup' %}" class="plan-cta">Get Started</a>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="plan-card">
+                <div class="plan-icon">💎</div>
+                <h3 class="plan-name">Premium Plan</h3>
+                <div class="plan-range">$10,000 - $24,999</div>
+                <div class="plan-roi">12%</div>
+                <div class="plan-roi-label">Daily Returns</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> 30 Days Investment Period</li>
+                    <li><i class="fas fa-check"></i> 360% Total Return</li>
+                    <li><i class="fas fa-check"></i> VIP Support Channel</li>
+                    <li><i class="fas fa-check"></i> Instant Withdrawals</li>
+                    <li><i class="fas fa-check"></i> Advanced Analytics</li>
+                    <li><i class="fas fa-check"></i> Risk Assessment Tools</li>
+                </ul>
+                <a href="{% url 'signup' %}" class="plan-cta">Get Started</a>
+            </div>
+
+            <!-- Elite Plan -->
+            <div class="plan-card">
+                <div class="plan-icon">🏆</div>
+                <h3 class="plan-name">Elite Plan</h3>
+                <div class="plan-range">$25,000 - $49,999</div>
+                <div class="plan-roi">15%</div>
+                <div class="plan-roi-label">Daily Returns</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> 45 Days Investment Period</li>
+                    <li><i class="fas fa-check"></i> 675% Total Return</li>
+                    <li><i class="fas fa-check"></i> Dedicated Account Manager</li>
+                    <li><i class="fas fa-check"></i> Instant Withdrawals</li>
+                    <li><i class="fas fa-check"></i> Portfolio Diversification</li>
+                    <li><i class="fas fa-check"></i> Quarterly Strategy Reviews</li>
+                </ul>
+                <a href="{% url 'signup' %}" class="plan-cta">Get Started</a>
+            </div>
+
+            <!-- VIP Plan -->
+            <div class="plan-card vip">
+                <div class="plan-icon">👑</div>
+                <h3 class="plan-name">VIP Plan</h3>
+                <div class="plan-range">$50,000+</div>
+                <div class="plan-roi">20%</div>
+                <div class="plan-roi-label">Daily Returns</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check"></i> 60 Days Investment Period</li>
+                    <li><i class="fas fa-check"></i> 1200% Total Return</li>
+                    <li><i class="fas fa-check"></i> Personal Investment Advisor</li>
+                    <li><i class="fas fa-check"></i> Priority Instant Withdrawals</li>
+                    <li><i class="fas fa-check"></i> Exclusive Opportunities</li>
+                    <li><i class="fas fa-check"></i> Custom Investment Strategies</li>
+                    <li><i class="fas fa-check"></i> VIP Events Access</li>
+                </ul>
+                <a href="{% url 'signup' %}" class="plan-cta">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI Calculator -->
+    <section class="calculator-section">
+        <div class="calculator-card">
+            <h2 class="calculator-title">💰 Investment Calculator</h2>
+            <div class="calc-input-group">
+                <label for="calcAmount">Investment Amount ($)</label>
+                <input type="number" id="calcAmount" placeholder="Enter amount" value="1000" min="100"
+                    oninput="calculateROI()">
+            </div>
+            <div class="calc-input-group">
+                <label for="calcPlan">Select Plan</label>
+                <select id="calcPlan" onchange="calculateROI()">
+                    <option value="5|7">Starter Plan (5% × 7 days)</option>
+                    <option value="7|14">Basic Plan (7% × 14 days)</option>
+                    <option value="10|21" selected>Standard Plan (10% × 21 days)</option>
+                    <option value="12|30">Premium Plan (12% × 30 days)</option>
+                    <option value="15|45">Elite Plan (15% × 45 days)</option>
+                    <option value="20|60">VIP Plan (20% × 60 days)</option>
+                </select>
+            </div>
+            <div class="calc-result">
+                <div class="calc-result-label">Total Return After Period</div>
+                <div class="calc-result-value" id="calcResult">$3,100</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer
+        style="background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(255,255,255,0.05); padding: 3rem 2rem; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" style="height: 40px; width: 40px;">
+                <div style="text-align: left;">
+                    <div style="font-size: 1.2rem; font-weight: 800; color: white;">ELITE</div>
+                    <div style="font-size: 0.6rem; font-weight: 600; letter-spacing: 2px; color: #F59E0B;">WEALTH CAPITAL</div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                <a href="{% url 'home' %}" style="color: #94a3b8; text-decoration: none;">Home</a>
+                <a href="/about" style="color: #94a3b8; text-decoration: none;">About</a>
+                <a href="/investment-plans" style="color: #94a3b8; text-decoration: none;">Plans</a>
+                <a href="/faq" style="color: #94a3b8; text-decoration: none;">FAQ</a>
+                <a href="/terms" style="color: #94a3b8; text-decoration: none;">Terms</a>
+                <a href="/privacy-policy" style="color: #94a3b8; text-decoration: none;">Privacy</a>
+                <a href="/contact" style="color: #94a3b8; text-decoration: none;">Contact</a>
+            </div>
+            <p style="color: #64748b; font-size: 0.85rem;">© 2026 Elite Wealth Capital Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+        <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        function calculateROI() {
+            const amount = parseFloat(document.getElementById('calcAmount').value) || 0;
+            const planData = document.getElementById('calcPlan').value.split('|');
+            const dailyRate = parseFloat(planData[0]) / 100;
+            const days = parseInt(planData[1]);
+
+            const totalReturn = amount + (amount * dailyRate * days);
+            document.getElementById('calcResult').textContent = '$' + totalReturn.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+        // Initialize
+        calculateROI();
+    </script>
+
+        
+</body>
+
+</html>

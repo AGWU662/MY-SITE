@@ -1,0 +1,186 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2"><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+            <p class="text-muted">Welcome to Elite Wealth Capital Admin Panel</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards Row -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ total_users|default:"0" }}</h3>
+                    <p>Total Users</p>
+                </div>
+                <div class="icon"><i class="fas fa-users"></i></div>
+                <a href="{% url 'admin:accounts_customuser_changelist' %}" class="small-box-footer">
+                    View Users <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ total_balance|default:"$0.00" }}</h3>
+                    <p>Total Balance</p>
+                </div>
+                <div class="icon"><i class="fas fa-dollar-sign"></i></div>
+                <a href="{% url 'admin:accounts_customuser_changelist' %}" class="small-box-footer">
+                    View Details <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ active_investments|default:"0" }}</h3>
+                    <p>Active Investments</p>
+                </div>
+                <div class="icon"><i class="fas fa-chart-line"></i></div>
+                <a href="{% url 'admin:investments_investment_changelist' %}" class="small-box-footer">
+                    View Investments <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="small-box bg-primary">
+                <div class="inner">
+                    <h3>{{ total_deposits|default:"$0.00" }}</h3>
+                    <p>Total Deposits</p>
+                </div>
+                <div class="icon"><i class="fas fa-plus-circle"></i></div>
+                <a href="{% url 'admin:investments_deposit_changelist' %}" class="small-box-footer">
+                    View Deposits <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Actions & Quick Stats -->
+    <div class="row">
+        <!-- Pending Actions -->
+        <div class="col-md-6">
+            <div class="card card-warning">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-exclamation-triangle"></i> Pending Actions</h3>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{% url 'admin:investments_deposit_changelist' %}?status__exact=pending">
+                                <i class="fas fa-plus-circle text-success"></i> Pending Deposits
+                            </a>
+                            <span class="badge {% if pending_deposits > 0 %}badge-danger{% else %}badge-success{% endif %}">
+                                {{ pending_deposits|default:"0" }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{% url 'admin:investments_withdrawal_changelist' %}?status__exact=pending">
+                                <i class="fas fa-minus-circle text-danger"></i> Pending Withdrawals
+                            </a>
+                            <span class="badge {% if pending_withdrawals > 0 %}badge-danger{% else %}badge-success{% endif %}">
+                                {{ pending_withdrawals|default:"0" }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{% url 'admin:kyc_kycdocument_changelist' %}?status__exact=submitted">
+                                <i class="fas fa-id-card text-info"></i> Pending KYC Reviews
+                            </a>
+                            <span class="badge {% if pending_kyc > 0 %}badge-warning{% else %}badge-success{% endif %}">
+                                {{ pending_kyc|default:"0" }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{% url 'admin:investments_loan_changelist' %}?status__exact=pending">
+                                <i class="fas fa-money-check-alt text-primary"></i> Pending Loans
+                            </a>
+                            <span class="badge {% if pending_loans > 0 %}badge-warning{% else %}badge-success{% endif %}">
+                                {{ pending_loans|default:"0" }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{% url 'admin:investments_agentapplication_changelist' %}?status__exact=pending">
+                                <i class="fas fa-user-tie text-secondary"></i> Agent Applications
+                            </a>
+                            <span class="badge {% if pending_agents > 0 %}badge-info{% else %}badge-success{% endif %}">
+                                {{ pending_agents|default:"0" }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="col-md-6">
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-bar"></i> Quick Stats</h3>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-user-plus text-primary"></i> New Users (This Week)</span>
+                            <strong>{{ new_users_week|default:"0" }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-user-check text-success"></i> Verified Users (KYC)</span>
+                            <strong>{{ verified_users|default:"0" }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-hand-holding-usd text-warning"></i> Total Invested</span>
+                            <strong class="text-success">{{ total_invested|default:"$0.00" }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-money-bill-wave text-danger"></i> Total Withdrawals</span>
+                            <strong class="text-danger">{{ total_withdrawals|default:"$0.00" }}</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'admin:accounts_customuser_add' %}" class="btn btn-block btn-outline-primary">
+                                <i class="fas fa-user-plus"></i> Add User
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'admin:investments_walletaddress_add' %}" class="btn btn-block btn-outline-success">
+                                <i class="fas fa-wallet"></i> Add Wallet
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'admin:investments_investmentplan_add' %}" class="btn btn-block btn-outline-warning">
+                                <i class="fas fa-layer-group"></i> Add Plan
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'admin:accounts_customuser_changelist' %}" class="btn btn-block btn-outline-info">
+                                <i class="fas fa-users-cog"></i> Manage Users
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,415 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Leadership Team - Elite Wealth Capital</title>
+    <meta name="description" content="Meet the experienced leadership team at Elite Wealth Capital. Our executives bring decades of expertise in finance, investment management, and global markets.">
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: rgba(15, 25, 38, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo img { height: 40px; }
+        .logo span { color: #fff; font-weight: 700; font-size: 1.25rem; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { color: #94a3b8; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #3b82f6; }
+        
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #0f1926 0%, #1e293b 100%);
+            padding: 140px 0 80px;
+            text-align: center;
+            color: white;
+        }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .page-header p { color: #94a3b8; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        
+        /* Team Section */
+        .team-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .section-title h2 {
+            font-size: 2rem;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        .section-title p {
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Team Grid */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .team-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .team-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .member-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            object-position: center top;
+            background: linear-gradient(135deg, #e2e8f0, #f1f5f9);
+        }
+        
+        .member-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .member-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f1926;
+            margin-bottom: 0.25rem;
+        }
+        .member-role {
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        .member-bio {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Social Links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+        .social-link {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .social-link:hover {
+            background: #3b82f6;
+            color: white;
+        }
+        .social-link svg { width: 18px; height: 18px; fill: currentColor; }
+        
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            padding: 60px 20px;
+            margin: 60px 0;
+        }
+        .stats-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+            color: white;
+        }
+        .stat-item h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        .stat-item p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Values Section */
+        .values-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .value-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .value-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .value-icon svg { width: 30px; height: 30px; fill: white; }
+        .value-card h3 {
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        .value-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0f1926;
+            color: #94a3b8;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .footer a { color: #3b82f6; text-decoration: none; }
+        
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Elite Wealth Capital" width="40" height="40">
+            <span>Elite Wealth Capital</span>
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="/about">About</a>
+            <a href="/investment-plans">Invest</a>
+            <a href="/contact">Contact</a>
+            <a href="{% url 'login' %}">Login</a>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Meet Our Leadership Team</h1>
+        <p>Our executives bring decades of combined experience in finance, investment management, and technology</p>
+    </div>
+
+    <!-- Executive Team -->
+    <section class="team-section">
+        <div class="section-title">
+            <h2>Executive Leadership</h2>
+            <p>The visionaries driving Elite Wealth Capital's success</p>
+        </div>
+        <div class="team-grid">
+            <!-- CEO -->
+            <div class="team-card">
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop" alt="James Mitchell" class="member-img">
+                <div class="member-info">
+                    <h3 class="member-name">James Mitchell</h3>
+                    <p class="member-role">Chief Executive Officer</p>
+                    <p class="member-bio">20+ years in investment banking. Former VP at Goldman Sachs. Harvard MBA graduate with expertise in global markets.</p>
+                    <div class="social-links">
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M22.46 6c-.85.38-1.78.64-2.75.76 1-.6 1.76-1.55 2.12-2.68-.93.55-1.96.95-3.06 1.17-.88-.94-2.13-1.53-3.51-1.53-2.66 0-4.81 2.16-4.81 4.81 0 .38.04.75.13 1.1-4-.2-7.58-2.11-9.96-5.02-.42.72-.66 1.56-.66 2.46 0 1.68.85 3.16 2.14 4.02-.79-.02-1.53-.24-2.18-.6v.06c0 2.35 1.67 4.31 3.88 4.76-.4.1-.83.16-1.27.16-.31 0-.62-.03-.92-.08.63 1.96 2.45 3.39 4.61 3.43-1.69 1.32-3.83 2.1-6.15 2.1-.4 0-.8-.02-1.19-.07 2.19 1.4 4.78 2.22 7.57 2.22 9.07 0 14.02-7.52 14.02-14.02 0-.21 0-.43-.01-.64.96-.69 1.79-1.56 2.45-2.55z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CFO -->
+            <div class="team-card">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop" alt="Sarah Roberts" class="member-img">
+                <div class="member-info">
+                    <h3 class="member-name">Sarah Roberts</h3>
+                    <p class="member-role">Chief Financial Officer</p>
+                    <p class="member-bio">Former CFO at Morgan Stanley Asia. CPA with 18 years of corporate finance experience. Stanford Economics graduate.</p>
+                    <div class="social-links">
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M22.46 6c-.85.38-1.78.64-2.75.76 1-.6 1.76-1.55 2.12-2.68-.93.55-1.96.95-3.06 1.17-.88-.94-2.13-1.53-3.51-1.53-2.66 0-4.81 2.16-4.81 4.81 0 .38.04.75.13 1.1-4-.2-7.58-2.11-9.96-5.02-.42.72-.66 1.56-.66 2.46 0 1.68.85 3.16 2.14 4.02-.79-.02-1.53-.24-2.18-.6v.06c0 2.35 1.67 4.31 3.88 4.76-.4.1-.83.16-1.27.16-.31 0-.62-.03-.92-.08.63 1.96 2.45 3.39 4.61 3.43-1.69 1.32-3.83 2.1-6.15 2.1-.4 0-.8-.02-1.19-.07 2.19 1.4 4.78 2.22 7.57 2.22 9.07 0 14.02-7.52 14.02-14.02 0-.21 0-.43-.01-.64.96-.69 1.79-1.56 2.45-2.55z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTO -->
+            <div class="team-card">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop" alt="Michael Chen" class="member-img">
+                <div class="member-info">
+                    <h3 class="member-name">Michael Chen</h3>
+                    <p class="member-role">Chief Technology Officer</p>
+                    <p class="member-bio">Former tech lead at Coinbase. MIT Computer Science PhD. Pioneer in blockchain and fintech solutions.</p>
+                    <div class="social-links">
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COO -->
+            <div class="team-card">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop" alt="Emily Watson" class="member-img">
+                <div class="member-info">
+                    <h3 class="member-name">Emily Watson</h3>
+                    <p class="member-role">Chief Operating Officer</p>
+                    <p class="member-bio">15 years in operations management. Former Director at BlackRock. Expert in scaling fintech operations globally.</p>
+                    <div class="social-links">
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M22.46 6c-.85.38-1.78.64-2.75.76 1-.6 1.76-1.55 2.12-2.68-.93.55-1.96.95-3.06 1.17-.88-.94-2.13-1.53-3.51-1.53-2.66 0-4.81 2.16-4.81 4.81 0 .38.04.75.13 1.1-4-.2-7.58-2.11-9.96-5.02-.42.72-.66 1.56-.66 2.46 0 1.68.85 3.16 2.14 4.02-.79-.02-1.53-.24-2.18-.6v.06c0 2.35 1.67 4.31 3.88 4.76-.4.1-.83.16-1.27.16-.31 0-.62-.03-.92-.08.63 1.96 2.45 3.39 4.61 3.43-1.69 1.32-3.83 2.1-6.15 2.1-.4 0-.8-.02-1.19-.07 2.19 1.4 4.78 2.22 7.57 2.22 9.07 0 14.02-7.52 14.02-14.02 0-.21 0-.43-.01-.64.96-.69 1.79-1.56 2.45-2.55z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Head of Investments -->
+            <div class="team-card">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" alt="David Park" class="member-img">
+                <div class="member-info">
+                    <h3 class="member-name">David Park</h3>
+                    <p class="member-role">Head of Investments</p>
+                    <p class="member-bio">Former Portfolio Manager at Bridgewater. CFA charterholder with $2B+ AUM experience in hedge fund strategies.</p>
+                    <div class="social-links">
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Head of Compliance -->
+            <div class="team-card">
+                <img src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&h=400&fit=crop" alt="Jennifer Adams" class="member-img">
+                <div class="member-info">
+                    <h3 class="member-name">Jennifer Adams</h3>
+                    <p class="member-role">Chief Compliance Officer</p>
+                    <p class="member-bio">20 years in regulatory compliance. Former SEC examiner. Expert in financial regulations and risk management.</p>
+                    <div class="social-links">
+                        <a href="javascript:void(0);" class="social-link"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>150+</h3>
+                <p>Years Combined Experience</p>
+            </div>
+            <div class="stat-item">
+                <h3>$127M+</h3>
+                <p>Total Payouts</p>
+            </div>
+            <div class="stat-item">
+                <h3>50K+</h3>
+                <p>Happy Investors</p>
+            </div>
+            <div class="stat-item">
+                <h3>85+</h3>
+                <p>Countries Served</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="values-section">
+        <div class="section-title">
+            <h2>Our Core Values</h2>
+            <p>The principles that guide everything we do</p>
+        </div>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                </div>
+                <h3>Trust & Security</h3>
+                <p>Your investments are protected by industry-leading security measures and regulatory compliance.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <h3>Transparency</h3>
+                <p>Clear communication about fees, performance, and strategies. No hidden surprises.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+                </div>
+                <h3>Performance</h3>
+                <p>Delivering consistent returns through disciplined investment strategies and risk management.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+                <h3>Client First</h3>
+                <p>Your financial goals are our priority. We succeed when you succeed.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Elite Wealth Capital. All rights reserved.</p>
+        <p style="margin-top: 10px;">
+            <a href="/terms">Terms of Service</a> &nbsp;|&nbsp; 
+            <a href="/privacy-policy">Privacy Policy</a> &nbsp;|&nbsp; 
+            <a href="/contact">Contact Us</a>
+        </p>
+    </footer>
+
+        <script defer src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
+

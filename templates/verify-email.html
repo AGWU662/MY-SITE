@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="main-site auth-page">
+    <div class="auth-background"><div class="auth-gradient"></div></div>
+    <a href="{% url 'home' %}" class="back-home"><span>←</span> Back to Home</a>
+    <div class="auth-container">
+        <div class="auth-card card-glass" style="text-align: center;">
+            <div class="auth-logo">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" style="height: 50px; width: auto; margin-bottom: 1rem;">
+                </a>
+            </div>
+            {% if verified %}
+                <div style="color: #4ade80; font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                <h1 class="auth-title">Email Verified!</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    Your email address has been successfully verified. You can now log in to your account.
+                </p>
+                <a href="{% url 'login' %}" class="btn btn-primary btn-block">Login to Your Account</a>
+            {% elif error %}
+                <div style="color: #f87171; font-size: 3rem; margin-bottom: 1rem;">❌</div>
+                <h1 class="auth-title">Verification Failed</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">{{ error }}</p>
+                <a href="{% url 'home' %}" class="btn btn-secondary btn-block">Return Home</a>
+            {% else %}
+                <div style="color: var(--gold); font-size: 3rem; margin-bottom: 1rem;">📧</div>
+                <h1 class="auth-title">Check Your Email</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    We've sent a verification link to your email address. Please click the link in the email to verify your account.
+                </p>
+                <a href="{% url 'home' %}" class="btn btn-secondary btn-block">Return Home</a>
+            {% endif %}
+        </div>
+    </div>
+    <script src="{% static 'js/main.js?v=20260308' %}"></script>
+</body>
+</html>

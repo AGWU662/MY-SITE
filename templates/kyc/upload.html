@@ -1,0 +1,576 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYC Verification - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260314' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260314' %}">
+    <style>
+        .kyc-page {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .kyc-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 760px;
+            margin-bottom: 2rem;
+        }
+        .kyc-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .kyc-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #F59E0B;
+            margin-bottom: 0.5rem;
+        }
+        .kyc-header p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+        }
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: calc(50% - 80px);
+            width: 160px;
+            height: 2px;
+            background: rgba(255,255,255,0.15);
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            width: 80px;
+            position: relative;
+            z-index: 1;
+        }
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.4);
+            transition: all 0.3s;
+        }
+        .step.active .step-circle {
+            background: #F59E0B;
+            border-color: #F59E0B;
+            color: #0f172a;
+        }
+        .step.done .step-circle {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        .step-label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            text-align: center;
+        }
+        .step.active .step-label,
+        .step.done .step-label {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Form sections */
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #F59E0B;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
+        }
+        .form-label .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+        .form-control {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 0.65rem 0.9rem;
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #F59E0B;
+            background: rgba(245, 158, 11, 0.05);
+        }
+        .form-control option {
+            background: #1e293b;
+            color: #fff;
+        }
+        /* File upload areas */
+        .upload-area {
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #F59E0B;
+            background: rgba(245, 158, 11, 0.05);
+        }
+        .upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .upload-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 0.25rem;
+        }
+        .upload-hint {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+        }
+        .upload-area.has-file .upload-icon { color: #10b981; }
+        .upload-area.has-file {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        /* Navigation buttons */
+        .form-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+        .btn-nav {
+            padding: 0.7rem 1.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-prev {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.8);
+        }
+        .btn-prev:hover { background: rgba(255,255,255,0.15); }
+        .btn-next, .btn-submit {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #0f172a;
+            flex: 1;
+            max-width: 220px;
+        }
+        .btn-next:hover, .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+        .btn-back-link {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        .btn-back-link:hover { color: rgba(255,255,255,0.8); }
+
+        /* Tip boxes */
+        .tip-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 1.25rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .messages-area {
+            width: 100%;
+            max-width: 760px;
+            margin-bottom: 1rem;
+        }
+        .alert {
+            padding: 0.85rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .alert-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+        }
+    </style>
+</head>
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal">
+        <div class="ticker-track"></div>
+    </div>
+
+    <div class="kyc-page" style="padding-top: 60px;">
+        <!-- Messages -->
+        <div class="messages-area">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-error{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="kyc-card">
+            <div class="kyc-header">
+                <a href="{% url 'dashboard' %}" class="btn-back-link">← Back to Dashboard</a>
+                <h1 style="margin-top: 1rem;">🪪 Identity Verification</h1>
+                <p>We are required by law to verify your identity before you can withdraw funds.<br>Your documents are encrypted and stored securely.</p>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="steps" id="stepsIndicator">
+                <div class="step active" id="step1Indicator">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Document</div>
+                </div>
+                <div class="step" id="step2Indicator">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Personal</div>
+                </div>
+                <div class="step" id="step3Indicator">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Upload</div>
+                </div>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" id="kycForm" novalidate>
+                {% csrf_token %}
+
+                <!-- Step 1: Document Details -->
+                <div class="form-section active" id="step1">
+                    <div class="section-title">📄 Document Details</div>
+                    <div class="tip-box">
+                        💡 Please select the primary government-issued ID you will use for verification. The information must match exactly what appears on your document.
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Document Type <span class="required">*</span></label>
+                            <select name="document_type" class="form-control" id="docType" required>
+                                <option value="">Select document type…</option>
+                                <option value="passport">Passport</option>
+                                <option value="national_id">National ID Card</option>
+                                <option value="drivers_license">Driver's License</option>
+                                <option value="residence_permit">Residence Permit</option>
+                                <option value="voter_id">Voter ID Card</option>
+                                <option value="tax_id">Tax Identification Card</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Document Number <span class="required">*</span></label>
+                            <input type="text" name="document_number" class="form-control"
+                                placeholder="e.g. A12345678 or 001234567" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Issuing Country <span class="required">*</span></label>
+                            <select name="issuing_country" class="form-control" required>
+                                <option value="">Select country…</option>
+                                <option value="Afghanistan">Afghanistan</option>
+                                <option value="Albania">Albania</option>
+                                <option value="Algeria">Algeria</option>
+                                <option value="Angola">Angola</option>
+                                <option value="Argentina">Argentina</option>
+                                <option value="Australia">Australia</option>
+                                <option value="Austria">Austria</option>
+                                <option value="Bangladesh">Bangladesh</option>
+                                <option value="Belgium">Belgium</option>
+                                <option value="Brazil">Brazil</option>
+                                <option value="Canada">Canada</option>
+                                <option value="Chile">Chile</option>
+                                <option value="China">China</option>
+                                <option value="Colombia">Colombia</option>
+                                <option value="Democratic Republic of Congo">DR Congo</option>
+                                <option value="Denmark">Denmark</option>
+                                <option value="Egypt">Egypt</option>
+                                <option value="Ethiopia">Ethiopia</option>
+                                <option value="Finland">Finland</option>
+                                <option value="France">France</option>
+                                <option value="Germany">Germany</option>
+                                <option value="Ghana">Ghana</option>
+                                <option value="Greece">Greece</option>
+                                <option value="India">India</option>
+                                <option value="Indonesia">Indonesia</option>
+                                <option value="Iran">Iran</option>
+                                <option value="Ireland">Ireland</option>
+                                <option value="Israel">Israel</option>
+                                <option value="Italy">Italy</option>
+                                <option value="Jamaica">Jamaica</option>
+                                <option value="Japan">Japan</option>
+                                <option value="Kenya">Kenya</option>
+                                <option value="Malaysia">Malaysia</option>
+                                <option value="Mexico">Mexico</option>
+                                <option value="Morocco">Morocco</option>
+                                <option value="Mozambique">Mozambique</option>
+                                <option value="Netherlands">Netherlands</option>
+                                <option value="New Zealand">New Zealand</option>
+                                <option value="Nigeria">Nigeria</option>
+                                <option value="Norway">Norway</option>
+                                <option value="Pakistan">Pakistan</option>
+                                <option value="Peru">Peru</option>
+                                <option value="Philippines">Philippines</option>
+                                <option value="Poland">Poland</option>
+                                <option value="Portugal">Portugal</option>
+                                <option value="Romania">Romania</option>
+                                <option value="Russia">Russia</option>
+                                <option value="Rwanda">Rwanda</option>
+                                <option value="Saudi Arabia">Saudi Arabia</option>
+                                <option value="Senegal">Senegal</option>
+                                <option value="Sierra Leone">Sierra Leone</option>
+                                <option value="Singapore">Singapore</option>
+                                <option value="South Africa">South Africa</option>
+                                <option value="South Korea">South Korea</option>
+                                <option value="Spain">Spain</option>
+                                <option value="Sweden">Sweden</option>
+                                <option value="Switzerland">Switzerland</option>
+                                <option value="Tanzania">Tanzania</option>
+                                <option value="Thailand">Thailand</option>
+                                <option value="Trinidad and Tobago">Trinidad and Tobago</option>
+                                <option value="Turkey">Turkey</option>
+                                <option value="Uganda">Uganda</option>
+                                <option value="Ukraine">Ukraine</option>
+                                <option value="United Arab Emirates">United Arab Emirates</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="United States">United States</option>
+                                <option value="Vietnam">Vietnam</option>
+                                <option value="Zambia">Zambia</option>
+                                <option value="Zimbabwe">Zimbabwe</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Issuing Authority</label>
+                            <input type="text" name="issuing_authority" class="form-control"
+                                placeholder="e.g. Home Office, DVLA, DMV">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Issue Date</label>
+                            <input type="date" name="issue_date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" name="expires_at" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-nav">
+                        <a href="{% url 'dashboard' %}" class="btn-back-link">Cancel</a>
+                        <button type="button" class="btn-nav btn-next" onclick="goToStep(2)">Next: Personal Info →</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Personal Details -->
+                <div class="form-section" id="step2">
+                    <div class="section-title">👤 Personal Details</div>
+                    <div class="tip-box">
+                        💡 Enter the personal details exactly as they appear on your identity document. This is used to cross-verify your identity.
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" name="date_of_birth" class="form-control"
+                                placeholder="YYYY-MM-DD">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nationality</label>
+                            <input type="text" name="nationality" class="form-control"
+                                placeholder="e.g. British, Nigerian, American">
+                        </div>
+                    </div>
+                    <div class="form-nav">
+                        <button type="button" class="btn-nav btn-prev" onclick="goToStep(1)">← Back</button>
+                        <button type="button" class="btn-nav btn-next" onclick="goToStep(3)">Next: Upload Photos →</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Document Upload -->
+                <div class="form-section" id="step3">
+                    <div class="section-title">📸 Upload Documents</div>
+                    <div class="tip-box">
+                        💡 Please upload clear, well-lit photos of your documents. All text must be readable. Accepted formats: JPG, PNG, WebP (max 10 MB each).
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Front of Document <span class="required">*</span></label>
+                            <div class="upload-area" id="frontUpload">
+                                <input type="file" name="front_image" accept="image/*" required
+                                    onchange="handleFileUpload(this, 'frontUpload')">
+                                <div class="upload-icon">🪪</div>
+                                <div class="upload-label">Upload Front Image</div>
+                                <div class="upload-hint">JPG, PNG or WebP · max 10 MB</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Back of Document</label>
+                            <div class="upload-area" id="backUpload">
+                                <input type="file" name="back_image" accept="image/*"
+                                    onchange="handleFileUpload(this, 'backUpload')">
+                                <div class="upload-icon">🔄</div>
+                                <div class="upload-label">Upload Back Image</div>
+                                <div class="upload-hint">Optional · JPG, PNG or WebP</div>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">Selfie Holding Document <span class="required">*</span></label>
+                            <div class="upload-area" id="selfieUpload" style="max-width: 380px; margin: 0 auto;">
+                                <input type="file" name="selfie_image" accept="image/*" required
+                                    onchange="handleFileUpload(this, 'selfieUpload')">
+                                <div class="upload-icon">🤳</div>
+                                <div class="upload-label">Upload Selfie with Document</div>
+                                <div class="upload-hint">Hold your document next to your face · max 10 MB</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-nav">
+                        <button type="button" class="btn-nav btn-prev" onclick="goToStep(2)">← Back</button>
+                        <button type="submit" class="btn-nav btn-submit">Submit for Verification ✓</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script defer src="{% static 'js/main.js' %}"></script>
+    <script>
+    let currentStep = 1;
+
+    function goToStep(step) {
+        // Validate current step before moving forward
+        if (step > currentStep && !validateStep(currentStep)) return;
+
+        // Hide all sections
+        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.step').forEach(s => {
+            s.classList.remove('active', 'done');
+        });
+
+        // Show target section
+        document.getElementById('step' + step).classList.add('active');
+
+        // Update step indicators
+        for (let i = 1; i <= 3; i++) {
+            const ind = document.getElementById('step' + i + 'Indicator');
+            if (i < step) ind.classList.add('done');
+            else if (i === step) ind.classList.add('active');
+        }
+
+        currentStep = step;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function validateStep(step) {
+        if (step === 1) {
+            const docType = document.querySelector('[name="document_type"]').value;
+            const docNum = document.querySelector('[name="document_number"]').value.trim();
+            const country = document.querySelector('[name="issuing_country"]').value;
+            if (!docType || !docNum || !country) {
+                alert('Please fill in Document Type, Document Number, and Issuing Country before continuing.');
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function handleFileUpload(input, areaId) {
+        const area = document.getElementById(areaId);
+        if (input.files && input.files[0]) {
+            area.classList.add('has-file');
+            const label = area.querySelector('.upload-label');
+            if (label) label.textContent = '✓ ' + input.files[0].name;
+        } else {
+            area.classList.remove('has-file');
+        }
+    }
+
+    // Drag and drop
+    document.querySelectorAll('.upload-area').forEach(area => {
+        area.addEventListener('dragover', e => { e.preventDefault(); area.classList.add('dragover'); });
+        area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+        area.addEventListener('drop', e => {
+            e.preventDefault();
+            area.classList.remove('dragover');
+            const input = area.querySelector('input[type="file"]');
+            if (input && e.dataTransfer.files.length) {
+                const dt = new DataTransfer();
+                dt.items.add(e.dataTransfer.files[0]);
+                input.files = dt.files;
+                input.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+    </script>
+</body>
+</html>
+

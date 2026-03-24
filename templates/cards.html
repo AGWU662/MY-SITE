@@ -1,0 +1,343 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Cards - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    </head>
+
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal">
+        <div class="ticker-track"></div>
+    </div>
+
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand"
+                style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="40" style="height: 40px;">
+                <span class="logo-text">Elite Wealth Capital</span>
+            </a>
+            <div class="nav-user">
+                <span class="user-name" id="userName">{{ user.full_name }}</span>
+                <a href="{% url 'logout' %}" class="btn-secondary">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link"><span class="icon">📊</span><span>Dashboard</span></a>
+                <a href="{% url 'invest' %}" class="sidebar-link"><span class="icon">💰</span><span>Invest</span></a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link"><span class="icon">💳</span><span>Add Funds</span></a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link"><span class="icon">💸</span><span>Withdraw</span></a>
+                <a href="{% url 'loans' %}" class="sidebar-link"><span class="icon">🏦</span><span>Get Loan</span></a>
+                <a href="{% url 'cards' %}" class="sidebar-link active"><span class="icon">💎</span><span>Virtual Cards</span></a>
+                <a href="{% url 'transactions' %}" class="sidebar-link"><span class="icon">📝</span><span>Transactions</span></a>
+                <a href="{% url 'dispute' %}" class="sidebar-link"><span class="icon">⚠️</span><span>Disputes & Support</span></a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link"><span class="icon">⚙️</span><span>Account Settings</span></a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link"><span class="icon">⭐</span><span>Upgrade</span></a>
+                <a href="{% url 'agent_application' %}" class="sidebar-link"><span class="icon">🤝</span><span>Become Agent</span></a>
+            </nav>
+        </aside>
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>💎 Virtual Cards</h1>
+                <p>Apply for and manage your virtual debit cards</p>
+            </div>
+
+            {% if not active_card and not pending_card %}
+            <!-- NO CARD - APPLY STATE -->
+            <div id="applyCardSection">
+                <div class="card-glass" style="padding: 2rem; text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">💳</div>
+                    <h2 style="margin-bottom: 1rem;">Get Your Virtual Card</h2>
+                    <p style="color: #94a3b8; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        Apply for a virtual debit card to make seamless online transactions, 
+                        shop globally, and manage your funds with ease.
+                    </p>
+                    
+                    <!-- Requirements Check -->
+                    <div style="background: rgba(15, 23, 42, 0.5); padding: 1.5rem; border-radius: 1rem; margin-bottom: 2rem; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;">
+                        <h4 style="margin-bottom: 1rem; color: #F59E0B;">Requirements:</h4>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                            {% if user.kyc_status == 'verified' %}
+                            <span style="color: #10b981;">✅</span>
+                            {% else %}
+                            <span style="color: #ef4444;">❌</span>
+                            {% endif %}
+                            <span>Identity Verification (KYC)</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                            {% if user.email_verified %}
+                            <span style="color: #10b981;">✅</span>
+                            {% else %}
+                            <span style="color: #ef4444;">❌</span>
+                            {% endif %}
+                            <span>Verified Email Address</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            {% if user.phone %}
+                            <span style="color: #10b981;">✅</span>
+                            {% else %}
+                            <span style="color: #ef4444;">❌</span>
+                            {% endif %}
+                            <span>Phone Number Added</span>
+                        </div>
+                    </div>
+
+                    {% if user.kyc_status != 'verified' %}
+                    <p style="color: #ef4444; margin-bottom: 1rem;">⚠️ Please complete KYC verification to apply for a card.</p>
+                    <a href="{% url 'kyc:upload' %}" class="btn btn-primary" style="margin-right: 1rem;">Complete KYC</a>
+                    {% else %}
+                    <button onclick="showCardOptions()" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                        🎯 Apply for Virtual Card
+                    </button>
+                    {% endif %}
+                </div>
+
+                <!-- Card Type Selection (Hidden by default) -->
+                <div id="cardTypeSelection" style="display: none;">
+                    <h3 style="margin-bottom: 1.5rem; text-align: center;">Choose Your Card Type</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                        
+                        <!-- Standard Card -->
+                        <div class="card-glass" style="padding: 2rem; text-align: center; cursor: pointer; transition: 0.3s; border: 2px solid transparent;" 
+                            onclick="selectCardType('standard')" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='transparent'">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">💳</div>
+                            <h4 style="color: #3b82f6;">Standard Card</h4>
+                            <p style="color: #94a3b8; font-size: 0.9rem; margin: 1rem 0;">Perfect for everyday transactions</p>
+                            <ul style="text-align: left; color: #94a3b8; font-size: 0.85rem; margin-bottom: 1rem;">
+                                <li>$5,000 daily limit</li>
+                                <li>Free monthly maintenance</li>
+                                <li>Global acceptance</li>
+                            </ul>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;">FREE</div>
+                        </div>
+
+                        <!-- Gold Card -->
+                        <div class="card-glass" style="padding: 2rem; text-align: center; cursor: pointer; transition: 0.3s; border: 2px solid transparent; background: linear-gradient(135deg, rgba(212, 165, 32, 0.1), rgba(15, 23, 42, 0.8));" 
+                            onclick="selectCardType('gold')" onmouseover="this.style.borderColor='#d4a520'" onmouseout="this.style.borderColor='transparent'">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+                            <h4 style="color: #d4a520;">Gold Card</h4>
+                            <p style="color: #94a3b8; font-size: 0.9rem; margin: 1rem 0;">For serious investors</p>
+                            <ul style="text-align: left; color: #94a3b8; font-size: 0.85rem; margin-bottom: 1rem;">
+                                <li>$25,000 daily limit</li>
+                                <li>Priority support</li>
+                                <li>1% cashback rewards</li>
+                            </ul>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #d4a520;">$49/year</div>
+                        </div>
+
+                        <!-- Platinum Card -->
+                        <div class="card-glass" style="padding: 2rem; text-align: center; cursor: pointer; transition: 0.3s; border: 2px solid transparent; background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(15, 23, 42, 0.8));" 
+                            onclick="selectCardType('platinum')" onmouseover="this.style.borderColor='#94a3b8'" onmouseout="this.style.borderColor='transparent'">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">💎</div>
+                            <h4 style="color: #94a3b8;">Platinum Card</h4>
+                            <p style="color: #94a3b8; font-size: 0.9rem; margin: 1rem 0;">Ultimate luxury experience</p>
+                            <ul style="text-align: left; color: #94a3b8; font-size: 0.85rem; margin-bottom: 1rem;">
+                                <li>Unlimited transactions</li>
+                                <li>Concierge service</li>
+                                <li>2% cashback rewards</li>
+                            </ul>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #94a3b8;">$199/year</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application Form (Hidden by default) -->
+                <div id="applicationForm" style="display: none; margin-top: 2rem;">
+                    <div class="card-glass" style="padding: 2rem; max-width: 500px; margin: 0 auto;">
+                        <h3 style="margin-bottom: 1.5rem; text-align: center;">📝 Card Application</h3>
+                        <form method="POST" action="{% url 'cards' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="request_card">
+                            <input type="hidden" name="card_type" id="selectedCardType" value="standard">
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; color: #94a3b8;">Full Name (as it appears on card)</label>
+                                <input type="text" name="card_holder_name" value="{{ user.full_name }}" required
+                                    style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(15, 23, 42, 0.5); border: 1px solid #334155; color: white;">
+                            </div>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; color: #94a3b8;">Billing Address</label>
+                                <input type="text" name="billing_address" placeholder="Enter your address" required
+                                    style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(15, 23, 42, 0.5); border: 1px solid #334155; color: white;">
+                            </div>
+
+                            <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                                <p style="color: #F59E0B; font-size: 0.9rem; margin: 0;">
+                                    ⏳ Your application will be reviewed by our team within 24-48 hours.
+                                    You will receive a notification once approved.
+                                </p>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">
+                                Submit Application
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            {% elif pending_card %}
+            <!-- PENDING APPROVAL STATE -->
+            <div class="card-glass" style="padding: 3rem; text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+                <h2 style="color: #F59E0B;">Application Under Review</h2>
+                <p style="color: #94a3b8; max-width: 400px; margin: 1rem auto;">
+                    Your virtual card application is being reviewed by our team. 
+                    You will be notified once it's approved.
+                </p>
+                <div style="background: rgba(15, 23, 42, 0.5); padding: 1rem; border-radius: 0.5rem; display: inline-block; margin-top: 1rem;">
+                    <span style="color: #64748b;">Applied on:</span>
+                    <span style="color: white; margin-left: 0.5rem;">{{ pending_card.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+
+            {% elif active_card %}
+            <!-- HAS CARD - SHOW CARD -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+                <!-- Realistic Debit Card -->
+                <div class="card-glass"
+                    style="padding: 2rem; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 1rem; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <!-- Background Gloss -->
+                    <div
+                        style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;">
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 2rem;">
+                        <img src="{% static 'images/logo.webp' %}" alt="Elite" style="height: 30px; opacity: 0.8;">
+                        <span
+                            style="font-weight: 700; color: #fff; letter-spacing: 2px; font-style: italic;">VISA</span>
+                    </div>
+
+                    <!-- Chip -->
+                    <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                        <div
+                            style="width: 45px; height: 35px; background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%); border-radius: 6px; position: relative; overflow: hidden;">
+                            <div
+                                style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.3);">
+                            </div>
+                            <div
+                                style="position: absolute; top: 0; left: 33%; width: 1px; height: 100%; background: rgba(0,0,0,0.3);">
+                            </div>
+                            <div
+                                style="position: absolute; top: 0; left: 66%; width: 1px; height: 100%; background: rgba(0,0,0,0.3);">
+                            </div>
+                        </div>
+                        <span style="font-size: 1.5rem;">📡</span>
+                    </div>
+
+                    <div
+                        style="font-family: 'Courier New', monospace; font-size: 1.4rem; letter-spacing: 0.15em; margin-bottom: 1.5rem; text-shadow: 0 2px 2px rgba(0,0,0,0.5);">
+                        {{ active_card.card_number }}
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div>
+                            <div style="font-size: 0.6rem; color: #94a3b8; letter-spacing: 1px;">CARD HOLDER</div>
+                            <div style="font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 1px;">
+                                {{ active_card.card_holder_name|upper }}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.6rem; color: #94a3b8; letter-spacing: 1px;">EXPIRES</div>
+                            <div style="font-family: 'Courier New', monospace;">{{ active_card.expiry_date }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-glass" style="padding: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Card Balance</h3>
+                    <div style="font-size: 2rem; font-weight: 700; color: #10b981; margin-bottom: 1rem;">
+                        ${{ active_card.balance|floatformat:2 }}
+                    </div>
+                    <p style="color: #94a3b8; margin-bottom: 1.5rem;">Available for spending</p>
+                    <a href="{% url 'add_funds' %}?for=card" class="btn btn-primary" style="width: 100%; display: block; text-align: center; text-decoration: none;">
+                        💳 Fund Card
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-glass" style="padding: 2rem; margin-top: 1.5rem;">
+                <h3 style="margin-bottom: 1rem;">Card Features</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                    <div style="text-align: center; padding: 1rem;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌍</div>
+                        <div style="font-size: 0.875rem;">Global Acceptance</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🔒</div>
+                        <div style="font-size: 0.875rem;">Secure Transactions</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚡</div>
+                        <div style="font-size: 0.875rem;">Instant Funding</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📱</div>
+                        <div style="font-size: 0.875rem;">Mobile Payments</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </main>
+    </div>
+
+    <script>
+        function showCardOptions() {
+            document.getElementById('cardTypeSelection').style.display = 'block';
+            document.querySelector('#applyCardSection > .card-glass').style.display = 'none';
+        }
+
+        function selectCardType(type) {
+            document.getElementById('selectedCardType').value = type;
+            document.getElementById('cardTypeSelection').style.display = 'none';
+            document.getElementById('applicationForm').style.display = 'block';
+        }
+    </script>
+
+        <script src="{% static 'js/main.js?v=20260308' %}"></script>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="nav-items">
+            <a href="{% url 'dashboard' %}">
+                <span class="icon">📊</span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'invest' %}">
+                <span class="icon">💰</span>
+                <span>Invest</span>
+            </a>
+            <a href="{% url 'add_funds' %}">
+                <span class="icon">💳</span>
+                <span>Deposit</span>
+            </a>
+            <a href="{% url 'withdraw' %}">
+                <span class="icon">💸</span>
+                <span>Withdraw</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+</body>
+
+</html>
+

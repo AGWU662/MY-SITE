@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referrals - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script async type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal">
+        <div class="ticker-track"></div>
+    </div>
+
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand"
+                style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="40" style="height: 40px;">
+                <span class="logo-text">Elite Wealth Capital</span>
+            </a>
+            <div class="nav-user">
+                <span class="user-name">{{ user.full_name }}</span>
+                <a href="{% url 'accounts:logout' %}" class="btn-secondary">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link"><span class="icon">📊</span><span>Dashboard</span></a>
+                <a href="{% url 'invest' %}" class="sidebar-link"><span class="icon">💰</span><span>Invest</span></a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link"><span class="icon">💳</span><span>Add Funds</span></a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link"><span class="icon">💸</span><span>Withdraw</span></a>
+                <a href="{% url 'loans' %}" class="sidebar-link"><span class="icon">🏦</span><span>Get Loan</span></a>
+                <a href="{% url 'cards' %}" class="sidebar-link"><span class="icon">💎</span><span>Virtual Cards</span></a>
+                <a href="{% url 'transactions' %}" class="sidebar-link"><span class="icon">📝</span><span>Transactions</span></a>
+                <a href="{% url 'referrals' %}" class="sidebar-link active"><span class="icon">👥</span><span>Referrals</span></a>
+                <a href="{% url 'referral_leaderboard' %}" class="sidebar-link"><span class="icon">🏆</span><span>Leaderboard</span></a>
+                <a href="{% url 'activity_log' %}" class="sidebar-link"><span class="icon">🕐</span><span>Activity Log</span></a>
+                <a href="{% url 'notifications:list' %}" class="sidebar-link"><span class="icon">🔔</span><span>Notifications</span></a>
+                <a href="{% url 'dispute' %}" class="sidebar-link"><span class="icon">⚠️</span><span>Disputes & Support</span></a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link"><span class="icon">⚙️</span><span>Account Settings</span></a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link"><span class="icon">⭐</span><span>Upgrade</span></a>
+                <a href="{% url 'agent_application' %}" class="sidebar-link"><span class="icon">🤝</span><span>Become Agent</span></a>
+            </nav>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>Referral Program</h1>
+                <p>Invite friends and earn rewards when they invest</p>
+            </div>
+
+            <!-- Referral Stats -->
+            <div class="stats-grid" style="margin-bottom: 2rem;">
+                <div class="stat-card glass-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ total_referrals }}</span>
+                        <span class="stat-label">Total Referrals</span>
+                    </div>
+                </div>
+                <div class="stat-card glass-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-info">
+                        <span class="stat-value">${{ referral_bonus|floatformat:2 }}</span>
+                        <span class="stat-label">Total Earnings</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referral Link Card -->
+            <div class="glass-card" style="padding: 2rem; margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: #F59E0B;">🔗 Your Referral Link</h3>
+                <p style="color: #94a3b8; margin-bottom: 1rem;">Share this link with friends and earn $30 when they join!</p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <input type="text" id="referralLink" 
+                        value="{{ request.build_absolute_uri|slice:':-1' }}{% url 'signup' %}?ref={{ referral_code }}" 
+                        readonly
+                        style="flex: 1; min-width: 250px; padding: 0.75rem 1rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #fff; font-family: monospace;">
+                    <button onclick="copyReferralLink()" class="btn-primary" style="padding: 0.75rem 1.5rem;">
+                        📋 Copy Link
+                    </button>
+                </div>
+                <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.75rem;">
+                    Referral Code: <strong style="color: #F59E0B;">{{ referral_code }}</strong> &nbsp;|&nbsp;
+                    <a href="{% url 'referral_leaderboard' %}" style="color:#F59E0B;text-decoration:none;">🏆 View Leaderboard</a>
+                </p>
+            </div>
+
+            <!-- Referral History -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>Your Referrals</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Joined</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for referral in referrals %}
+                            <tr>
+                                <td>{{ referral.referred.full_name }}</td>
+                                <td>{{ referral.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if referral.referred.is_active %}
+                                    <span class="status-badge status-active">Active</span>
+                                    {% else %}
+                                    <span class="status-badge status-pending">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" style="text-align: center; padding: 2rem; color: #64748b;">
+                                    No referrals yet. Share your link to start earning!
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-bottom-nav">
+        <a href="{% url 'dashboard' %}" class="bottom-nav-item">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="{% url 'invest' %}" class="bottom-nav-item">
+            <span class="nav-icon">💰</span>
+            <span class="nav-label">Invest</span>
+        </a>
+        <a href="{% url 'add_funds' %}" class="bottom-nav-item">
+            <span class="nav-icon">💳</span>
+            <span class="nav-label">Deposit</span>
+        </a>
+        <a href="{% url 'withdraw' %}" class="bottom-nav-item">
+            <span class="nav-icon">💸</span>
+            <span class="nav-label">Withdraw</span>
+        </a>
+        <a href="{% url 'accounts:profile' %}" class="bottom-nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">Settings</span>
+        </a>
+    </nav>
+
+    <script>
+        function copyReferralLink() {
+            const linkInput = document.getElementById('referralLink');
+            linkInput.select();
+            document.execCommand('copy');
+            alert('Referral link copied to clipboard!');
+        }
+    </script>
+        <script defer src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

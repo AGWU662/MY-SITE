@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become an Agent - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    </head>
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal">
+        <div class="ticker-track"></div>
+    </div>
+
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="40" style="height: 40px;">
+                <span class="logo-text">Elite Wealth Capital</span>
+            </a>
+            <div class="nav-user">
+                <span class="user-name" id="userName">Loading...</span>
+                <button class="btn-secondary" onclick="logout()" aria-label="Log out of your account">Logout</button>
+            </div>
+        </div>
+    </nav>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link"><span class="icon">📊</span><span>Dashboard</span></a>
+                <a href="{% url 'invest' %}" class="sidebar-link"><span class="icon">💰</span><span>Invest</span></a>
+                <a href="agent-application" class="sidebar-link active"><span class="icon">🤝</span><span>Become Agent</span></a>
+            </nav>
+        </aside>
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>🤝 Become an Agent</h1>
+                <p>Earn commissions by referring investors to our platform</p>
+            </div>
+            <div class="card-glass" style="padding: 2rem; margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 1rem;">Agent Benefits</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <div style="text-align: center; padding: 1.5rem; background: rgba(245, 158, 11, 0.1); border-radius: 1rem;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
+                        <h4>10% Commission</h4>
+                        <p style="color: #94a3b8; font-size: 0.875rem;">Earn on every referral deposit</p>
+                    </div>
+                    <div style="text-align: center; padding: 1.5rem; background: rgba(59, 130, 246, 0.1); border-radius: 1rem;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+                        <h4>Dashboard Access</h4>
+                        <p style="color: #94a3b8; font-size: 0.875rem;">Track your referrals in real-time</p>
+                    </div>
+                    <div style="text-align: center; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 1rem;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚡</div>
+                        <h4>Instant Payouts</h4>
+                        <p style="color: #94a3b8; font-size: 0.875rem;">Withdraw commissions anytime</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-glass" style="padding: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Apply to Become an Agent</h3>
+                <form id="agentApplicationForm">
+                    <div class="form-group">
+                        <label>Why do you want to become an agent?</label>
+                        <textarea id="motivation" rows="4" style="width: 100%; padding: 1rem; background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; border-radius: 0.5rem; color: #fff;" placeholder="Tell us about yourself and your plans..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>How many people can you refer monthly?</label>
+                        <select id="referralEstimate" style="width: 100%; padding: 1rem; background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; border-radius: 0.5rem; color: #fff;">
+                            <option value="">Select an option</option>
+                            <option value="1-10">1-10 people</option>
+                            <option value="11-50">11-50 people</option>
+                            <option value="51-100">51-100 people</option>
+                            <option value="100+">100+ people</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="{% url 'dashboard' %}" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{% url 'invest' %}" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Invest</span>
+        </a>
+        <a href="{% url 'add_funds' %}" class="nav-item">
+            <i class="fas fa-plus-circle"></i>
+            <span>Deposit</span>
+        </a>
+        <a href="{% url 'withdraw' %}" class="nav-item">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>Withdraw</span>
+        </a>
+        <a href="{% url 'accounts:profile' %}" class="nav-item">
+            <i class="fas fa-user-cog"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+    
+        <script src="{% static 'js/main.js?v=20260308' %}"></script>
+    
+    
+</body>
+</html>
+
+

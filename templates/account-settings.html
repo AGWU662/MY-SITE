@@ -1,0 +1,404 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - Elite Wealth Capital</title>
+    <link rel="icon" type="image/webp" href="{% static 'images/logo.webp' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/glassmorphism-theme.css?v=20260308' %}">
+    <link rel="stylesheet" href="{% static 'css/mobile.css?v=20260320' %}">
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script async type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    </head>
+
+<body class="dashboard-site">
+    <!-- Crypto Ticker -->
+    <div class="crypto-ticker-horizontal">
+        <div class="ticker-track"></div>
+    </div>
+
+    <nav class="dashboard-nav">
+        <div class="container-fluid">
+            <a href="{% url 'dashboard' %}" class="nav-brand"
+                style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital" width="40" height="40" style="height: 40px;">
+                <span class="logo-text">Elite Wealth Capital</span>
+            </a>
+            <div class="nav-user">
+                <span class="user-name" id="userName">Loading...</span>
+                <button class="btn-secondary" onclick="logout()" aria-label="Log out of your account">Logout</button>
+            </div>
+        </div>
+    </nav>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="sidebar-link"><span class="icon">📊</span><span>Dashboard</span></a>
+                <a href="{% url 'invest' %}" class="sidebar-link"><span class="icon">💰</span><span>Invest</span></a>
+                <a href="{% url 'add_funds' %}" class="sidebar-link"><span class="icon">💳</span><span>Add Funds</span></a>
+                <a href="{% url 'withdraw' %}" class="sidebar-link"><span class="icon">💸</span><span>Withdraw</span></a>
+                <a href="{% url 'loans' %}" class="sidebar-link"><span class="icon">🏦</span><span>Get Loan</span></a>
+                <a href="{% url 'cards' %}" class="sidebar-link"><span class="icon">💎</span><span>Virtual Cards</span></a>
+                <a href="{% url 'transactions' %}" class="sidebar-link"><span class="icon">📝</span><span>Transactions</span></a>
+                <a href="{% url 'dispute' %}" class="sidebar-link"><span class="icon">⚠️</span><span>Disputes & Support</span></a>
+                <a href="{% url 'accounts:profile' %}" class="sidebar-link active"><span class="icon">⚙️</span><span>Account Settings</span></a>
+                <a href="{% url 'upgrade' %}" class="sidebar-link"><span class="icon">⭐</span><span>Upgrade</span></a>
+                <a href="{% url 'agent_application' %}" class="sidebar-link"><span class="icon">🤝</span><span>Become Agent</span></a>
+            </nav>
+        </aside>
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>Account Settings</h1>
+                <p>Manage your profile and security settings</p>
+            </div>
+            <div class="card-glass" style="padding: 2rem; margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 1.5rem;">Profile Information</h3>
+                <form id="profileForm" method="POST" action="{% url 'accounts:profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Profile Picture Upload -->
+                    <div class="form-group" style="margin-bottom: 1.5rem; text-align: center;">
+                        <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 1rem;">
+                            {% if user.profile_image %}
+                            <img id="profilePreview" 
+                                src="{{ user.profile_image.url }}" alt="Profile photo" width="120" height="120" 
+                                style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold);">
+                            {% else %}
+                            <div id="profilePreview" 
+                                style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #F59E0B, #D97706); display: flex; align-items: center; justify-content: center; color: #0f172a; font-weight: 800; font-size: 2.5rem; border: 3px solid var(--gold);">
+                                {{ user.full_name|first|upper }}
+                            </div>
+                            {% endif %}
+                            <label for="profileImageInput" 
+                                style="position: absolute; bottom: 0; right: 0; width: 36px; height: 36px; background: var(--gold); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                <span style="color: var(--navy); font-size: 1.2rem;">📷</span>
+                            </label>
+                            <input type="file" id="profileImageInput" name="profile_image" accept="image/*" style="display: none;" onchange="previewProfileImage(this)">
+                        </div>
+                        <small style="color: rgba(255,255,255,0.6);">Click camera icon to upload a profile photo</small>
+                    </div>
+                    
+                    <div class="form-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" name="full_name" id="fullName" class="form-control" placeholder="Full Name" value="{{ user.full_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" name="phone" id="phone" class="form-control" placeholder="Phone Number" value="{{ user.phone|default:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email" class="form-control" placeholder="Email" value="{{ user.email }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" name="country" id="country" class="form-control" placeholder="Country" value="{{ user.country|default:'' }}">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Save Changes</button>
+                </form>
+            </div>
+            <div class="card-glass" style="padding: 2rem; margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 1.5rem;">Identity Verification (KYC)</h3>
+                
+                {% if user.kyc_status == 'verified' %}
+                <div style="padding: 1rem; border-radius: 0.5rem; background: rgba(16, 185, 129, 0.2); color: #10B981;">
+                    <span style="font-size: 1.5rem;">✅</span> Your account is fully verified.
+                </div>
+                {% elif user.kyc_status == 'submitted' %}
+                <div style="padding: 1rem; border-radius: 0.5rem; background: rgba(245, 158, 11, 0.2); color: #F59E0B;">
+                    <span style="font-size: 1.5rem;">⏳</span> Your documents are under review. This usually takes 24-48 hours.
+                </div>
+                {% elif user.kyc_status == 'rejected' %}
+                <div style="padding: 1rem; border-radius: 0.5rem; background: rgba(239, 68, 68, 0.2); color: #EF4444; margin-bottom: 1rem;">
+                    <span style="font-size: 1.5rem;">❌</span> Verification failed. Please submit new documents.
+                </div>
+                {% endif %}
+                
+                {% if user.kyc_status != 'verified' and user.kyc_status != 'submitted' %}
+                <form method="POST" action="{% url 'kyc:upload' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label>Document Type</label>
+                        <select name="document_type" class="form-control"
+                            style="width: 100%; padding: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 0.5rem;">
+                            <option value="passport">Passport</option>
+                            <option value="national_id">National ID Card</option>
+                            <option value="drivers_license">Driving License</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label>Document Number</label>
+                        <input type="text" name="document_number" class="form-control" required placeholder="Enter document ID number"
+                            style="width: 100%; padding: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 0.5rem;">
+                    </div>
+
+                    <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label>Document Front</label>
+                            <input type="file" name="front_image" accept="image/*" class="form-control" required style="padding: 0.5rem;">
+                            <small style="color: grey;">Clear photo of the front side</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Document Back</label>
+                            <input type="file" name="back_image" accept="image/*" class="form-control" style="padding: 0.5rem;">
+                            <small style="color: grey;">Back side (if applicable)</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Selfie with ID</label>
+                            <input type="file" name="selfie_image" accept="image/*" class="form-control" required style="padding: 0.5rem;">
+                            <small style="color: grey;">Photo of you holding the ID</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
+                        <span class="btn-text">Submit Documents</span>
+                    </button>
+                    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: rgba(255,255,255,0.5);">
+                        Your data is encrypted and used only for verification purposes.
+                    </p>
+                </form>
+                {% endif %}
+            </div>
+
+            <div class="card-glass" style="padding: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Security Settings</h3>
+                <form method="POST" action="{% url 'accounts:change_password' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" name="current_password" class="form-control" placeholder="Enter current password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" name="new_password" id="newPassword" class="form-control" placeholder="Enter new password" required>
+                        <div id="passwordStrength" style="margin-top: 0.5rem; height: 4px; border-radius: 2px; background: #334155; overflow: hidden;">
+                            <div id="strengthBar" style="height: 100%; width: 0%; transition: all 0.3s;"></div>
+                        </div>
+                        <small id="strengthText" style="color: #64748b; font-size: 0.75rem;"></small>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" name="confirm_password" class="form-control" placeholder="Confirm new password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Update Password</button>
+                </form>
+            </div>
+
+            <!-- Preferences Section -->
+            <div class="card-glass" style="padding: 2rem; margin-top: 1.5rem;">
+                <h3 style="margin-bottom: 1.5rem;">⚙️ Preferences</h3>
+                
+                <!-- Sound Effects Toggle -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.5rem;">🔊</span>
+                        <div>
+                            <div style="font-weight: 600; color: #fff;">Sound Effects</div>
+                            <div style="font-size: 0.85rem; color: #94a3b8;">Play notification sounds for deposits and alerts</div>
+                        </div>
+                    </div>
+                    <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                        <input type="checkbox" id="soundToggle" onchange="toggleSoundSetting(this)">
+                        <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .3s; border-radius: 28px;"></span>
+                    </label>
+                </div>
+
+                <!-- Email Notifications Toggle -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.5rem;">📧</span>
+                        <div>
+                            <div style="font-weight: 600; color: #fff;">Email Notifications</div>
+                            <div style="font-size: 0.85rem; color: #94a3b8;">Receive updates about your investments via email</div>
+                        </div>
+                    </div>
+                    <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                        <input type="checkbox" id="emailToggle" checked>
+                        <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .3s; border-radius: 28px;"></span>
+                    </label>
+                </div>
+                
+                <!-- Push Notifications Toggle -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.5rem;">🔔</span>
+                        <div>
+                            <div style="font-weight: 600; color: #fff;">Push Notifications</div>
+                            <div style="font-size: 0.85rem; color: #94a3b8;">Receive real-time alerts on your device</div>
+                        </div>
+                    </div>
+                    <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                        <input type="checkbox" id="pushToggle" checked>
+                        <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .3s; border-radius: 28px;"></span>
+                    </label>
+                </div>
+                
+                <!-- Dark Mode Toggle -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.5rem;">🌙</span>
+                        <div>
+                            <div style="font-weight: 600; color: #fff;">Dark Mode</div>
+                            <div style="font-size: 0.85rem; color: #94a3b8;">Currently active - optimized for low-light viewing</div>
+                        </div>
+                    </div>
+                    <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 28px;">
+                        <input type="checkbox" id="darkModeToggle" checked disabled>
+                        <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #475569; transition: .3s; border-radius: 28px;"></span>
+                    </label>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="nav-items">
+            <a href="{% url 'dashboard' %}">
+                <span class="icon">📊</span>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'invest' %}">
+                <span class="icon">💰</span>
+                <span>Invest</span>
+            </a>
+            <a href="{% url 'add_funds' %}">
+                <span class="icon">💳</span>
+                <span>Deposit</span>
+            </a>
+            <a href="{% url 'withdraw' %}">
+                <span class="icon">💸</span>
+                <span>Withdraw</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}" class="active">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+    </nav>
+
+    <style>
+        /* Toggle switch styles */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .switch input:checked + .slider {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+        .switch .slider::before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        .switch input:checked + .slider::before {
+            transform: translateX(22px);
+        }
+    </style>
+
+        <script src="{% static 'js/main.js?v=20260308' %}"></script>
+    <script src="{% static 'js/dashboard.js?v=20260308' %}"></script>
+
+    <script>
+        // Sound settings
+        function toggleSoundSetting(checkbox) {
+            localStorage.setItem('soundEnabled', checkbox.checked);
+        }
+        
+        // Password strength indicator
+        document.getElementById('newPassword').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            let text = '';
+            let color = '';
+            
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            switch(strength) {
+                case 0:
+                case 1:
+                    text = 'Weak'; color = '#EF4444'; break;
+                case 2:
+                    text = 'Fair'; color = '#F59E0B'; break;
+                case 3:
+                    text = 'Good'; color = '#3B82F6'; break;
+                case 4:
+                case 5:
+                    text = 'Strong'; color = '#10B981'; break;
+            }
+            
+            strengthBar.style.width = (strength * 20) + '%';
+            strengthBar.style.background = color;
+            strengthText.textContent = password.length > 0 ? text : '';
+            strengthText.style.color = color;
+        });
+        
+        // Load sound setting on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
+            document.getElementById('soundToggle').checked = soundEnabled;
+        });
+        
+        // Profile image preview
+        function previewProfileImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const container = document.getElementById('profilePreview').parentElement;
+                    // Replace whatever is in the preview slot with a proper img tag
+                    let preview = document.getElementById('profilePreview');
+                    if (preview.tagName !== 'IMG') {
+                        const img = document.createElement('img');
+                        img.id = 'profilePreview';
+                        img.alt = 'Profile photo';
+                        img.width = 120;
+                        img.height = 120;
+                        img.style.cssText = 'width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);';
+                        preview.replaceWith(img);
+                        preview = img;
+                    }
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+
+</html>
+
