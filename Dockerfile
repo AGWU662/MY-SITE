@@ -16,8 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN python manage.py collectstatic --noinput
-RUN mkdir -p /app/media
+RUN mkdir -p /app/media /app/staticfiles
 RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 8000
