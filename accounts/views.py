@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django_ratelimit.decorators import ratelimit
 import logging
 from .models import CustomUser, ActivityLog, Referral
@@ -18,6 +19,8 @@ from .forms import (
     ForgotPasswordForm, ResetPasswordForm, ChangePasswordForm
 )
 from notifications.models import Notification
+from core.validators import validate_uploaded_file
+from core.utils import get_client_ip
 
 logger = logging.getLogger(__name__)
 
@@ -25,30 +28,6 @@ logger = logging.getLogger(__name__)
 NEW_USER_BONUS = Decimal('20.00')
 REFERRER_BONUS = Decimal('30.00')
 
-# File upload limits
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
-
-
-def validate_uploaded_file(file, field_name):
-    """Validate uploaded file size and type."""
-    if not file:
-        return None
-    if file.size > MAX_FILE_SIZE:
-        raise ValidationError(f'{field_name}: File must be less than 5MB.')
-    if file.content_type not in ALLOWED_IMAGE_TYPES:
-        raise ValidationError(f'{field_name}: Only JPEG, PNG, and WebP images are allowed.')
-    return file
-
-
-def get_client_ip(request):
-    """Get client IP address from request."""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0].strip()
-    else:
-        ip = request.META.get('REMOTE_ADDR', '')
-    return ip
 
 
 @ratelimit(key='ip', rate='5/m', method='POST', block=True)
@@ -128,6 +107,7 @@ def logout_view(request):
 
 
 @ratelimit(key='ip', rate='3/m', method='POST', block=True)
+@transaction.atomic
 def signup_view(request):
     """User registration with referral bonus system."""
     if request.user.is_authenticated:

@@ -188,7 +188,7 @@ NEW WITHDRAWAL REQUEST
 User: {withdrawal.user.full_name or withdrawal.user.email}
 Email: {withdrawal.user.email}
 Amount: ${withdrawal.amount:,.2f}
-Method: {withdrawal.withdrawal_method}
+Method: {withdrawal.crypto_type}
 Wallet: {withdrawal.wallet_address}
 Submitted: {withdrawal.created_at.strftime('%Y-%m-%d %H:%M UTC')}
 
@@ -221,7 +221,7 @@ Elite Wealth Capital Admin Alerts
                 </tr>
                 <tr>
                     <td style="padding: 10px; border-bottom: 1px solid #334155; color: #94a3b8;">Method:</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #334155; color: #fff;">{withdrawal.withdrawal_method}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #334155; color: #fff;">{withdrawal.crypto_type}</td>
                 </tr>
                 <tr>
                     <td style="padding: 10px; color: #94a3b8;">Wallet:</td>

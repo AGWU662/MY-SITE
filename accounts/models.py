@@ -124,6 +124,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
         ordering = ['-date_joined']
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['kyc_status']),
+            models.Index(fields=['date_joined']),
+            models.Index(fields=['referral_code']),
+        ]
     
     def __str__(self):
         return self.email
@@ -194,6 +200,11 @@ class ActivityLog(models.Model):
         verbose_name = 'Activity Log'
         verbose_name_plural = 'Activity Logs'
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', 'created_at']),
+            models.Index(fields=['action']),
+            models.Index(fields=['created_at']),
+        ]
     
     def __str__(self):
         return f"{self.user.email} - {self.action}"
@@ -220,6 +231,11 @@ class Referral(models.Model):
         verbose_name = 'Referral'
         verbose_name_plural = 'Referrals'
         unique_together = ['referrer', 'referred']
+        indexes = [
+            models.Index(fields=['referrer', 'status']),
+            models.Index(fields=['status']),
+            models.Index(fields=['created_at']),
+        ]
     
     def __str__(self):
         return f"{self.referrer.email} -> {self.referred.email}"

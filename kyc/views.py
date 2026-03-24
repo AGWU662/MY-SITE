@@ -5,27 +5,7 @@ from django.core.exceptions import ValidationError
 from .models import KYCDocument
 from accounts.models import ActivityLog
 from notifications.models import Notification
-
-# File upload limits
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
-
-
-def validate_uploaded_file(file, field_name):
-    """Validate uploaded file size and type."""
-    if not file:
-        return None
-    
-    # Check file size
-    if file.size > MAX_FILE_SIZE:
-        raise ValidationError(f'{field_name}: File size must be less than 5MB. Your file is {file.size / (1024*1024):.1f}MB.')
-    
-    # Check file type
-    content_type = file.content_type
-    if content_type not in ALLOWED_IMAGE_TYPES:
-        raise ValidationError(f'{field_name}: Only JPEG, PNG, and WebP images are allowed. Got: {content_type}')
-    
-    return file
+from core.validators import validate_uploaded_file
 
 
 @login_required

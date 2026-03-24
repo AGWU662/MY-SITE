@@ -66,6 +66,7 @@
             <div class="card-glass" style="padding: 2rem;">
                 <h3 style="margin-bottom: 1.5rem;">Apply to Become an Agent</h3>
                 <form id="agentApplicationForm">
+                    {% csrf_token %}
                     <div class="form-group">
                         <label>Why do you want to become an agent?</label>
                         <textarea id="motivation" rows="4" style="width: 100%; padding: 1rem; background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; border-radius: 0.5rem; color: #fff;" placeholder="Tell us about yourself and your plans..."></textarea>

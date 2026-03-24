@@ -1,7 +1,9 @@
 import uuid
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from django.core.cache import cache
+from django.core.validators import MinValueValidator
 
 
 class InvestmentPlan(models.Model):
@@ -12,9 +14,22 @@ class InvestmentPlan(models.Model):
     description = models.TextField(blank=True)
     icon = models.CharField(max_length=50, default='fa-chart-line')
     
-    min_amount = models.DecimalField(max_digits=15, decimal_places=2)
-    max_amount = models.DecimalField(max_digits=15, decimal_places=2)
-    daily_roi = models.DecimalField(max_digits=5, decimal_places=2, help_text='Daily ROI percentage')
+    min_amount = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
+    max_amount = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
+    daily_roi = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2, 
+        help_text='Daily ROI percentage',
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
     duration_days = models.IntegerField()
     
     is_active = models.BooleanField(default=True)
@@ -64,9 +79,22 @@ class Investment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='investments')
     plan = models.ForeignKey(InvestmentPlan, on_delete=models.PROTECT, related_name='investments')
     
-    amount = models.DecimalField(max_digits=15, decimal_places=2)
-    expected_profit = models.DecimalField(max_digits=15, decimal_places=2)
-    actual_profit = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    amount = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
+    expected_profit = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
+    actual_profit = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2, 
+        default=0,
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
     
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     start_date = models.DateTimeField(auto_now_add=True)
@@ -171,7 +199,11 @@ class Withdrawal(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='withdrawals')
     
-    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    amount = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
     crypto_type = models.CharField(max_length=10, choices=CRYPTO_CHOICES)
     wallet_address = models.CharField(max_length=255)
     
@@ -234,7 +266,11 @@ class Deposit(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='deposits')
     
-    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    amount = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
     crypto_type = models.CharField(max_length=10, choices=CRYPTO_CHOICES)
     tx_hash = models.CharField(max_length=255, blank=True)
     proof_image = models.ImageField(upload_to='deposits/', blank=True, null=True)
@@ -316,12 +352,32 @@ class Loan(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loans')
     
-    amount = models.DecimalField(max_digits=15, decimal_places=2)
-    interest_rate = models.DecimalField(max_digits=5, decimal_places=2, default=5.0, help_text='Monthly interest rate %')
+    amount = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
+    interest_rate = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2, 
+        default=5.0, 
+        help_text='Monthly interest rate %',
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
     duration_days = models.IntegerField(choices=DURATION_CHOICES)
     
-    total_repayment = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    amount_repaid = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    total_repayment = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2, 
+        default=0,
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
+    amount_repaid = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2, 
+        default=0,
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
     
     purpose = models.TextField(blank=True)
     collateral_description = models.TextField(blank=True)
@@ -494,10 +550,28 @@ class Coupon(models.Model):
     description = models.TextField(blank=True)
     
     discount_type = models.CharField(max_length=20, choices=DISCOUNT_TYPE_CHOICES)
-    discount_value = models.DecimalField(max_digits=10, decimal_places=2, help_text='Percentage or fixed amount')
+    discount_value = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        help_text='Percentage or fixed amount',
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
     
-    min_deposit = models.DecimalField(max_digits=15, decimal_places=2, default=0, help_text='Minimum deposit to use coupon')
-    max_discount = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, help_text='Maximum discount amount')
+    min_deposit = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2, 
+        default=0, 
+        help_text='Minimum deposit to use coupon',
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
+    max_discount = models.DecimalField(
+        max_digits=15, 
+        decimal_places=2, 
+        null=True, 
+        blank=True, 
+        help_text='Maximum discount amount',
+        validators=[MinValueValidator(Decimal('0.01'))]
+    )
     
     uses_limit = models.IntegerField(default=0, help_text='0 = unlimited')
     uses_count = models.IntegerField(default=0)

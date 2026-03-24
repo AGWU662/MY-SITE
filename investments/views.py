@@ -22,34 +22,10 @@ from .models import (
 )
 from accounts.models import ActivityLog, CustomUser
 from notifications.models import Notification
+from core.validators import validate_uploaded_file
+from core.utils import get_client_ip
 
 logger = logging.getLogger(__name__)
-
-# File upload limits
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'image/gif']
-
-
-def validate_uploaded_file(file, field_name, max_size=MAX_FILE_SIZE):
-    """Validate uploaded file size and type."""
-    if not file:
-        return None
-    
-    if file.size > max_size:
-        raise ValidationError(f'{field_name}: File size must be less than {max_size // (1024*1024)}MB.')
-    
-    content_type = file.content_type
-    if content_type not in ALLOWED_IMAGE_TYPES:
-        raise ValidationError(f'{field_name}: Only JPEG, PNG, WebP, and GIF images are allowed.')
-    
-    return file
-
-
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        return x_forwarded_for.split(',')[0].strip()
-    return request.META.get('REMOTE_ADDR', '')
 
 
 # Bybit coin → chain type mapping for deposit addresses
