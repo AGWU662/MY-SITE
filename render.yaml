@@ -1,12 +1,11 @@
 # Render Blueprint for Elite Wealth Capital
 # Auto-deploy enabled with instant rollover
 
-# Database shared with existing project - not creating new one
-# databases:
-#   - name: elite-wealth-db
-#     databaseName: elite_wealth
-#     user: elite_admin
-#     plan: free
+databases:
+  - name: elite-wealth-db
+    databaseName: elite_wealth
+    user: elite_admin
+    plan: free
 
 services:
   - type: web
@@ -29,7 +28,9 @@ services:
     
     envVars:
       - key: DATABASE_URL
-        sync: false  # Will use existing free database from another project
+        fromDatabase:
+          name: elite-wealth-db
+          property: connectionString
       - key: DJANGO_SETTINGS_MODULE
         value: elite_wealth.settings
       - key: DEBUG
