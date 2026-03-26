@@ -371,6 +371,10 @@ def certificate(request):
 def partners(request):
     return render(request, 'partners.html')
 
+def global_presence(request):
+    """Global offices and presence page."""
+    return render(request, 'global-presence.html')
+
 def terms(request):
     return render(request, 'terms.html')
 

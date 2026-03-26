@@ -221,7 +221,7 @@
         z-index: 200;
         transform: translateX(120%);
         transition: transform 0.3s ease;
-        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
+        background: ${type === 'success' ? '#00A86B' : type === 'error' ? '#ef4444' : type === 'warning' ? '#FFD700' : '#3b82f6'};
         box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     `;
 

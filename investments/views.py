@@ -1094,3 +1094,273 @@ def download_receipt(request, receipt_type, transaction_id):
     except Exception as e:
         messages.error(request, 'Could not generate receipt. Please try again.')
         return redirect('transactions')
+
+
+# ===== PAYMENT GATEWAY VIEWS =====
+
+@login_required
+def process_stripe_payment(request):
+    """Process Stripe payment for deposit."""
+    from .payment_gateways import StripePaymentGateway
+    from django.urls import reverse
+    
+    if request.method == 'POST':
+        try:
+            amount = Decimal(request.POST.get('amount', '0'))
+        except (ValueError, TypeError, InvalidOperation):
+            messages.error(request, 'Invalid amount.')
+            return redirect('add_funds')
+        
+        min_dep = getattr(settings, 'MIN_DEPOSIT', 10)
+        if amount < Decimal(str(min_dep)):
+            messages.error(request, f'Minimum deposit is ${min_dep}')
+            return redirect('add_funds')
+        
+        # Create payment intent
+        success, result = StripePaymentGateway.create_payment_intent(
+            amount=amount,
+            currency='usd',
+            metadata={
+                'user_id': str(request.user.id),
+                'user_email': request.user.email
+            }
+        )
+        
+        if success:
+            # Store payment intent ID in session
+            request.session['stripe_payment_intent_id'] = result['payment_intent_id']
+            request.session['stripe_amount'] = str(amount)
+            
+            return render(request, 'payments/stripe_checkout.html', {
+                'client_secret': result['client_secret'],
+                'amount': amount,
+                'stripe_public_key': os.getenv('STRIPE_PUBLIC_KEY')
+            })
+        else:
+            messages.error(request, f"Payment failed: {result.get('error', 'Unknown error')}")
+            return redirect('add_funds')
+    
+    return redirect('add_funds')
+
+
+@login_required
+def verify_stripe_payment(request):
+    """Verify and confirm Stripe payment."""
+    from .payment_gateways import StripePaymentGateway
+    
+    payment_intent_id = request.session.get('stripe_payment_intent_id')
+    if not payment_intent_id:
+        messages.error(request, 'Payment session expired.')
+        return redirect('add_funds')
+    
+    success, result = StripePaymentGateway.verify_payment(payment_intent_id)
+    
+    if success and result['status'] == 'succeeded':
+        amount = result['amount']
+        
+        # Create deposit record
+        deposit = Deposit.objects.create(
+            user=request.user,
+            amount=amount,
+            crypto_type='USD',
+            tx_hash=payment_intent_id,
+            status='confirmed'
+        )
+        
+        # Update user balance
+        with transaction.atomic():
+            user = CustomUser.objects.select_for_update().get(pk=request.user.pk)
+            user.balance += amount
+            user.save()
+        request.user.refresh_from_db()
+        
+        # Log activity
+        ActivityLog.objects.create(
+            user=request.user,
+            action='stripe_deposit',
+            description=f'Stripe deposit of ${amount:,.2f}',
+            ip_address=get_client_ip(request),
+            user_agent=request.META.get('HTTP_USER_AGENT', '')
+        )
+        
+        # Notify user
+        Notification.objects.create(
+            user=request.user,
+            notification_type='success',
+            title='Deposit Confirmed',
+            message=f'Your Stripe deposit of ${amount:,.2f} has been confirmed.'
+        )
+        
+        # Clear session
+        del request.session['stripe_payment_intent_id']
+        del request.session['stripe_amount']
+        
+        messages.success(request, f'Successfully deposited ${amount:,.2f} via Stripe!')
+        return redirect('dashboard')
+    else:
+        messages.error(request, 'Payment verification failed.')
+        return redirect('add_funds')
+
+
+@login_required
+def process_paypal_payment(request):
+    """Initiate PayPal payment."""
+    from .payment_gateways import PayPalPaymentGateway
+    from django.urls import reverse
+    
+    if request.method == 'POST':
+        try:
+            amount = Decimal(request.POST.get('amount', '0'))
+        except (ValueError, TypeError, InvalidOperation):
+            messages.error(request, 'Invalid amount.')
+            return redirect('add_funds')
+        
+        min_dep = getattr(settings, 'MIN_DEPOSIT', 10)
+        if amount < Decimal(str(min_dep)):
+            messages.error(request, f'Minimum deposit is ${min_dep}')
+            return redirect('add_funds')
+        
+        # Create PayPal payment
+        success, result = PayPalPaymentGateway.create_payment(
+            amount=amount,
+            currency='USD',
+            return_url=request.build_absolute_uri(reverse('investments:execute_paypal_payment')),
+            cancel_url=request.build_absolute_uri(reverse('add_funds')),
+            description='Elite Wealth Capital - Investment Deposit'
+        )
+        
+        if success and result.get('approval_url'):
+            # Store payment ID in session
+            request.session['paypal_payment_id'] = result['payment_id']
+            request.session['paypal_amount'] = str(amount)
+            
+            # Redirect to PayPal for approval
+            return redirect(result['approval_url'])
+        else:
+            messages.error(request, f"Payment failed: {result.get('error', 'Unknown error')}")
+            return redirect('add_funds')
+    
+    return redirect('add_funds')
+
+
+@login_required
+def execute_paypal_payment(request):
+    """Execute PayPal payment after user approval."""
+    from .payment_gateways import PayPalPaymentGateway
+    
+    payment_id = request.session.get('paypal_payment_id')
+    payer_id = request.GET.get('PayerID')
+    
+    if not payment_id or not payer_id:
+        messages.error(request, 'Payment session expired or invalid.')
+        return redirect('add_funds')
+    
+    success, result = PayPalPaymentGateway.execute_payment(payment_id, payer_id)
+    
+    if success and result['status'] == 'approved':
+        amount = result['amount']
+        
+        # Create deposit record
+        deposit = Deposit.objects.create(
+            user=request.user,
+            amount=amount,
+            crypto_type='USD',
+            tx_hash=payment_id,
+            status='confirmed'
+        )
+        
+        # Update user balance
+        with transaction.atomic():
+            user = CustomUser.objects.select_for_update().get(pk=request.user.pk)
+            user.balance += amount
+            user.save()
+        request.user.refresh_from_db()
+        
+        # Log activity
+        ActivityLog.objects.create(
+            user=request.user,
+            action='paypal_deposit',
+            description=f'PayPal deposit of ${amount:,.2f}',
+            ip_address=get_client_ip(request),
+            user_agent=request.META.get('HTTP_USER_AGENT', '')
+        )
+        
+        # Notify user
+        Notification.objects.create(
+            user=request.user,
+            notification_type='success',
+            title='Deposit Confirmed',
+            message=f'Your PayPal deposit of ${amount:,.2f} has been confirmed.'
+        )
+        
+        # Clear session
+        del request.session['paypal_payment_id']
+        del request.session['paypal_amount']
+        
+        messages.success(request, f'Successfully deposited ${amount:,.2f} via PayPal!')
+        return redirect('dashboard')
+    else:
+        messages.error(request, 'Payment execution failed.')
+        return redirect('add_funds')
+
+
+@login_required
+def verify_crypto_payment(request):
+    """Verify cryptocurrency payment via Coinbase Commerce."""
+    from .payment_gateways import CryptoPaymentGateway
+    
+    if request.method == 'POST':
+        charge_id = request.POST.get('charge_id')
+        
+        if not charge_id:
+            return JsonResponse({'success': False, 'error': 'Missing charge ID'})
+        
+        success, result = CryptoPaymentGateway.verify_charge(charge_id)
+        
+        if success:
+            status = result['status']
+            
+            if status == 'COMPLETED':
+                # Extract amount from pricing
+                pricing = result.get('pricing', {})
+                amount = Decimal(pricing.get('local', {}).get('amount', '0'))
+                
+                # Create deposit record
+                deposit = Deposit.objects.create(
+                    user=request.user,
+                    amount=amount,
+                    crypto_type='CRYPTO',
+                    tx_hash=charge_id,
+                    status='confirmed'
+                )
+                
+                # Update user balance
+                with transaction.atomic():
+                    user = CustomUser.objects.select_for_update().get(pk=request.user.pk)
+                    user.balance += amount
+                    user.save()
+                
+                # Log activity
+                ActivityLog.objects.create(
+                    user=request.user,
+                    action='crypto_deposit',
+                    description=f'Crypto deposit of ${amount:,.2f}',
+                    ip_address=get_client_ip(request),
+                    user_agent=request.META.get('HTTP_USER_AGENT', '')
+                )
+                
+                # Notify user
+                Notification.objects.create(
+                    user=request.user,
+                    notification_type='success',
+                    title='Crypto Deposit Confirmed',
+                    message=f'Your cryptocurrency deposit of ${amount:,.2f} has been confirmed.'
+                )
+                
+                return JsonResponse({'success': True, 'status': 'confirmed', 'amount': float(amount)})
+            else:
+                return JsonResponse({'success': True, 'status': status.lower()})
+        else:
+            return JsonResponse({'success': False, 'error': result.get('error', 'Verification failed')})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})

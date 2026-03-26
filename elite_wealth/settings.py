@@ -50,14 +50,21 @@ INSTALLED_APPS = [
     
     # Third Party
     'corsheaders',
+    # 'rest_framework',  # Commented out - add djangorestframework to requirements.txt if needed
+    # 'rest_framework_simplejwt',  # Commented out - add djangorestframework-simplejwt to requirements.txt if needed
+    # 'drf_yasg',  # Commented out - add drf-yasg to requirements.txt if needed
+    # 'channels',  # Commented out - add channels to requirements.txt if needed
     
     # Local Apps
+    'core.apps.CoreConfig',  # Core utilities and performance tools
     'accounts.apps.AccountsConfig',
     'investments.apps.InvestmentsConfig',
     'dashboard.apps.DashboardConfig',
     'tasks.apps.TasksConfig',
     'kyc.apps.KycConfig',
     'notifications.apps.NotificationsConfig',
+    'messaging.apps.MessagingConfig',
+    'api.apps.ApiConfig',
 ]
 
 # Jazzmin Admin Settings
@@ -310,9 +317,12 @@ def dashboard_callback(request, context):
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.gzip.GZipMiddleware',  # GZip compression for performance
+    'django.middleware.cache.UpdateCacheMiddleware',  # Cache middleware (must be first after GZip)
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',  # Cache middleware (must be after Common)
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -390,14 +400,16 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
+# Support CDN for static files if configured
+STATIC_URL = os.getenv('CDN_URL', '/static/')
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 # Use CompressedStaticFilesStorage instead of Manifest version to avoid source map issues
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files (uploads)
-MEDIA_URL = '/media/'
+# Support CDN for media files if configured
+MEDIA_URL = os.getenv('CDN_MEDIA_URL', '/media/')
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
@@ -422,6 +434,31 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+
+
+# Cache Configuration (Redis)
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/1'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PARSER_CLASS': 'redis.connection.HiredisParser',
+            'CONNECTION_POOL_CLASS_KWARGS': {
+                'max_connections': 50,
+            },
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'SOCKET_TIMEOUT': 5,
+        },
+        'KEY_PREFIX': 'ewc',
+        'TIMEOUT': 300,  # 5 minutes default
+    }
+}
+
+# Cache middleware settings
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_SECONDS = 600  # 10 minutes for page caching
+CACHE_MIDDLEWARE_KEY_PREFIX = 'ewc_page'
 
 
 # Email Configuration (Zoho Mail SMTP)
@@ -493,3 +530,95 @@ REFERRAL_BONUS_PERCENT = 5
 # Bybit API credentials for deposit address retrieval (set in environment)
 BYBIT_API_KEY = os.getenv('BYBIT_API_KEY', '')
 BYBIT_API_SECRET = os.getenv('BYBIT_API_SECRET', '')
+
+
+# ===== REST Framework Configuration =====
+from datetime import timedelta
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ),
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DATE_FORMAT': '%Y-%m-%d',
+}
+
+# JWT Configuration
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
+# Swagger/OpenAPI Configuration
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+    'JSON_EDITOR': True,
+    'SHOW_REQUEST_HEADERS': True,
+    'SUPPORTED_SUBMIT_METHODS': ['get', 'post', 'put', 'delete', 'patch'],
+}
+
+
+# ===== Django Channels Configuration =====
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/2')],
+            'capacity': 1500,
+            'expiry': 10,
+        },
+    },
+}
+
+
+# ===== Payment Gateway Configuration =====
+# Stripe
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
+
+# PayPal
+PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # sandbox or live
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', '')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', '')
+
+# Coinbase Commerce
+COINBASE_COMMERCE_API_KEY = os.getenv('COINBASE_COMMERCE_API_KEY', '')
+COINBASE_COMMERCE_WEBHOOK_SECRET = os.getenv('COINBASE_COMMERCE_WEBHOOK_SECRET', '')

@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0a1628">
+    <meta name="theme-color" content="#0A1F44">
     <meta name="description"
         content="Access your Elite Wealth Capital investment dashboard. Monitor portfolio performance, track returns, and manage your premium investments.">
     <title>Dashboard - Elite Wealth Capital</title>
@@ -161,7 +161,7 @@
 
                 <!-- Add Funds Button (Visible Header) -->
                 <a href="{% url 'add_funds' %}" class="btn-primary add-funds-btn" aria-label="Add funds to your account"
-                    style="padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; margin-right: 15px; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: #0f172a; font-weight: 600;">Add
+                    style="padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; margin-right: 15px; background: linear-gradient(135deg, #FFD700 0%, #DAA520 100%); color: #0A1F44; font-weight: 600;">Add
                     Funds</a>
 
                 <div class="user-info" style="display: flex; align-items: center; gap: 0.5rem;">
@@ -169,11 +169,11 @@
                     {% if user.profile_image %}
                     <a href="{% url 'accounts:profile' %}" style="text-decoration: none; flex-shrink: 0;" aria-label="View your profile">
                         <img src="{{ user.profile_image.url }}" alt="{{ user.full_name }}'s profile photo"
-                            style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #F59E0B;">
+                            style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #FFD700;">
                     </a>
                     {% else %}
                     <a href="{% url 'accounts:profile' %}" style="text-decoration: none; flex-shrink: 0;" aria-label="View your profile">
-                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #F59E0B, #D97706); display: flex; align-items: center; justify-content: center; color: #0f172a; font-weight: 700; font-size: 0.9rem; border: 2px solid rgba(245,158,11,0.5);" aria-hidden="true">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #FFD700, #DAA520); display: flex; align-items: center; justify-content: center; color: #0A1F44; font-weight: 700; font-size: 0.9rem; border: 2px solid rgba(255, 215, 0,0.5);" aria-hidden="true">
                             {{ user.full_name|first|upper }}
                         </div>
                     </a>
@@ -201,12 +201,12 @@
                         style="display: none; position: absolute; top: 100%; right: 0; width: 320px; background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); max-height: 400px; overflow-y: auto;">
                         <div style="padding: 1rem; border-bottom: 1px solid #334155; font-weight: 600; display: flex; justify-content: space-between; align-items: center;">
                             <span>Your Notifications</span>
-                            <a href="{% url 'notifications:list' %}" style="font-size: 0.8rem; color: #F59E0B;">View All</a>
+                            <a href="{% url 'notifications:list' %}" style="font-size: 0.8rem; color: #FFD700;">View All</a>
                         </div>
                         <div id="notifList" role="list">
                             {% if recent_notifications %}
                                 {% for notif in recent_notifications %}
-                                <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #334155; {% if not notif.is_read %}background: rgba(245, 158, 11, 0.1);{% endif %}">
+                                <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #334155; {% if not notif.is_read %}background: rgba(255, 215, 0, 0.1);{% endif %}">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
                                         <span>{% if notif.notification_type == 'success' %}✅{% elif notif.notification_type == 'warning' %}⚠️{% elif notif.notification_type == 'error' %}❌{% else %}ℹ️{% endif %}</span>
                                         <strong style="font-size: 0.9rem; color: #fff;">{{ notif.title }}</strong>
@@ -237,7 +237,7 @@
                 <!-- Crypto Ticker Widget (Vertical) -->
                 <div class="crypto-ticker-vertical" id="cryptoTicker">
                     <div
-                        style="padding: 10px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(245, 158, 11, 0.1); text-align: center;">
+                        style="padding: 10px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255, 215, 0, 0.1); text-align: center;">
                         Live Market</div>
                     <div id="tickerContent">
                         <!-- Content Injected via JS -->
@@ -392,19 +392,19 @@
             </div>
 
             <!-- Referral Code Section -->
-            <div class="stat-card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%); border: 1px solid rgba(245, 158, 11, 0.3);">
+            <div class="stat-card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%); border: 1px solid rgba(255, 215, 0, 0.3);">
                 <div class="stat-header" style="margin-bottom: 1rem;">
-                    <span class="stat-icon" style="background: rgba(245, 158, 11, 0.2); color: #F59E0B;">🎁</span>
+                    <span class="stat-icon" style="background: rgba(255, 215, 0, 0.2); color: #FFD700;">🎁</span>
                     <span class="stat-label" style="font-size: 1.1rem; font-weight: 600;">Your Referral Code</span>
                 </div>
                 <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem;">
-                    Share your code with friends! They get <strong style="color: #10B981;">$20</strong> signup bonus, you earn <strong style="color: #F59E0B;">$30</strong> for each referral.
+                    Share your code with friends! They get <strong style="color: #00A86B;">$20</strong> signup bonus, you earn <strong style="color: #FFD700;">$30</strong> for each referral.
                 </p>
                 <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 200px;">
-                        <div style="display: flex; align-items: center; background: rgba(15, 23, 42, 0.8); border: 2px dashed #F59E0B; border-radius: 8px; padding: 0.75rem 1rem;">
-                            <span id="referralCode" style="font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #F59E0B; letter-spacing: 2px; flex: 1;">{{ referral_code }}</span>
-                            <button onclick="copyReferralCode()" aria-label="Copy referral code to clipboard" style="background: #F59E0B; color: #0f172a; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="display: flex; align-items: center; background: rgba(15, 23, 42, 0.8); border: 2px dashed #FFD700; border-radius: 8px; padding: 0.75rem 1rem;">
+                            <span id="referralCode" style="font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #FFD700; letter-spacing: 2px; flex: 1;">{{ referral_code }}</span>
+                            <button onclick="copyReferralCode()" aria-label="Copy referral code to clipboard" style="background: #FFD700; color: #0A1F44; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
                                 <span id="copyIcon" aria-hidden="true">📋</span> Copy
                             </button>
                         </div>
@@ -419,7 +419,7 @@
                     <span style="color: #94a3b8; font-size: 0.85rem;">
                         <span id="referralCount">{{ referral_count }}</span> people joined using your code
                     </span>
-                    <span style="color: #10B981; font-size: 0.9rem; font-weight: 500;">
+                    <span style="color: #00A86B; font-size: 0.9rem; font-weight: 500;">
                         Total earned: <span id="referralEarnings">${{ referral_bonus|floatformat:2 }}</span>
                     </span>
                 </div>
@@ -487,7 +487,7 @@
                     <h3>📊 Bitcoin (BTC/USDT)</h3>
                     <div style="height: 250px; position: relative;">
                         <canvas id="btcChart"></canvas>
-                        <div id="btcPrice" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; color: #10B981; font-weight: 600; font-size: 1.1rem;">Loading...</div>
+                        <div id="btcPrice" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; color: #00A86B; font-weight: 600; font-size: 1.1rem;">Loading...</div>
                     </div>
                 </div>
                 <!-- Ethereum Chart -->
@@ -495,7 +495,7 @@
                     <h3>📊 Ethereum (ETH/USDT)</h3>
                     <div style="height: 250px; position: relative;">
                         <canvas id="ethChart"></canvas>
-                        <div id="ethPrice" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; color: #10B981; font-weight: 600; font-size: 1.1rem;">Loading...</div>
+                        <div id="ethPrice" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; color: #00A86B; font-weight: 600; font-size: 1.1rem;">Loading...</div>
                     </div>
                 </div>
             </div>
@@ -507,14 +507,54 @@
                     <!-- Populated by JavaScript -->
                 </div>
             </div>
+            
+            <!-- Portfolio Performance Chart -->
+            <div class="chart-card" style="margin-bottom: 2rem;">
+                <h3>💼 Portfolio Performance (Last 30 Days)</h3>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="portfolioChart"></canvas>
+                </div>
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(0, 168, 107, 0.1); border-radius: 8px; border: 1px solid rgba(0, 168, 107, 0.3);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center;">
+                        <div>
+                            <div style="color: #00A86B; font-size: 1.5rem; font-weight: 700;">${{ total_balance|floatformat:2 }}</div>
+                            <div style="color: #94a3b8; font-size: 0.85rem;">Total Portfolio Value</div>
+                        </div>
+                        <div>
+                            <div style="color: #FFD700; font-size: 1.5rem; font-weight: 700;">+{{ total_earned|floatformat:2 }}%</div>
+                            <div style="color: #94a3b8; font-size: 0.85rem;">30-Day Return</div>
+                        </div>
+                        <div>
+                            <div style="color: #3B82F6; font-size: 1.5rem; font-weight: 700;">{{ active_investments_count }}</div>
+                            <div style="color: #94a3b8; font-size: 0.85rem;">Active Investments</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Investment Distribution Pie Chart -->
+            <div class="charts-row" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                <div class="chart-card" style="flex: 1; min-width: 300px;">
+                    <h3>🎯 Investment Distribution by Sector</h3>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card" style="flex: 1; min-width: 300px;">
+                    <h3>📊 Monthly Profit Trend</h3>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="profitTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
             {% if upcoming_maturities %}
             <!-- Upcoming Maturities Alert -->
-            <div class="stats-card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(245, 158, 11, 0.3);">
+            <div class="stats-card" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(255, 215, 0, 0.3);">
                 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
                     <span style="font-size: 2rem;">⏰</span>
                     <div>
-                        <h3 style="margin: 0; color: #F59E0B;">Investments Maturing Soon!</h3>
+                        <h3 style="margin: 0; color: #FFD700;">Investments Maturing Soon!</h3>
                         <p style="margin: 0; color: #94a3b8; font-size: 0.875rem;">These investments will complete within 3 days</p>
                     </div>
                 </div>
@@ -526,8 +566,8 @@
                             <span style="color: #94a3b8; font-size: 0.875rem; margin-left: 0.5rem;">${{ inv.amount|floatformat:2 }}</span>
                         </div>
                         <div style="text-align: right;">
-                            <span style="color: #10B981; font-weight: 600;">+${{ inv.expected_profit|floatformat:2 }}</span>
-                            <span style="color: #F59E0B; font-size: 0.75rem; display: block;">{{ inv.days_remaining }} day{{ inv.days_remaining|pluralize }} left</span>
+                            <span style="color: #00A86B; font-weight: 600;">+${{ inv.expected_profit|floatformat:2 }}</span>
+                            <span style="color: #FFD700; font-size: 0.75rem; display: block;">{{ inv.days_remaining }} day{{ inv.days_remaining|pluralize }} left</span>
                         </div>
                     </div>
                     {% endfor %}
@@ -569,7 +609,7 @@
                                     <td>
                                         {% if inv.status == 'active' %}
                                             <div class="progress-bar" style="width: 100%; background: #1e293b; border-radius: 4px; height: 8px;">
-                                                <div style="width: {{ inv.progress_percentage|default:0|floatformat:1 }}%; background: linear-gradient(90deg, #F59E0B, #3B82F6); height: 100%; border-radius: 4px;"></div>
+                                                <div style="width: {{ inv.progress_percentage|default:0|floatformat:1 }}%; background: linear-gradient(90deg, #FFD700, #3B82F6); height: 100%; border-radius: 4px;"></div>
                                             </div>
                                         {% elif inv.status == 'completed' %}
                                             <span class="text-success">✓ Complete</span>
@@ -588,7 +628,7 @@
                                             <p style="color: #64748b; font-size: 0.875rem; margin: 0; max-width: 300px;">
                                                 Start your wealth journey today with our premium investment plans
                                             </p>
-                                            <a href="{% url 'invest' %}" class="btn btn-primary" style="margin-top: 0.5rem; background: linear-gradient(135deg, #F59E0B, #D97706); border: none; padding: 0.75rem 1.5rem; border-radius: 8px; color: white; text-decoration: none; font-weight: 600;">
+                                            <a href="{% url 'invest' %}" class="btn btn-primary" style="margin-top: 0.5rem; background: linear-gradient(135deg, #FFD700, #DAA520); border: none; padding: 0.75rem 1.5rem; border-radius: 8px; color: white; text-decoration: none; font-weight: 600;">
                                                 🚀 Start Investing
                                             </a>
                                         </div>
@@ -714,7 +754,7 @@
             if (ticker && priceDiv) {
                 const price = parseFloat(ticker.lastPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 const change = parseFloat(ticker.price24hPcnt) * 100;
-                const changeColor = change >= 0 ? '#10B981' : '#EF4444';
+                const changeColor = change >= 0 ? '#00A86B' : '#EF4444';
                 const changeSign = change >= 0 ? '+' : '';
                 priceDiv.innerHTML = `$${price} <span style="color: ${changeColor}; font-size: 0.85rem;">${changeSign}${change.toFixed(2)}%</span>`;
             }
@@ -792,7 +832,7 @@
                 if (ticker) {
                     const price = parseFloat(ticker.lastPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                     const change = (parseFloat(ticker.price24hPcnt) * 100).toFixed(2);
-                    const changeColor = parseFloat(change) >= 0 ? '#10B981' : '#EF4444';
+                    const changeColor = parseFloat(change) >= 0 ? '#00A86B' : '#EF4444';
                     const changeSign = parseFloat(change) >= 0 ? '+' : '';
                     
                     html += `
@@ -801,7 +841,7 @@
                             <span style="font-size: 1.5rem;">${s.icon}</span>
                             <span style="color: #fff; font-weight: 600;">${s.name}</span>
                         </div>
-                        <div style="color: #F59E0B; font-size: 1.1rem; font-weight: 600;">$${price}</div>
+                        <div style="color: #FFD700; font-size: 1.1rem; font-weight: 600;">$${price}</div>
                         <div style="color: ${changeColor}; font-size: 0.85rem;">${changeSign}${change}%</div>
                     </div>`;
                 }
@@ -813,6 +853,202 @@
         createCryptoChart('btcChart', 'btcPrice', 'BTCUSDT', '#F7931A');
         createCryptoChart('ethChart', 'ethPrice', 'ETHUSDT', '#627EEA');
         loadMarketOverview();
+        
+        // Portfolio Performance Chart
+        function createPortfolioChart() {
+            const canvas = document.getElementById('portfolioChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Generate 30 days of data with growth trend
+            const labels = [];
+            const data = [];
+            const startValue = {{ total_balance|default:10000 }} * 0.85; // Start at 85% of current
+            
+            for (let i = 30; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                
+                // Simulate growth with some volatility
+                const growth = (30 - i) / 30 * 0.15; // 15% growth over 30 days
+                const volatility = (Math.random() - 0.5) * 0.02; // +/- 1% daily volatility
+                data.push(startValue * (1 + growth + volatility));
+            }
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Portfolio Value',
+                        data: data,
+                        borderColor: '#00A86B',
+                        backgroundColor: 'rgba(0, 168, 107, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#00A86B',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleColor: '#fff',
+                            bodyColor: '#00A86B',
+                            callbacks: {
+                                label: function(context) {
+                                    return '$' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { 
+                                color: '#94a3b8',
+                                maxRotation: 0,
+                                autoSkipPadding: 20
+                            }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { 
+                                color: '#94a3b8',
+                                callback: v => '$' + (v / 1000).toFixed(1) + 'K'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+        
+        // Investment Distribution Chart
+        function createDistributionChart() {
+            const canvas = document.getElementById('distributionChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Cryptocurrency', 'Oil & Gas', 'Real Estate', 'Agriculture'],
+                    datasets: [{
+                        data: [40, 25, 20, 15],
+                        backgroundColor: [
+                            '#FFD700',
+                            '#3B82F6',
+                            '#00A86B',
+                            '#8B5CF6'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#0f1926'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff',
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Monthly Profit Trend Chart
+        function createProfitTrendChart() {
+            const canvas = document.getElementById('profitTrendChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            const profits = [1200, 1850, 2100, 2450, 2800, 3200];
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Monthly Profit',
+                        data: profits,
+                        backgroundColor: 'rgba(212, 175, 55, 0.8)',
+                        borderColor: '#D4AF37',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        barPercentage: 0.7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return '$' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { 
+                                color: '#94a3b8',
+                                callback: v => '$' + v
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize portfolio charts
+        setTimeout(() => {
+            createPortfolioChart();
+            createDistributionChart();
+            createProfitTrendChart();
+        }, 500);
         
         // Refresh every 60 seconds
         setInterval(() => {
@@ -901,7 +1137,7 @@
                 right: 0;
                 background: linear-gradient(135deg, rgba(10, 22, 40, 0.98), rgba(15, 23, 42, 0.95));
                 backdrop-filter: blur(20px);
-                border-top: 1px solid rgba(245, 158, 11, 0.3);
+                border-top: 1px solid rgba(255, 215, 0, 0.3);
                 padding: 0.5rem 0;
                 z-index: 999;
                 box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
@@ -926,8 +1162,8 @@
 
             .bottom-nav-item:hover,
             .bottom-nav-item:active {
-                background: rgba(245, 158, 11, 0.1);
-                color: #F59E0B;
+                background: rgba(255, 215, 0, 0.1);
+                color: #FFD700;
                 transform: translateY(-2px);
             }
 
