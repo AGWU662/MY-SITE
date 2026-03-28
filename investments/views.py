@@ -18,7 +18,7 @@ import urllib.parse
 from .models import (
     InvestmentPlan, Investment, Withdrawal, Deposit, WalletAddress,
     Loan, LoanRepayment, VirtualCard, Coupon, CouponUsage,
-    AgentApplication, AccountUpgrade
+    AgentApplication, AccountUpgrade, CryptoTicker
 )
 from accounts.models import ActivityLog, CustomUser
 from notifications.models import Notification
@@ -66,6 +66,56 @@ def wallet_addresses_api(request):
         })
 
     return JsonResponse({'success': True, 'wallets': wallet_addresses})
+
+
+def crypto_ticker_api(request):
+    """
+    JSON endpoint for live crypto price ticker.
+    Fetches prices from CoinGecko API for cryptos configured in CryptoTicker model.
+    """
+    tickers = CryptoTicker.objects.filter(is_active=True).order_by('display_order')
+    
+    if not tickers.exists():
+        return JsonResponse({'success': False, 'message': 'No tickers configured'}, status=404)
+    
+    # Build list of CoinGecko IDs
+    coingecko_ids = ','.join([t.coingecko_id for t in tickers])
+    
+    # Fetch prices from CoinGecko public API
+    try:
+        url = f'https://api.coingecko.com/api/v3/simple/price?ids={coingecko_ids}&vs_currencies=usd&include_24hr_change=true'
+        req = urllib.request.Request(url)
+        req.add_header('Accept', 'application/json')
+        
+        with urllib.request.urlopen(req, timeout=4) as response:
+            data = json.loads(response.read().decode('utf-8'))
+        
+        # Format response
+        results = []
+        for ticker in tickers:
+            coin_data = data.get(ticker.coingecko_id, {})
+            if coin_data:
+                results.append({
+                    'symbol': ticker.symbol,
+                    'name': ticker.name,
+                    'price': coin_data.get('usd', 0),
+                    'change_24h': coin_data.get('usd_24h_change', 0)
+                })
+        
+        return JsonResponse({'success': True, 'tickers': results})
+        
+    except Exception as e:
+        logger.warning(f'CoinGecko API error: {e}')
+        # Return fallback static prices
+        fallback = []
+        for ticker in tickers:
+            fallback.append({
+                'symbol': ticker.symbol,
+                'name': ticker.name,
+                'price': 0,
+                'change_24h': 0
+            })
+        return JsonResponse({'success': True, 'tickers': fallback, 'source': 'fallback'})
 
 
 def plans_list(request):
