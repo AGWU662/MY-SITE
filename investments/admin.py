@@ -5,7 +5,7 @@ from django.utils import timezone
 import csv
 from .models import (InvestmentPlan, Investment, Deposit, Withdrawal, WalletAddress,
                      Loan, LoanRepayment, VirtualCard, Coupon, CouponUsage, 
-                     AgentApplication, AccountUpgrade)
+                     AgentApplication, AccountUpgrade, CryptoTicker)
 
 
 @admin.register(InvestmentPlan)
@@ -326,6 +326,28 @@ class AccountUpgradeAdmin(admin.ModelAdmin):
                 obj.processed_at = timezone.now()
         
         super().save_model(request, obj, form, change)
+
+
+@admin.register(CryptoTicker)
+class CryptoTickerAdmin(admin.ModelAdmin):
+    """
+    Manage which cryptocurrencies appear in the live price ticker shown
+    on every page. Prices are fetched live from the CoinGecko public API
+    using the coingecko_id you set here.
+
+    Common coingecko_id values:
+      BTC  → bitcoin          ETH  → ethereum
+      USDT → tether           USDC → usd-coin
+      LTC  → litecoin         BNB  → binancecoin
+      SOL  → solana           XRP  → ripple
+      ADA  → cardano          DOGE → dogecoin
+    """
+
+    list_display = ['symbol', 'name', 'coingecko_id', 'display_order', 'is_active']
+    list_editable = ['display_order', 'is_active']
+    list_filter = ['is_active']
+    search_fields = ['symbol', 'name', 'coingecko_id']
+    ordering = ['display_order', 'symbol']
 
 
 admin.site.register(LoanRepayment)

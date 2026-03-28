@@ -14,4 +14,7 @@ urlpatterns = [
     path('loans/<int:loan_id>/repay/', views.loan_repay, name='loan_repay'),
     path('cards/', views.virtual_cards, name='cards'),
     path('agent/', views.agent_page, name='agent'),
+    
+    # API endpoints
+    path('api/ticker/', views.crypto_ticker_api, name='crypto_ticker_api'),
 ]
