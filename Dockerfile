@@ -27,15 +27,13 @@ RUN pip install --upgrade pip && \
 # Copy project files
 COPY . /app/
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
-
 # Create media directory
-RUN mkdir -p /app/media
+RUN mkdir -p /app/media /app/staticfiles
 
 # Expose port
 EXPOSE 10000
 
 # Run migrations and start server
-CMD python manage.py migrate --noinput && \
-    gunicorn elite_wealth_capital.wsgi:application --bind 0.0.0.0:10000 --workers 3 --timeout 120
+CMD python manage.py collectstatic --noinput --clear && \
+    python manage.py migrate --noinput && \
+    gunicorn elite_wealth_capital.wsgi:application --bind 0.0.0.0:10000 --workers 3 --timeout 120 --log-level info
