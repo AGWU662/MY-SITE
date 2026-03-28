@@ -456,3 +456,13 @@ def global_presence_info(request):
     
     return render(request, 'dashboard/global_presence_info.html', context)
 
+
+def us_services(request):
+    """US Services page"""
+    return render(request, 'us-services.html')
+
+
+def reviews_page(request):
+    """Reviews page with popup functionality"""
+    return render(request, 'reviews.html')
+

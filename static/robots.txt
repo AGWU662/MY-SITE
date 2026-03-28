@@ -34,7 +34,7 @@ Disallow: /deposit-status/
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://www.elitewealthcapital.uk/sitemap.xml
+Sitemap: https://elitewealthcapita.uk/sitemap.xml
 
 # Crawl-delay for polite crawling
 Crawl-delay: 1
