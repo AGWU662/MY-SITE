@@ -163,6 +163,8 @@
     </style>
 </head>
 <body>
+    {% include 'components/crypto_ticker.html' %}
+
     <!-- Navigation (can be hidden by setting hide_nav=True in template context) -->
     {% if not hide_nav %}
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
@@ -289,27 +291,7 @@
     <script defer src="{% static 'js/main.js' %}"></script>
     
     <!-- Tawk.to Live Chat Support (Responsive: Mobile, Tablet, Desktop) -->
-    <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-        try {
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true;
-            s1.src='https://embed.tawk.to/69c1f2a729e9681c3d64de5d/1jkepnodo';
-            s1.charset='UTF-8';
-            s1.setAttribute('crossorigin','*');
-            
-            // Add error handler for failed script loading
-            s1.onerror = function() {
-                console.error('Tawk.to widget failed to load');
-            };
-            
-            s0.parentNode.insertBefore(s1,s0);
-        } catch(e) {
-            console.error('Tawk.to initialization error:', e);
-        }
-    })();
-    </script>
+    {% include 'components/tawk_widget.html' %}
     
     {% block extra_js %}{% endblock %}
 </body>

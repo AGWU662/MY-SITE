@@ -87,6 +87,8 @@
     </style>
 </head>
 <body>
+    {% include 'components/crypto_ticker.html' %}
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="navbar-container">
@@ -304,5 +306,6 @@
             if (!wasActive) { faqItem.classList.add('active'); }
         }
     </script>
+    {% include 'components/tawk_widget.html' %}
 </body>
 </html>

@@ -227,6 +227,8 @@
     </style>
 </head>
 <body>
+    {% include 'components/crypto_ticker.html' %}
+
     <!-- Navigation -->
     <nav class="navbar">
         <a href="{% url 'home' %}" class="logo">
@@ -410,6 +412,7 @@
     </footer>
 
         <script defer src="{% static 'js/main.js' %}"></script>
+    {% include 'components/tawk_widget.html' %}
 </body>
 </html>
 
