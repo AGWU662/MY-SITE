@@ -1,0 +1,290 @@
+# DNS CONFIGURATION GUIDE
+# Elite Wealth Capital - elitewealthcapita.uk
+
+## Current DNS Setup (Working Configuration)
+
+Domain: elitewealthcapita.uk
+Registrar: [Your domain provider - check where you purchased domain]
+
+## Required DNS Records
+
+### 1. A Record (Root Domain)
+Points your main domain to Render's IP address
+
+```
+Type: A
+Host: @ (or leave blank, or use "elitewealthcapita.uk")
+Value: 216.24.57.1
+TTL: Auto (or 3600)
+```
+
+**Purpose:** Makes elitewealthcapita.uk point to Render
+
+---
+
+### 2. CNAME Record (WWW Subdomain)
+Points www subdomain to your Render service
+
+```
+Type: CNAME
+Host: www
+Value: my-site-ghnp.onrender.com
+TTL: Auto (or 3600)
+```
+
+**Purpose:** Makes www.elitewealthcapita.uk point to Render
+
+---
+
+### Optional: CNAME for All Subdomains (Wildcard)
+If you want all subdomains to work (e.g., api.elitewealthcapita.uk)
+
+```
+Type: CNAME
+Host: *
+Value: my-site-ghnp.onrender.com
+TTL: Auto (or 3600)
+```
+
+**Purpose:** Makes *.elitewealthcapita.uk point to Render
+
+---
+
+## How to Update DNS (Step-by-Step)
+
+### If Using Namecheap:
+1. Login to Namecheap
+2. Go to "Domain List"
+3. Click "Manage" next to elitewealthcapita.uk
+4. Click "Advanced DNS" tab
+5. Add/Edit records:
+   - Add A Record: @ → 216.24.57.1
+   - Add CNAME Record: www → my-site-ghnp.onrender.com
+6. Save changes
+7. Wait 5-60 minutes for propagation
+
+### If Using GoDaddy:
+1. Login to GoDaddy
+2. Go to "My Products" → "Domains"
+3. Click "DNS" next to elitewealthcapita.uk
+4. Add/Edit records:
+   - Add A Record: @ → 216.24.57.1
+   - Add CNAME Record: www → my-site-ghnp.onrender.com
+5. Save changes
+6. Wait 5-60 minutes for propagation
+
+### If Using Cloudflare:
+1. Login to Cloudflare
+2. Select elitewealthcapita.uk domain
+3. Click "DNS" tab
+4. Add/Edit records:
+   - Add A Record: @ → 216.24.57.1 (Proxy status: DNS only)
+   - Add CNAME Record: www → my-site-ghnp.onrender.com (Proxy status: DNS only)
+5. Save changes
+6. Wait 5-60 minutes for propagation
+
+---
+
+## Verifying DNS Configuration
+
+### Method 1: Command Line (Windows)
+```powershell
+# Check A record
+nslookup elitewealthcapita.uk
+
+# Should return: 216.24.57.1
+
+# Check CNAME record
+nslookup www.elitewealthcapita.uk
+
+# Should return: my-site-ghnp.onrender.com then 216.24.57.1
+```
+
+### Method 2: Command Line (Mac/Linux)
+```bash
+# Check A record
+dig elitewealthcapita.uk +short
+
+# Should return: 216.24.57.1
+
+# Check CNAME record
+dig www.elitewealthcapita.uk +short
+
+# Should return: my-site-ghnp.onrender.com
+```
+
+### Method 3: Online Tools
+Visit: https://dnschecker.org
+Enter: elitewealthcapita.uk
+Check: A record shows 216.24.57.1 globally
+
+---
+
+## If Creating NEW Render Service
+
+**Important:** Your new service will have a DIFFERENT URL!
+
+Example old: `my-site-ghnp.onrender.com`
+Example new: `elite-wealth-xyz.onrender.com`
+
+**You MUST update your CNAME record** to point to new service URL:
+
+```
+Type: CNAME
+Host: www
+Value: elite-wealth-xyz.onrender.com (NEW URL)
+```
+
+**How to find your new service URL:**
+1. Go to Render dashboard
+2. Click your new service
+3. Look for "Service URL" at top
+4. Copy the `.onrender.com` URL
+5. Use this in your CNAME record
+
+---
+
+## DNS Propagation Time
+
+**Normal:** 5-30 minutes
+**Maximum:** Up to 48 hours (rare)
+
+During propagation:
+- Some locations see old site
+- Some locations see new site
+- This is normal and temporary
+
+**Tip:** Use incognito/private browsing to avoid browser cache
+
+---
+
+## Render Custom Domain Setup
+
+After DNS is configured, add domain in Render:
+
+1. Go to Render dashboard → Your service
+2. Click "Settings" tab
+3. Scroll to "Custom Domains" section
+4. Click "Add Custom Domain"
+5. Enter: `elitewealthcapita.uk`
+6. Click "Add"
+7. Also add: `www.elitewealthcapita.uk`
+8. Click "Add"
+
+**Render will automatically:**
+- Detect DNS pointing to them
+- Provision SSL certificate (10 mins)
+- Enable HTTPS
+- Redirect HTTP to HTTPS
+
+---
+
+## SSL Certificate Status
+
+**Automatic SSL from Render:**
+- Free Let's Encrypt certificate
+- Auto-renews every 90 days
+- Covers both domain and www
+- No manual configuration needed
+
+**Check SSL Status:**
+1. Render dashboard → Custom Domains section
+2. Should show "Active" with green checkmark
+3. Can take 5-15 minutes after adding domain
+
+---
+
+## Troubleshooting DNS Issues
+
+### Site shows "Page not found" or "Service unavailable"
+- **Cause:** DNS not propagated yet
+- **Fix:** Wait 30 more minutes, clear browser cache
+
+### Site shows "Certificate error" or "Not secure"
+- **Cause:** SSL certificate still provisioning
+- **Fix:** Wait 10-15 minutes after adding domain
+
+### www.domain.com works but domain.com doesn't (or vice versa)
+- **Cause:** Missing A or CNAME record
+- **Fix:** Add both A record (@) and CNAME (www)
+
+### "This site can't be reached" error
+- **Cause:** DNS pointing to wrong IP
+- **Fix:** Verify A record = 216.24.57.1
+
+### Mixed content errors
+- **Cause:** Site loading HTTP resources on HTTPS page
+- **Fix:** All resources should use HTTPS in templates
+
+---
+
+## Testing Your Configuration
+
+After setting up DNS and adding domain to Render:
+
+1. **Test root domain:**
+   - Visit: https://elitewealthcapita.uk
+   - Should load site with padlock icon
+
+2. **Test www subdomain:**
+   - Visit: https://www.elitewealthcapita.uk
+   - Should load site with padlock icon
+
+3. **Test HTTP redirect:**
+   - Visit: http://elitewealthcapita.uk
+   - Should redirect to: https://elitewealthcapita.uk
+
+4. **Test functionality:**
+   - Login works ✅
+   - Signup works ✅
+   - Dashboard loads ✅
+   - Images display ✅
+
+---
+
+## Important Notes for New Workspace
+
+If you delete current service and create new one:
+
+1. ✅ Keep same DATABASE_URL (user data preserved)
+2. ✅ Update CNAME to new service URL
+3. ✅ A record stays same (216.24.57.1)
+4. ✅ Remove domain from old service first
+5. ✅ Add domain to new service
+6. ✅ Wait for SSL certificate
+
+**User data is safe** - it's in PostgreSQL database, not tied to specific service!
+
+---
+
+## Quick Reference Card
+
+**Your Domain:** elitewealthcapita.uk
+
+**A Record:**
+- Host: @
+- Value: 216.24.57.1
+
+**CNAME Record:**
+- Host: www
+- Value: my-site-ghnp.onrender.com (update if new service!)
+
+**Render Service URL:** my-site-ghnp.onrender.com
+**Service ID:** srv-d72cbd0ule4c73e27km0
+
+**Verification:**
+- nslookup elitewealthcapita.uk → 216.24.57.1
+- https://elitewealthcapita.uk → Site loads with HTTPS
+
+---
+
+## Support Resources
+
+**DNS Checker:** https://dnschecker.org
+**Render Docs:** https://render.com/docs/custom-domains
+**SSL Test:** https://www.ssllabs.com/ssltest/
+**Render Status:** https://status.render.com
+
+---
+
+This file contains all DNS configuration details needed to recreate your domain setup with a new Render service!

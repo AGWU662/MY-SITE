@@ -1,0 +1,380 @@
+# 🔧 COMPLETE RENDER SERVICE CONFIGURATION
+# Elite Wealth Capital - elitewealthcapita.uk
+# Service ID: srv-d72cbd0ule4c73e27km0
+
+## ============================================================
+## SERVICE CONFIGURATION
+## ============================================================
+
+Service Name: my-site
+Service Type: Web Service
+Runtime: Docker
+Region: Frankfurt (EU) or Oregon (US) - [Check your current region in Render dashboard]
+Branch: main
+Instance Type: Starter ($7/month)
+
+Build Command: (Docker handles this - defined in Dockerfile)
+Start Command: (Docker handles this - defined in Dockerfile CMD)
+
+Root Directory: /
+Dockerfile Path: ./Dockerfile
+
+Auto-Deploy: Yes (deploys automatically on git push)
+
+## ============================================================
+## GITHUB REPOSITORY CONNECTION
+## ============================================================
+
+Repository: AGWU662/MY-SITE
+Branch: main
+Provider: GitHub
+
+Deploy Hook URL: [Found in Settings → Deploy Hook - copy from your Render dashboard]
+
+## ============================================================
+## CUSTOM DOMAINS CONFIGURATION
+## ============================================================
+
+Primary Domain: elitewealthcapita.uk
+Alternative Domain: www.elitewealthcapita.uk
+
+Render-provided URL: my-site-ghnp.onrender.com
+
+SSL/HTTPS: Automatic (Render provides free SSL)
+SSL Certificate: Auto-managed by Render
+
+Internal Address: my-site-ghnp:10000 (for internal service-to-service communication)
+
+## ============================================================
+## DNS CONFIGURATION (Your Domain Registrar)
+## ============================================================
+
+Domain: elitewealthcapita.uk
+Registrar: [Your domain provider - e.g., Namecheap, GoDaddy, Cloudflare]
+
+DNS Records Required:
+
+### A Record (Root domain)
+Type: A
+Name: @ (or leave blank for root)
+Value: 216.24.57.1 (Render's IP address)
+TTL: Automatic (or 3600 seconds)
+
+### CNAME Record (www subdomain)
+Type: CNAME
+Name: www
+Value: my-site-ghnp.onrender.com (your Render service URL)
+TTL: Automatic (or 3600 seconds)
+
+### Optional: CNAME for wildcard subdomain
+Type: CNAME
+Name: *
+Value: my-site-ghnp.onrender.com
+TTL: Automatic
+
+## ============================================================
+## ENVIRONMENT VARIABLES (20 total)
+## ============================================================
+
+# Django Core
+SECRET_KEY=2b701cac9564763581c440415aae95ef
+DEBUG=False
+DJANGO_SETTINGS_MODULE=elite_wealth_capital.settings
+
+# Allowed Hosts
+ALLOWED_HOSTS=elitewealthcapita.uk,www.elitewealthcapita.uk,my-site-ghnp.onrender.com
+
+# Database (PostgreSQL Internal URL - FASTER)
+DATABASE_URL=postgresql://elite_admin:4nByWZVjPEQ2G1uIIki0vSCn99fuxKmw@dpg-d72e1uh4tr6s73bdvfp0-a/elite_wealth_k85f
+
+# Email Configuration
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.zoho.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=admin@elitewealthcapita.uk
+EMAIL_HOST_PASSWORD=myfavour1$
+DEFAULT_FROM_EMAIL=admin@elitewealthcapita.uk
+ADMIN_EMAIL=admin@elitewealthcapita.uk
+
+# Cloudinary (Cloud Storage)
+CLOUDINARY_CLOUD_NAME=dh5ikf5un
+CLOUDINARY_API_KEY=926391542761186
+CLOUDINARY_API_SECRET=RGBNIYy2_c_wybiwH7-qINfbF5M
+
+# Company Information
+COMPANY_NAME=Elite Wealth Capital
+COMPANY_EMAIL=admin@elitewealthcapita.uk
+COMPANY_ADDRESS=London, United Kingdom, Norway
+COMPANY_WEBSITE=https://elitewealthcapita.uk
+
+## ============================================================
+## POSTGRESQL DATABASE CONFIGURATION
+## ============================================================
+
+Database Service Name: elite_wealth_k85f (or similar)
+Database Type: PostgreSQL 16
+Region: Same as web service
+Plan: Free or Starter
+
+Database Name: elite_wealth_k85f
+Database User: elite_admin
+Database Password: 4nByWZVjPEQ2G1uIIki0vSCn99fuxKmw
+
+Internal Connection String (RECOMMENDED - FASTER):
+postgresql://elite_admin:4nByWZVjPEQ2G1uIIki0vSCn99fuxKmw@dpg-d72e1uh4tr6s73bdvfp0-a/elite_wealth_k85f
+
+External Connection String (for local development):
+postgresql://elite_admin:4nByWZVjPEQ2G1uIIki0vSCn99fuxKmw@dpg-d72e1uh4tr6s73bdvfp0-a.frankfurt-postgres.render.com/elite_wealth_k85f
+
+Database Host: dpg-d72e1uh4tr6s73bdvfp0-a (internal)
+Database Port: 5432
+
+## ============================================================
+## BUILD CONFIGURATION
+## ============================================================
+
+Build Method: Docker
+Dockerfile: ./Dockerfile
+
+Dockerfile Contents:
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y postgresql-client git && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+CMD python manage.py migrate && python manage.py collectstatic --noinput && gunicorn elite_wealth_capital.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --timeout 120
+```
+
+Requirements File: requirements.txt (includes all Python packages)
+
+Static Files: Collected via WhiteNoise (no separate static storage needed)
+
+## ============================================================
+## RUNTIME CONFIGURATION
+## ============================================================
+
+Python Version: 3.11 (specified in Dockerfile)
+Web Server: Gunicorn
+Workers: 4 (adjust based on traffic)
+Timeout: 120 seconds
+Port: $PORT (automatically assigned by Render)
+
+Health Check: / (root URL)
+Health Check Interval: 30 seconds
+
+## ============================================================
+## SECURITY SETTINGS
+## ============================================================
+
+HTTPS: Enabled (automatic via Render)
+SSL Certificate: Auto-renewed by Render
+
+Security Headers (configured in settings.py):
+- SECURE_SSL_REDIRECT=False (Render handles HTTPS)
+- SESSION_COOKIE_SECURE=True (production)
+- CSRF_COOKIE_SECURE=True (production)
+- SECURE_BROWSER_XSS_FILTER=True
+- SECURE_CONTENT_TYPE_NOSNIFF=True
+- X_FRAME_OPTIONS=DENY
+
+CSRF Protection: Enabled
+Trusted Origins: 
+  - https://elitewealthcapita.uk
+  - https://www.elitewealthcapita.uk
+  - https://my-site-ghnp.onrender.com
+
+## ============================================================
+## SCALING CONFIGURATION
+## ============================================================
+
+Current Plan: Starter
+Instances: 1 (can scale up to multiple instances)
+Auto-scaling: Not enabled (manual scaling only on Starter plan)
+
+Recommended for high traffic:
+- Upgrade to Standard plan ($25/month)
+- Enable auto-scaling (2-10 instances)
+- Add Redis for session management
+
+## ============================================================
+## BACKUP CONFIGURATION
+## ============================================================
+
+Database Backups:
+- Automatic daily backups (Render provides)
+- Retention: 7 days (free tier) / 30 days (paid)
+- Manual backup: pg_dump command
+
+Code Backups:
+- GitHub repository (version controlled)
+- All code safely stored in git
+
+User Data Backups:
+- Database: PostgreSQL (persistent)
+- Images: Cloudinary (persistent)
+- Both survive service restarts/redeployments
+
+## ============================================================
+## MONITORING & LOGS
+## ============================================================
+
+Logs: Real-time in Render dashboard
+Metrics: CPU, Memory, Request count
+Alerts: Configure in Render dashboard (email notifications)
+
+Log Retention: 7 days (free tier) / 30 days (paid)
+
+Monitoring Tools (optional):
+- Sentry (error tracking)
+- New Relic (performance monitoring)
+- Datadog (infrastructure monitoring)
+
+## ============================================================
+## ADDITIONAL SERVICES
+## ============================================================
+
+Redis: Not currently configured (optional for Celery)
+If needed:
+- Add Redis service in Render
+- Set REDIS_URL environment variable
+- Enable Celery workers
+
+Cron Jobs: Not configured
+If needed:
+- Add Cron Job service in Render
+- Schedule: python manage.py your_command
+- Useful for: cleanup tasks, backups, reports
+
+## ============================================================
+## DEPLOYMENT WORKFLOW
+## ============================================================
+
+1. Push code to GitHub (AGWU662/MY-SITE main branch)
+2. Render detects commit via webhook
+3. Starts new build using Dockerfile
+4. Installs dependencies (pip install)
+5. Runs migrations (python manage.py migrate)
+6. Collects static files (collectstatic)
+7. Starts Gunicorn server
+8. Health check passes
+9. Routes traffic to new version
+10. Old version shut down
+
+Total deployment time: 3-5 minutes
+
+## ============================================================
+## FILES IN REPOSITORY
+## ============================================================
+
+Required Files:
+- Dockerfile (build configuration)
+- requirements.txt (Python dependencies)
+- .dockerignore (exclude venv, __pycache__, etc.)
+- manage.py (Django management)
+- elite_wealth_capital/settings.py (Django settings)
+- elite_wealth_capital/wsgi.py (WSGI application)
+
+Optional Files:
+- runtime.txt (not used with Docker)
+- Procfile (not used with Docker)
+- build.sh (not used with Docker)
+
+## ============================================================
+## TROUBLESHOOTING CHECKLIST
+## ============================================================
+
+If site doesn't work after deployment:
+
+1. Check Logs (Render dashboard → Logs tab)
+2. Verify all environment variables set
+3. Check database connection (DATABASE_URL correct)
+4. Verify DNS records (A and CNAME)
+5. Check ALLOWED_HOSTS includes your domain
+6. Verify static files collected (collectstatic)
+7. Check migrations ran (migrate)
+8. Verify SSL certificate active (can take 10 mins)
+
+Common Issues:
+- 502 Bad Gateway: Check logs for Python errors
+- 503 Service Unavailable: Build still in progress
+- Static files 404: Check WhiteNoise configuration
+- Database errors: Check DATABASE_URL and migrations
+- CSRF errors: Check CSRF_TRUSTED_ORIGINS
+
+## ============================================================
+## COST BREAKDOWN
+## ============================================================
+
+Current Monthly Cost:
+- Web Service (Starter): $7/month
+- PostgreSQL (Free): $0/month
+- Bandwidth: Included
+- SSL Certificate: Free
+
+Total: $7/month
+
+Upgrade Options:
+- Standard plan: $25/month (auto-scaling, more resources)
+- PostgreSQL Starter: $7/month (more storage, better performance)
+- Professional: $85/month (dedicated resources)
+
+## ============================================================
+## CONTACT & SUPPORT
+## ============================================================
+
+Render Dashboard: https://dashboard.render.com
+Service URL: https://dashboard.render.com/web/srv-d72cbd0ule4c73e27km0
+Render Status: https://status.render.com
+Render Docs: https://render.com/docs
+Support: support@render.com
+
+GitHub Repo: https://github.com/AGWU662/MY-SITE
+Live Site: https://elitewealthcapita.uk
+
+## ============================================================
+## RECREATION CHECKLIST
+## ============================================================
+
+To recreate this exact setup in new workspace:
+
+☐ 1. Create new Web Service in Render
+☐ 2. Connect GitHub repo: AGWU662/MY-SITE
+☐ 3. Set Runtime to: Docker
+☐ 4. Set Branch to: main
+☐ 5. Add all 20 environment variables (see section above)
+☐ 6. Connect existing PostgreSQL database (same DATABASE_URL)
+☐ 7. Wait for first deployment (3-5 mins)
+☐ 8. Add custom domain: elitewealthcapita.uk
+☐ 9. Add www subdomain: www.elitewealthcapita.uk
+☐ 10. Update DNS A record: 216.24.57.1
+☐ 11. Update DNS CNAME: new-service-name.onrender.com
+☐ 12. Wait for SSL certificate (10 mins)
+☐ 13. Test site: login, signup, profile, investments
+☐ 14. Verify Cloudinary images work
+☐ 15. Delete old service (optional, after verification)
+
+## ============================================================
+## IMPORTANT NOTES
+## ============================================================
+
+✅ User data is stored in PostgreSQL - survives service deletion
+✅ Same DATABASE_URL = same user data in new service
+✅ Cloudinary images persist regardless of service
+✅ Domain can be moved to new service without data loss
+✅ No need to recreate database - reuse existing connection
+✅ Old service can run alongside new one during migration
+
+## ============================================================
+## LAST UPDATED
+## ============================================================
+
+Date: March 28, 2026
+Service ID: srv-d72cbd0ule4c73e27km0
+Configuration Captured By: GitHub Copilot CLI
+Status: Production (Active)
+
+This configuration file contains everything needed to recreate 
+the exact Render setup for Elite Wealth Capital platform.
