@@ -20,6 +20,10 @@ django-celery-results>=2.5
 Pillow>=10.0
 qrcode>=7.4
 
+# Cloud Storage
+cloudinary>=1.36
+django-cloudinary-storage>=0.3
+
 # Production Server
 gunicorn>=21.0
 whitenoise>=6.5
