@@ -350,7 +350,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'elite_wealth.wsgi.application'
-ASGI_APPLICATION = 'elite_wealth.asgi.application'
+# ASGI_APPLICATION = 'elite_wealth.asgi.application'  # Commented out - not using Channels
 
 
 # Database
@@ -581,16 +581,18 @@ SWAGGER_SETTINGS = {
 
 
 # ===== Django Channels Configuration =====
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/2')],
-            'capacity': 1500,
-            'expiry': 10,
-        },
-    },
-}
+# Commented out - Channels not installed
+# Uncomment when you add channels/channels-redis to requirements.txt
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             'hosts': [os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/2')],
+#             'capacity': 1500,
+#             'expiry': 10,
+#         },
+#     },
+# }
 
 
 # ===== Payment Gateway Configuration =====
