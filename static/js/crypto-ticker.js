@@ -97,25 +97,24 @@ class CryptoTicker {
 
     async fetchPrices() {
         try {
-            const symbols = cryptoSymbols.join(',');
-            const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr`);
-            const data = await response.json();
+            // Use our Django API endpoint that fetches from CoinGecko
+            const response = await fetch('/investments/api/ticker/');
+            const result = await response.json();
             
-            // Filter for our symbols
-            const relevantData = data.filter(item => {
-                const symbol = item.symbol.replace('USDT', '');
-                return cryptoSymbols.includes(symbol);
-            });
-            
-            relevantData.forEach(item => {
-                const symbol = item.symbol.replace('USDT', '');
-                this.prices[symbol] = {
-                    price: parseFloat(item.lastPrice),
-                    change: parseFloat(item.priceChangePercent)
-                };
-            });
-            
-            this.renderTicker();
+            if (result.success && result.tickers) {
+                // Convert API response to our internal format
+                result.tickers.forEach(ticker => {
+                    this.prices[ticker.symbol] = {
+                        price: ticker.price,
+                        change: ticker.change_24h
+                    };
+                });
+                
+                this.renderTicker();
+            } else {
+                // Use fallback prices if API returns error
+                this.useFallbackPrices();
+            }
         } catch (error) {
             console.error('Error fetching crypto prices:', error);
             // Use fallback prices if API fails

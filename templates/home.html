@@ -1209,6 +1209,13 @@
             font-size: 2rem;
         }
     }
+    
+    /* Partners Section Hover Effect */
+    .partners-grid a:hover img {
+        filter: grayscale(0%) brightness(100%) !important;
+        transform: scale(1.1);
+        opacity: 1 !important;
+    }
 </style>
 {% endblock %}
 
@@ -1896,6 +1903,55 @@
         </div>
     </div>
 </div>
+
+<!-- Partners & Platforms Section -->
+<section class="section partners-section" style="background: #0f1926; padding: 60px 0;">
+    <div class="container">
+        <div class="text-center mb-4">
+            <p style="color: #64748b; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.5rem;">
+                Partnered With World-Class Organizations</p>
+            <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 2rem;">Trusted by Global Industry Leaders</h3>
+        </div>
+        
+        <div class="partners-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; align-items: center;">
+            <!-- Binance -->
+            <a href="https://www.binance.com" target="_blank" title="Binance" style="opacity: 0.8; transition: all 0.3s;">
+                <img src="{% static 'images/logo-binance.png' %}" alt="Binance" width="120" height="35"
+                    style="height: 35px; filter: grayscale(100%) brightness(200%); transition: all 0.3s;">
+            </a>
+            <!-- Coinbase -->
+            <a href="https://www.coinbase.com" target="_blank" title="Coinbase" style="opacity: 0.8; transition: all 0.3s;">
+                <img src="{% static 'images/logo-coinbase.png' %}" alt="Coinbase" width="120" height="30"
+                    style="height: 30px; filter: grayscale(100%) brightness(200%); transition: all 0.3s;">
+            </a>
+            <!-- Bybit -->
+            <a href="https://www.bybit.com" target="_blank" title="Bybit" style="opacity: 0.8; transition: all 0.3s;">
+                <img src="{% static 'images/logo-bybit.png' %}" alt="Bybit" width="120" height="30"
+                    style="height: 30px; filter: grayscale(100%) brightness(200%); transition: all 0.3s;">
+            </a>
+            <!-- KuCoin -->
+            <a href="https://www.kucoin.com" target="_blank" title="KuCoin" style="opacity: 0.8; transition: all 0.3s;">
+                <img src="{% static 'images/logo-kucoin.png' %}" alt="KuCoin" width="120" height="30"
+                    style="height: 30px; filter: grayscale(100%) brightness(200%); transition: all 0.3s;">
+            </a>
+            <!-- OKX -->
+            <a href="https://www.okx.com" target="_blank" title="OKX" style="opacity: 0.8; transition: all 0.3s;">
+                <img src="{% static 'images/logo-okx.png' %}" alt="OKX" width="120" height="30"
+                    style="height: 30px; filter: grayscale(100%) brightness(200%); transition: all 0.3s;">
+            </a>
+            <!-- Metamask -->
+            <a href="https://metamask.io" target="_blank" title="Metamask" style="opacity: 0.8; transition: all 0.3s;">
+                <img src="{% static 'images/logo-metamask.png' %}" alt="Metamask" width="120" height="40"
+                    style="height: 40px; filter: grayscale(100%); transition: all 0.3s;">
+            </a>
+            <!-- Trust Wallet -->
+            <a href="https://trustwallet.com" target="_blank" title="Trust Wallet" style="opacity: 0.8; transition: all 0.3s;">
+                <img src="{% static 'images/logo-trustwallet.png' %}" alt="Trust Wallet" width="120" height="40"
+                    style="height: 40px; filter: grayscale(100%); transition: all 0.3s;">
+            </a>
+        </div>
+    </div>
+</section>
 
 <!-- CTA Section -->
 <div class="cta-section">
