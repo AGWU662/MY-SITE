@@ -191,11 +191,85 @@ function quickAddFunds() {
 function initDashboard() {
     animateStatsUpdate();
     initSidebar();
+    initVerticalTicker();
 
     const copyBtn = document.getElementById('copyReferralBtn');
     if (copyBtn) {
         copyBtn.addEventListener('click', copyReferralLink);
     }
+}
+
+// ==================== VERTICAL SIDEBAR TICKER ====================
+
+async function initVerticalTicker() {
+    const container = document.getElementById('tickerContent');
+    if (!container) return;
+
+    const coins = [
+        { symbol: 'BTCUSDT',  name: 'BTC',  icon: '₿' },
+        { symbol: 'ETHUSDT',  name: 'ETH',  icon: 'Ξ' },
+        { symbol: 'BNBUSDT',  name: 'BNB',  icon: '⬡' },
+        { symbol: 'SOLUSDT',  name: 'SOL',  icon: '◎' },
+        { symbol: 'XRPUSDT',  name: 'XRP',  icon: '✕' },
+        { symbol: 'ADAUSDT',  name: 'ADA',  icon: '₳' },
+        { symbol: 'DOGEUSDT', name: 'DOGE', icon: 'Ð' },
+        { symbol: 'TRXUSDT',  name: 'TRX',  icon: '◈' },
+    ];
+
+    // Fallback prices if API unreachable
+    const fallback = {
+        BTCUSDT:  { price: 84000,   change:  1.25 },
+        ETHUSDT:  { price: 2000,    change: -0.85 },
+        BNBUSDT:  { price: 580,     change:  0.92 },
+        SOLUSDT:  { price: 135,     change:  2.15 },
+        XRPUSDT:  { price: 2.20,    change:  1.35 },
+        ADAUSDT:  { price: 0.72,    change: -0.45 },
+        DOGEUSDT: { price: 0.18,    change:  3.20 },
+        TRXUSDT:  { price: 0.24,    change:  0.50 },
+    };
+
+    let bybitMap = {};
+    try {
+        const resp = await fetch('https://api.bybit.com/v5/market/tickers?category=spot');
+        if (resp.ok) {
+            const json = await resp.json();
+            if (json.retCode === 0 && json.result && json.result.list) {
+                json.result.list.forEach(t => {
+                    bybitMap[t.symbol] = {
+                        price:  parseFloat(t.lastPrice),
+                        change: parseFloat(t.price24hPcnt) * 100,
+                    };
+                });
+            }
+        }
+    } catch (_) { /* use fallback */ }
+
+    let html = '';
+    coins.forEach(coin => {
+        const d = bybitMap[coin.symbol] || fallback[coin.symbol];
+        if (!d) return;
+        const price = d.price < 1
+            ? d.price.toFixed(4)
+            : d.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const changeFixed = d.change.toFixed(2);
+        const isPos = d.change >= 0;
+        html += `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.05);">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:1.1rem;">${coin.icon}</span>
+                <span style="color:#fff;font-weight:600;font-size:0.8rem;">${coin.name}</span>
+            </div>
+            <div style="text-align:right;">
+                <div style="color:#FFD700;font-size:0.78rem;font-weight:600;">$${price}</div>
+                <div style="color:${isPos ? '#00A86B' : '#EF4444'};font-size:0.7rem;">${isPos ? '+' : ''}${changeFixed}%</div>
+            </div>
+        </div>`;
+    });
+
+    container.innerHTML = html || '<p style="color:#94a3b8;padding:10px;font-size:0.8rem;">Loading…</p>';
+
+    // Refresh every 60 seconds
+    setTimeout(() => initVerticalTicker(), 60000);
 }
 
 // Cleanup on page unload

@@ -8,7 +8,7 @@ This file demonstrates best practices for:
 
 Copy these patterns to your actual views.
 """
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache

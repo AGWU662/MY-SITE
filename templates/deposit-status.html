@@ -208,6 +208,7 @@
     </style>
 </head>
 <body>
+    {% include 'components/crypto_ticker.html' %}
     <div class="status-container">
         <!-- Pending State -->
         <div id="pendingState" {% if deposit.status != 'pending' %}style="display: none;"{% endif %}>
@@ -323,5 +324,6 @@
         }
     </script>
         <script defer src="{% static 'js/main.js' %}"></script>
+    {% include 'components/tawk_widget.html' %}
 </body>
 </html>
