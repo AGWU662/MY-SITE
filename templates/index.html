@@ -136,6 +136,16 @@
         }]
     }
     </script>
+    <style>
+        /* Investment sector card hover */
+        .sector-card:hover { transform: translateY(-6px); }
+        .sector-card-agri:hover  { box-shadow: 0 20px 40px rgba(16,185,129,0.2); }
+        .sector-card-re:hover    { box-shadow: 0 20px 40px rgba(245,158,11,0.2); }
+        .sector-card-crypto:hover{ box-shadow: 0 20px 40px rgba(59,130,246,0.2); }
+        .sector-card-oil:hover   { box-shadow: 0 20px 40px rgba(239,68,68,0.15); }
+        /* Feature card hover */
+        .feature-card-dark:hover { transform: translateY(-4px); border-color: rgba(212,175,55,0.4) !important; }
+    </style>
 </head>
 
 <body class="main-site">
@@ -929,259 +939,177 @@
     </section>
 
     <!-- =================== CORE INVESTMENT SECTORS =================== -->
-    <section class="section investment-sectors" style="background: #f8fafc; padding: 100px 0;">
+    <section style="background:linear-gradient(180deg,#0a1628 0%,#0f1926 100%);padding:100px 0;">
         <div class="container">
-            <div class="section-header text-center mb-5">
-                <span
-                    style="color: #3b82f6; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Diversified
-                    Portfolio</span>
-                <h2 style="color: #0f1926; font-size: 2.5rem; margin-top: 0.5rem;">Core Investment Sectors</h2>
-                <p style="color: #64748b; max-width: 600px; margin: 0 auto; font-size: 1.1rem;">We strategically
-                    diversify capital across three high-growth industries to maximize stability and returns.</p>
+            <!-- Section header -->
+            <div style="text-align:center;margin-bottom:60px;">
+                <span style="display:inline-block;color:#d4af37;font-size:0.85rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Diversified Portfolio</span>
+                <h2 style="color:#fff;font-size:2.5rem;font-weight:800;margin:0 0 16px;">Core Investment Sectors</h2>
+                <p style="color:#94a3b8;font-size:1.1rem;max-width:620px;margin:0 auto;line-height:1.7;">We strategically diversify capital across four high-growth industries to maximise stability and compound returns.</p>
             </div>
 
-            <div class="row align-items-center mb-5">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="{% static 'images/land-o-lakes-inc-iFx1WMvjvpw-unsplash.jpg' %}"
-                        alt="Sustainable Agriculture" width="1200" height="600" loading="lazy"
-                        style="width: 100%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
-                </div>
-                <div class="col-lg-6 ps-lg-5">
-                    <div
-                        style="background: #e0f2fe; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                        <span style="font-size: 30px;">🌾</span>
+            <!-- 4-column card grid -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
+
+                <!-- Agricultural Technology -->
+                <div class="sector-card sector-card-agri" style="background:linear-gradient(135deg,rgba(16,185,129,0.08) 0%,rgba(5,150,105,0.15) 100%);border:1px solid rgba(16,185,129,0.3);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.3s,box-shadow 0.3s;">
+                    <div style="height:200px;background:url('{% static 'images/land-o-lakes-inc-iFx1WMvjvpw-unsplash.jpg' %}') center/cover no-repeat;position:relative;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(10,16,32,0.95));"></div>
+                        <div style="position:absolute;bottom:16px;left:16px;background:rgba(16,185,129,0.9);color:#fff;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;">🌾 Agriculture</div>
                     </div>
-                    <h3 style="color: #0f1926; font-size: 2rem; margin-bottom: 1rem;">Agricultural Technology</h3>
-                    <p style="color: #334155; font-size: 1.1rem; line-height: 1.7; margin-bottom: 1.5rem;">
-                        We invest heavily in sustainable farming technology and global food supply chains. Our
-                        agricultural portfolio spans vertical farming projects in Singapore, grain reserves in Ukraine,
-                        and sustainable livestock in South America.
-                    </p>
-                    <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Smart Irrigation Systems</li>
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Organic Crop Yield Optimization
-                        </li>
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Global Commodity Trading</li>
-                    </ul>
-                    <a href="/investment-plans" class="btn btn-primary">Invest in Agriculture →</a>
-                </div>
-            </div>
-
-            <div class="row align-items-center mb-5" style="flex-direction: row-reverse;">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="{% static 'images/real-estate-commercial.jpg' %}"
-                        alt="Prime Real Estate" width="1200" height="600" loading="lazy"
-                        style="width: 100%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
-                </div>
-                <div class="col-lg-6 pe-lg-5">
-                    <div
-                        style="background: #fef3c7; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                        <span style="font-size: 30px;">🏢</span>
-                    </div>
-                    <h3 style="color: #0f1926; font-size: 2rem; margin-bottom: 1rem;">Prime Real Estate</h3>
-                    <p style="color: #334155; font-size: 1.1rem; line-height: 1.7; margin-bottom: 1.5rem;">
-                        Our real estate division manages a growing portfolio of commercial and residential assets. From
-                        luxury developments in Dubai to commercial hubs in London, we secure tangible assets that
-                        appreciate over time.
-                    </p>
-                    <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Commercial Office Spaces</li>
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Luxury Residential Developments
-                        </li>
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Urban Development Projects</li>
-                    </ul>
-                    <a href="/investment-plans" class="btn btn-primary">View Real Estate Plans →</a>
-                </div>
-            </div>
-
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="{% static 'images/hero-crypto.jpg' %}"
-                        alt="Cryptocurrency Trading" width="1200" height="600" loading="lazy"
-                        style="width: 100%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
-                </div>
-                <div class="col-lg-6 ps-lg-5">
-                    <div
-                        style="background: #eff6ff; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                        <span style="font-size: 30px;">⚡</span>
-                    </div>
-                    <h3 style="color: #0f1926; font-size: 2rem; margin-bottom: 1rem;">Digital Assets & Mining</h3>
-                    <p style="color: #334155; font-size: 1.1rem; line-height: 1.7; margin-bottom: 1.5rem;">
-                        We operate industrial-scale Bitcoin mining facilities in Iceland and Texas, leveraging green
-                        energy for sustainable mining. Our high-frequency trading algorithms capitalize on crypto market
-                        volatility 24/7.
-                    </p>
-                    <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Green Energy Bitcoin Mining</li>
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> DeFi Yield Farming</li>
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> AI-Driven Arbitrage Trading</li>
-                    </ul>
-                    <a href="/investment-plans" class="btn btn-primary">Start Mining Now →</a>
-                </div>
-            </div>
-
-            <!-- Oil & Gas Section -->
-            <div class="row align-items-center mt-5" style="flex-direction: row-reverse;">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="{% static 'images/oil-refinery.jpg' %}"
-                        alt="Oil and Gas Operations" width="1200" height="600" loading="lazy"
-                        style="width: 100%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
-                </div>
-                <div class="col-lg-6 pe-lg-5">
-                    <div
-                        style="background: #fef3c7; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                        <span style="font-size: 30px;">⛽</span>
-                    </div>
-                    <h3 style="color: #0f1926; font-size: 2rem; margin-bottom: 1rem;">Oil & Gas Investments</h3>
-                    <p style="color: #334155; font-size: 1.1rem; line-height: 1.7; margin-bottom: 1.5rem;">
-                        Strategic investments in upstream and downstream petroleum operations. Our energy portfolio
-                        includes drilling rights in Texas, refinery stakes in the Middle East, and renewable
-                        energy transition projects.
-                    </p>
-                    <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Upstream Drilling Operations</li>
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Refinery & Pipeline Assets</li>
-                        <li style="margin-bottom: 10px; display: flex; align-items: center; color: #475569;"><span
-                                style="color: #10b981; margin-right: 10px;">✓</span> Energy Transition Projects</li>
-                    </ul>
-                    <a href="/investment-plans" class="btn btn-primary">Explore Energy Investments →</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- =================== DIVERSIFIED PORTFOLIOS SECTION =================== -->
-    <section class="section portfolios-section" style="background: #f8fafc; padding: 80px 0;">
-        <div class="container">
-            <div class="section-header text-center">
-                <h2>Diversified Global Portfolios</h2>
-                <p>Beyond crypto: sustainable wealth through tangible assets</p>
-            </div>
-
-            <div class="row"
-                style="display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; align-items: stretch;">
-                <!-- Agriculture -->
-                <div class="col-md-5" style="flex: 1; min-width: 300px; max-width: 550px;">
-                    <div
-                        style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); height: 100%; display: flex; flex-direction: column;">
-                        <img src="{% static 'images/land-o-lakes-inc-iFx1WMvjvpw-unsplash.jpg' %}"
-                            alt="Sustainable Agriculture" width="550" height="250" loading="lazy" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div style="padding: 2rem; flex: 1;">
-                            <h3 style="color: #0f1926; font-size: 1.5rem; margin-bottom: 1rem;">Sustainable Agriculture
-                            </h3>
-                            <p style="color: #64748b; margin-bottom: 1.5rem;">Invest in the future of food security. Our
-                                agricultural portfolio spans 12,000+ hectares of high-yield farmland across Europe and
-                                South America, focusing on organic grains, vertical farming technology, and sustainable
-                                livestock.</p>
-                            <ul style="list-style: none; padding: 0;">
-                                <li style="margin-bottom: 0.5rem; color: #475569;">✅ <strong>Fixed Assets:</strong> Land
-                                    ownership & machinery</li>
-                                <li style="margin-bottom: 0.5rem; color: #475569;">✅ <strong>Global Operations:</strong>
-                                    UK, Brazil, Ukraine</li>
-                                <li style="margin-bottom: 0.5rem; color: #475569;">✅ <strong>Tax Efficient:</strong>
-                                    Agricultural reliefs applied</li>
-                            </ul>
+                    <div style="padding:1.75rem;flex:1;display:flex;flex-direction:column;">
+                        <h3 style="color:#fff;font-size:1.3rem;font-weight:700;margin:0 0 12px;">Agricultural Technology</h3>
+                        <p style="color:#94a3b8;font-size:0.92rem;line-height:1.7;flex:1;margin:0 0 20px;">Sustainable farming, grain futures, vertical farming in Singapore, and livestock across South America.</p>
+                        <ul style="list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;">
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#10b981;font-weight:700;">✓</span> Smart Irrigation Systems</li>
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#10b981;font-weight:700;">✓</span> Organic Crop Yield Optimisation</li>
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#10b981;font-weight:700;">✓</span> Global Commodity Trading</li>
+                        </ul>
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);">
+                            <span style="color:#10b981;font-weight:700;font-size:1.1rem;">18–25% Returns</span>
+                            <a href="/investment-plans" style="color:#10b981;font-size:0.85rem;font-weight:600;text-decoration:none;">Invest →</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Real Estate -->
-                <div class="col-md-5" style="flex: 1; min-width: 300px; max-width: 550px;">
-                    <div
-                        style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); height: 100%; display: flex; flex-direction: column;">
-                        <img src="{% static 'images/real-estate-luxury.jpg' %}"
-                            alt="Prime Real Estate" width="550" height="250" loading="lazy" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div style="padding: 2rem; flex: 1;">
-                            <h3 style="color: #0f1926; font-size: 1.5rem; margin-bottom: 1rem;">Prime Real Estate</h3>
-                            <p style="color: #64748b; margin-bottom: 1.5rem;">High-value commercial and residential
-                                property developments in tier-1 cities. Our REIT-modelled portfolio offers stability and
-                                capital appreciation through luxury apartments, data centers, and logistic hubs.</p>
-                            <ul style="list-style: none; padding: 0;">
-                                <li style="margin-bottom: 0.5rem; color: #475569;">✅ <strong>Premium Locations:</strong>
-                                    London, Dubai, New York</li>
-                                <li style="margin-bottom: 0.5rem; color: #475569;">✅ <strong>Rental Yield:</strong>
-                                    Consistent monthly income</li>
-                                <li style="margin-bottom: 0.5rem; color: #475569;">✅ <strong>Development:</strong>
-                                    Commercial & Residential</li>
-                            </ul>
+                <!-- Prime Real Estate -->
+                <div class="sector-card sector-card-re" style="background:linear-gradient(135deg,rgba(245,158,11,0.08) 0%,rgba(217,119,6,0.15) 100%);border:1px solid rgba(245,158,11,0.3);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.3s,box-shadow 0.3s;">
+                    <div style="height:200px;background:url('{% static 'images/real-estate-luxury.jpg' %}') center/cover no-repeat;position:relative;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(10,16,32,0.95));"></div>
+                        <div style="position:absolute;bottom:16px;left:16px;background:rgba(245,158,11,0.9);color:#000;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;">🏢 Real Estate</div>
+                    </div>
+                    <div style="padding:1.75rem;flex:1;display:flex;flex-direction:column;">
+                        <h3 style="color:#fff;font-size:1.3rem;font-weight:700;margin:0 0 12px;">Prime Real Estate</h3>
+                        <p style="color:#94a3b8;font-size:0.92rem;line-height:1.7;flex:1;margin:0 0 20px;">High-value commercial and residential developments in tier-1 cities. Luxury apartments, data centres, and logistics hubs.</p>
+                        <ul style="list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;">
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#f59e0b;font-weight:700;">✓</span> Premium Locations: London, Dubai, New York</li>
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#f59e0b;font-weight:700;">✓</span> Consistent Rental Yield</li>
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#f59e0b;font-weight:700;">✓</span> Commercial &amp; Residential Development</li>
+                        </ul>
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);">
+                            <span style="color:#f59e0b;font-weight:700;font-size:1.1rem;">15–22% Returns</span>
+                            <a href="/investment-plans" style="color:#f59e0b;font-size:0.85rem;font-weight:600;text-decoration:none;">Invest →</a>
                         </div>
                     </div>
                 </div>
+
+                <!-- Digital Assets & Mining -->
+                <div class="sector-card sector-card-crypto" style="background:linear-gradient(135deg,rgba(59,130,246,0.08) 0%,rgba(30,58,138,0.15) 100%);border:1px solid rgba(59,130,246,0.3);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.3s,box-shadow 0.3s;">
+                    <div style="height:200px;background:url('{% static 'images/hero-crypto.jpg' %}') center/cover no-repeat;position:relative;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(10,16,32,0.95));"></div>
+                        <div style="position:absolute;bottom:16px;left:16px;background:rgba(59,130,246,0.9);color:#fff;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;">⚡ Digital Assets</div>
+                    </div>
+                    <div style="padding:1.75rem;flex:1;display:flex;flex-direction:column;">
+                        <h3 style="color:#fff;font-size:1.3rem;font-weight:700;margin:0 0 12px;">Digital Assets &amp; Mining</h3>
+                        <p style="color:#94a3b8;font-size:0.92rem;line-height:1.7;flex:1;margin:0 0 20px;">Industrial-scale Bitcoin mining in Iceland and Texas using green energy, plus AI-driven algorithmic trading 24/7.</p>
+                        <ul style="list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;">
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#3b82f6;font-weight:700;">✓</span> Green Energy Bitcoin Mining</li>
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#3b82f6;font-weight:700;">✓</span> DeFi Yield Farming</li>
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#3b82f6;font-weight:700;">✓</span> AI-Driven Arbitrage Trading</li>
+                        </ul>
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);">
+                            <span style="color:#3b82f6;font-weight:700;font-size:1.1rem;">Up to 20% Returns</span>
+                            <a href="/investment-plans" style="color:#3b82f6;font-size:0.85rem;font-weight:600;text-decoration:none;">Invest →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Oil & Gas -->
+                <div class="sector-card sector-card-oil" style="background:linear-gradient(135deg,rgba(239,68,68,0.08) 0%,rgba(185,28,28,0.15) 100%);border:1px solid rgba(239,68,68,0.3);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.3s,box-shadow 0.3s;">
+                    <div style="height:200px;background:url('{% static 'images/oil-refinery.jpg' %}') center/cover no-repeat;position:relative;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(10,16,32,0.95));"></div>
+                        <div style="position:absolute;bottom:16px;left:16px;background:rgba(239,68,68,0.9);color:#fff;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;">🛢️ Oil &amp; Gas</div>
+                    </div>
+                    <div style="padding:1.75rem;flex:1;display:flex;flex-direction:column;">
+                        <h3 style="color:#fff;font-size:1.3rem;font-weight:700;margin:0 0 12px;">Oil &amp; Gas Investments</h3>
+                        <p style="color:#94a3b8;font-size:0.92rem;line-height:1.7;flex:1;margin:0 0 20px;">Drilling rights in Texas, refinery stakes in the Middle East, and renewable energy transition projects across three continents.</p>
+                        <ul style="list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:8px;">
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#ef4444;font-weight:700;">✓</span> Upstream Drilling Operations</li>
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#ef4444;font-weight:700;">✓</span> Refinery &amp; Pipeline Assets</li>
+                            <li style="color:#cbd5e1;font-size:0.88rem;display:flex;align-items:center;gap:8px;"><span style="color:#ef4444;font-weight:700;">✓</span> Energy Transition Projects</li>
+                        </ul>
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);">
+                            <span style="color:#ef4444;font-weight:700;font-size:1.1rem;">18–22% Returns</span>
+                            <a href="/investment-plans" style="color:#ef4444;font-size:0.85rem;font-weight:600;text-decoration:none;">Invest →</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /grid -->
+
+            <!-- Bottom CTA strip -->
+            <div style="margin-top:56px;padding:40px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px;">
+                <div>
+                    <h3 style="color:#fff;font-size:1.5rem;font-weight:700;margin:0 0 8px;">Start Building Your Portfolio Today</h3>
+                    <p style="color:#94a3b8;margin:0;font-size:0.95rem;">Join 50,000+ investors already earning across all four sectors.</p>
+                </div>
+                <a href="{% url 'signup' %}" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#d4af37,#b8860b);color:#000;padding:14px 32px;border-radius:50px;font-weight:700;font-size:1rem;text-decoration:none;white-space:nowrap;">Get Started Free →</a>
             </div>
         </div>
     </section>
 
     <!-- =================== FEATURES SECTION =================== -->
-    <section class="section features-section">
+    <section style="background:linear-gradient(180deg,#0f1926 0%,#1a1a2e 100%);padding:100px 0;">
         <div class="container">
-            <div class="section-header text-center">
-                <h2>Why Choose Elite Wealth Capital?</h2>
-                <p>Industry-leading platform with unmatched benefits</p>
+            <!-- Section header -->
+            <div style="text-align:center;margin-bottom:60px;">
+                <span style="display:inline-block;color:#d4af37;font-size:0.85rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Platform Benefits</span>
+                <h2 style="color:#fff;font-size:2.5rem;font-weight:800;margin:0 0 16px;">Why Choose Elite Wealth Capital?</h2>
+                <p style="color:#94a3b8;font-size:1.1rem;max-width:580px;margin:0 auto;line-height:1.7;">Industry-leading features that put you in control of your financial future.</p>
             </div>
 
-            <div class="features-grid grid grid-3">
-                <div class="feature-card card-glass card">
-                    <div class="feature-icon">🔒</div>
-                    <h3>Bank-Level Security</h3>
-                    <p>256-bit SSL encryption, cold storage wallets, and multi-factor authentication protect your
-                        investments.</p>
+            <!-- Features grid: 4 cols on desktop, 2 on tablet, 1 on mobile -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+
+                <div class="feature-card-dark" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;transition:transform 0.3s,border-color 0.3s;">
+                    <div style="font-size:2.2rem;">🔒</div>
+                    <h3 style="color:#fff;font-size:1.05rem;font-weight:700;margin:0;">Bank-Level Security</h3>
+                    <p style="color:#94a3b8;font-size:0.88rem;line-height:1.65;margin:0;">256-bit SSL encryption, cold storage wallets, and multi-factor authentication protect every transaction.</p>
                 </div>
 
-                <div class="feature-card card-glass card">
-                    <div class="feature-icon">📈</div>
-                    <h3>High-Yield Returns</h3>
-                    <p>Earn up to 20% daily returns with our professionally managed investment plans.</p>
+                <div class="feature-card-dark" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;transition:transform 0.3s,border-color 0.3s;">
+                    <div style="font-size:2.2rem;">📈</div>
+                    <h3 style="color:#fff;font-size:1.05rem;font-weight:700;margin:0;">High-Yield Returns</h3>
+                    <p style="color:#94a3b8;font-size:0.88rem;line-height:1.65;margin:0;">Earn up to 20% daily returns with our professionally managed, diversified investment plans.</p>
                 </div>
 
-                <div class="feature-card card-glass card">
-                    <div class="feature-icon">🌍</div>
-                    <h3>Global Access</h3>
-                    <p>Available in 85+ countries with support for multiple currencies and payment methods.</p>
+                <div class="feature-card-dark" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;transition:transform 0.3s,border-color 0.3s;">
+                    <div style="font-size:2.2rem;">🌍</div>
+                    <h3 style="color:#fff;font-size:1.05rem;font-weight:700;margin:0;">Global Access</h3>
+                    <p style="color:#94a3b8;font-size:0.88rem;line-height:1.65;margin:0;">Available in 85+ countries with multi-currency support and multiple payment methods.</p>
                 </div>
 
-                <div class="feature-card card-glass card">
-                    <div class="feature-icon">💎</div>
-                    <h3>Premium Tiers</h3>
-                    <p>VIP programs with exclusive benefits, personal account managers, and priority withdrawals.</p>
+                <div class="feature-card-dark" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;transition:transform 0.3s,border-color 0.3s;">
+                    <div style="font-size:2.2rem;">💎</div>
+                    <h3 style="color:#fff;font-size:1.05rem;font-weight:700;margin:0;">Premium Tiers</h3>
+                    <p style="color:#94a3b8;font-size:0.88rem;line-height:1.65;margin:0;">VIP programmes with personal account managers, exclusive benefits, and priority withdrawals.</p>
                 </div>
 
-                <div class="feature-card card-glass card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Instant Processing</h3>
-                    <p>Automated profit calculation and instant crediting to your account. No delays.</p>
+                <div class="feature-card-dark" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;transition:transform 0.3s,border-color 0.3s;">
+                    <div style="font-size:2.2rem;">⚡</div>
+                    <h3 style="color:#fff;font-size:1.05rem;font-weight:700;margin:0;">Instant Processing</h3>
+                    <p style="color:#94a3b8;font-size:0.88rem;line-height:1.65;margin:0;">Automated profit calculation and instant account crediting. Zero delays on payouts.</p>
                 </div>
 
-                <div class="feature-card card-glass card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>24/7 Support</h3>
-                    <p>Round-the-clock customer support via live chat, email, and phone in multiple languages.</p>
+                <div class="feature-card-dark" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;transition:transform 0.3s,border-color 0.3s;">
+                    <div style="font-size:2.2rem;">🎯</div>
+                    <h3 style="color:#fff;font-size:1.05rem;font-weight:700;margin:0;">24/7 Support</h3>
+                    <p style="color:#94a3b8;font-size:0.88rem;line-height:1.65;margin:0;">Round-the-clock support via live chat, email, and phone in 12+ languages.</p>
                 </div>
 
-                <div class="feature-card card-glass card">
-                    <div class="feature-icon">🏦</div>
-                    <h3>Business Loans</h3>
-                    <p>Access low-interest business loans up to $500K for qualified investors. Fast approval process.
-                    </p>
+                <div class="feature-card-dark" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;transition:transform 0.3s,border-color 0.3s;">
+                    <div style="font-size:2.2rem;">🏦</div>
+                    <h3 style="color:#fff;font-size:1.05rem;font-weight:700;margin:0;">Business Loans</h3>
+                    <p style="color:#94a3b8;font-size:0.88rem;line-height:1.65;margin:0;">Access low-interest business loans up to $500K for qualified investors. Fast approval.</p>
                 </div>
 
-                <div class="feature-card card-glass card">
-                    <div class="feature-icon">💳</div>
-                    <h3>Virtual Cards</h3>
-                    <p>Get premium virtual debit cards for online transactions. Cashback rewards and global acceptance.
-                    </p>
+                <div class="feature-card-dark" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;transition:transform 0.3s,border-color 0.3s;">
+                    <div style="font-size:2.2rem;">💳</div>
+                    <h3 style="color:#fff;font-size:1.05rem;font-weight:700;margin:0;">Virtual Cards</h3>
+                    <p style="color:#94a3b8;font-size:0.88rem;line-height:1.65;margin:0;">Premium virtual debit cards for online transactions. Cashback rewards and global acceptance.</p>
                 </div>
-            </div>
+
+            </div><!-- /features grid -->
         </div>
     </section>
 

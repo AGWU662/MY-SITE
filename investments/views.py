@@ -87,7 +87,7 @@ def crypto_ticker_api(request):
     prices = {}
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'EliteWealthCapital/1.0'})
-        with urllib.request.urlopen(req, timeout=8) as resp:
+        with urllib.request.urlopen(req, timeout=4) as resp:
             prices = json.loads(resp.read().decode('utf-8'))
     except (urllib.error.URLError, OSError, json.JSONDecodeError) as exc:
         logger.warning('CoinGecko price fetch failed: %s', exc)

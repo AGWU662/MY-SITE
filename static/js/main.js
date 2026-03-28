@@ -73,22 +73,37 @@
             document.body.insertBefore(tickerContainer, document.body.firstChild);
         }
 
+        // Apply inline styles so the bar renders correctly even before style.css
+        // has fully loaded (style.css uses media="print"→onload lazy-loading).
+        tickerContainer.style.cssText = [
+            'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:1001',
+            'height:40px', 'overflow:hidden', 'display:flex', 'align-items:center',
+            'background:rgba(10,16,32,0.98)',
+            'border-bottom:1px solid rgba(212,175,55,0.35)',
+            'backdrop-filter:blur(8px)',
+        ].join(';');
+
         const tickerTrack = tickerContainer.querySelector('.ticker-track');
         if (!tickerTrack) return;
+
+        tickerTrack.style.cssText = [
+            'display:flex', 'align-items:center', 'gap:0', 'white-space:nowrap',
+            'animation:ticker 45s linear infinite',
+        ].join(';');
 
         // Static fallback data shown while live prices load or if the API is
         // temporarily unreachable (CoinGecko free tier).
         const fallbackCoins = [
-            { symbol: 'BTC',  name: 'Bitcoin',   price: 84000,    change: 1.25  },
-            { symbol: 'ETH',  name: 'Ethereum',  price: 2000,     change: -0.85 },
-            { symbol: 'USDT', name: 'Tether',    price: 1.00,     change: 0.00  },
-            { symbol: 'USDC', name: 'USD Coin',  price: 1.00,     change: 0.00  },
-            { symbol: 'LTC',  name: 'Litecoin',  price: 92,       change: 0.60  },
-            { symbol: 'BNB',  name: 'BNB',       price: 580,      change: 0.92  },
-            { symbol: 'SOL',  name: 'Solana',    price: 135,      change: 2.15  },
-            { symbol: 'XRP',  name: 'XRP',       price: 2.20,     change: 1.35  },
-            { symbol: 'ADA',  name: 'Cardano',   price: 0.72,     change: -0.45 },
-            { symbol: 'DOGE', name: 'Dogecoin',  price: 0.18,     change: 3.20  },
+            { symbol: 'BTC',  price: 84000,    change: 1.25  },
+            { symbol: 'ETH',  price: 2000,     change: -0.85 },
+            { symbol: 'USDT', price: 1.00,     change: 0.00  },
+            { symbol: 'USDC', price: 1.00,     change: 0.00  },
+            { symbol: 'LTC',  price: 92,       change: 0.60  },
+            { symbol: 'BNB',  price: 580,      change: 0.92  },
+            { symbol: 'SOL',  price: 135,      change: 2.15  },
+            { symbol: 'XRP',  price: 2.20,     change: 1.35  },
+            { symbol: 'ADA',  price: 0.72,     change: -0.45 },
+            { symbol: 'DOGE', price: 0.18,     change: 3.20  },
         ];
 
         function renderTicker(coins) {
@@ -99,14 +114,15 @@
                 const numPrice = parseFloat(rawPrice);
                 const change = parseFloat(c.change_24h !== undefined ? c.change_24h : (c.change || 0));
                 const changeFixed  = Math.abs(change).toFixed(2);
-                const changeClass  = change >= 0 ? 'positive' : 'negative';
-                const changeSymbol = change >= 0 ? '+' : '−';
+                const changeColor  = change >= 0 ? '#10b981' : '#ef4444';
+                const changeSymbol = change >= 0 ? '▲' : '▼';
                 const priceStr = numPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: numPrice < 0.01 ? 6 : 2 });
-                html += `<div class="ticker-item">
-                    <span class="crypto-symbol">${c.symbol}</span>
-                    <span class="crypto-price">$${priceStr}</span>
-                    <span class="crypto-change ${changeClass}">${changeSymbol}${changeFixed}%</span>
-                </div>`;
+                // Use inline styles on every item for guaranteed rendering
+                html += `<span style="display:inline-flex;align-items:center;gap:5px;padding:0 18px;height:40px;border-right:1px solid rgba(212,175,55,0.18);font-size:0.78rem;font-family:inherit;">`
+                      + `<span style="font-weight:700;color:#d4af37;">${c.symbol}</span>`
+                      + `<span style="color:#f1f5f9;font-weight:500;">$${priceStr}</span>`
+                      + `<span style="color:${changeColor};font-size:0.72rem;">${changeSymbol}${changeFixed}%</span>`
+                      + `</span>`;
             });
             // Duplicate for seamless infinite loop
             tickerTrack.innerHTML = html + html;
