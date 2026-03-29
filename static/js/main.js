@@ -61,21 +61,30 @@
         if (!tickerTrack) return;
 
         try {
-            const response = await fetch('/api/crypto-ticker/');
-            const data = await response.json();
+            const response = await fetch('/investments/api/ticker/');
+            const result = await response.json();
+            
+            if (!result.success || !result.tickers) {
+                console.warn('Crypto ticker API returned no data');
+                return;
+            }
             
             let tickerHTML = '';
-            data.forEach(crypto => {
-                const changeFixed = parseFloat(crypto.change || 0).toFixed(2);
-                const changeClass = crypto.change >= 0 ? 'positive' : 'negative';
-                const changeSymbol = crypto.change >= 0 ? '+' : '';
-                tickerHTML += 
+            result.tickers.forEach(crypto => {
+                const changeFixed = parseFloat(crypto.change_24h || 0).toFixed(2);
+                const changeClass = crypto.change_24h >= 0 ? 'positive' : 'negative';
+                const changeSymbol = crypto.change_24h >= 0 ? '+' : '';
+                const priceFormatted = parseFloat(crypto.price).toLocaleString(undefined, { 
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: crypto.price < 0.01 ? 8 : 2 
+                });
+                tickerHTML += `
                     <div class="ticker-item">
-                        <span class="crypto-symbol"></span>
-                        <span class="crypto-price">___BEGIN___COMMAND_DONE_MARKER___$LASTEXITCODE{parseFloat(crypto.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: crypto.price < 0.01 ? 8 : 2 })}</span>
-                        <span class="crypto-change ">%</span>
+                        <span class="crypto-symbol">${crypto.symbol}</span>
+                        <span class="crypto-price">$${priceFormatted}</span>
+                        <span class="crypto-change ${changeClass}">${changeSymbol}${changeFixed}%</span>
                     </div>
-                ;
+                `;
             });
 
             tickerTrack.innerHTML = tickerHTML + tickerHTML;
@@ -87,13 +96,20 @@
     // Toast Notifications
     function showToast(message, type = 'info') {
         const icons = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
+        const backgrounds = { 
+            success: 'linear-gradient(135deg, #10b981, #059669)', 
+            error: 'linear-gradient(135deg, #ef4444, #dc2626)', 
+            warning: 'linear-gradient(135deg, #f59e0b, #d97706)', 
+            info: 'linear-gradient(135deg, #3b82f6, #2563eb)' 
+        };
+        
         const toast = document.createElement('div');
-        toast.className = 	oast toast-;
-        toast.innerHTML = 
-            <span class="toast-icon"></span>
-            <span class="toast-message"></span>
-        ;
-        toast.style.cssText = 
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <span class="toast-icon">${icons[type] || icons.info}</span>
+            <span class="toast-message">${message}</span>
+        `;
+        toast.style.cssText = `
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -107,9 +123,9 @@
             z-index: 200;
             transform: translateX(120%);
             transition: transform 0.3s ease;
-            background: ;
+            background: ${backgrounds[type] || backgrounds.info};
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        ;
+        `;
 
         document.body.appendChild(toast);
         setTimeout(() => toast.style.transform = 'translateX(0)', 10);

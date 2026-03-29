@@ -21,8 +21,17 @@ db.sqlite3-journal
 staticfiles/
 media/
 
-# Environment
+# Environment & Secrets - NEVER COMMIT THESE
 .env
+.env.*
+*.env
+render-production.env
+render*.env
+*-production.env
+RENDER_COMPLETE_CONFIG.txt
+secrets/
+*.secret
+*.key
 
 # IDE
 .vscode/

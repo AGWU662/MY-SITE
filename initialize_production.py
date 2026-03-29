@@ -31,11 +31,11 @@ def main():
         print(f"❌ Error creating site settings: {e}")
         return False
     
-    # 2. Create admin user if doesn't exist
+    # 2. Create admin user if doesn't exist (uses environment variables)
     print("\n👤 Step 2: Creating Admin User...")
     User = get_user_model()
-    admin_email = 'admin@elitewealthcapita.uk'
-    admin_password = 'myfavour1$'
+    admin_email = os.environ.get('ADMIN_EMAIL', 'admin@elitewealthcapita.uk')
+    admin_password = os.environ.get('ADMIN_PASSWORD', '')
     
     try:
         if User.objects.filter(email=admin_email).exists():
@@ -47,13 +47,14 @@ def main():
             admin.is_active = True
             admin.save()
             print("✅ Admin permissions verified")
-        else:
+        elif admin_password:
             admin = User.objects.create_superuser(
                 email=admin_email,
                 password=admin_password
             )
             print(f"✅ Admin user created: {admin_email}")
-            print(f"   Password: {admin_password}")
+        else:
+            print("⚠️  ADMIN_PASSWORD not set - skipping admin creation")
     except Exception as e:
         print(f"❌ Error creating admin user: {e}")
         return False
@@ -79,7 +80,6 @@ def main():
     print("\n🔐 Admin Login:")
     print(f"   URL: https://elitewealthcapita.uk/admin/")
     print(f"   Email: {admin_email}")
-    print(f"   Password: {admin_password}")
     print("=" * 60)
     print()
     

@@ -133,7 +133,6 @@ def create_investment(request, plan_id):
 
 
 @login_required
-@login_required
 def my_investments(request):
     """User's investment portfolio"""
     # Auto-check and update investments (no Celery needed!)
@@ -372,14 +371,29 @@ def crypto_ticker_api(request):
     """
     JSON endpoint for live crypto price ticker.
     Fetches prices from CoinGecko API for cryptos configured in CryptoTicker model.
+    Returns fallback data if no tickers configured or API fails.
     """
     tickers = CryptoTicker.objects.filter(is_active=True).order_by('display_order')
 
-    if not tickers.exists():
-        return JsonResponse({'success': False, 'message': 'No tickers configured'}, status=404)
+    # Default fallback tickers if none configured in database
+    default_tickers = [
+        {'symbol': 'BTC', 'name': 'Bitcoin', 'coingecko_id': 'bitcoin'},
+        {'symbol': 'ETH', 'name': 'Ethereum', 'coingecko_id': 'ethereum'},
+        {'symbol': 'USDT', 'name': 'Tether', 'coingecko_id': 'tether'},
+        {'symbol': 'BNB', 'name': 'BNB', 'coingecko_id': 'binancecoin'},
+        {'symbol': 'SOL', 'name': 'Solana', 'coingecko_id': 'solana'},
+        {'symbol': 'XRP', 'name': 'XRP', 'coingecko_id': 'ripple'},
+        {'symbol': 'ADA', 'name': 'Cardano', 'coingecko_id': 'cardano'},
+        {'symbol': 'DOGE', 'name': 'Dogecoin', 'coingecko_id': 'dogecoin'},
+    ]
 
-    # Build list of CoinGecko IDs
-    coingecko_ids = ','.join([t.coingecko_id for t in tickers])
+    if not tickers.exists():
+        # Use default tickers if none configured
+        ticker_list = default_tickers
+        coingecko_ids = ','.join([t['coingecko_id'] for t in ticker_list])
+    else:
+        ticker_list = [{'symbol': t.symbol, 'name': t.name, 'coingecko_id': t.coingecko_id} for t in tickers]
+        coingecko_ids = ','.join([t.coingecko_id for t in tickers])
 
     # Fetch prices from CoinGecko public API
     try:
@@ -392,27 +406,36 @@ def crypto_ticker_api(request):
 
         # Format response
         results = []
-        for ticker in tickers:
-            coin_data = data.get(ticker.coingecko_id, {})
-            if coin_data:
-                results.append({
-                    'symbol': ticker.symbol,
-                    'name': ticker.name,
-                    'price': coin_data.get('usd', 0),
-                    'change_24h': coin_data.get('usd_24h_change', 0)
-                })
+        for ticker in ticker_list:
+            cg_id = ticker['coingecko_id'] if isinstance(ticker, dict) else ticker.coingecko_id
+            symbol = ticker['symbol'] if isinstance(ticker, dict) else ticker.symbol
+            name = ticker['name'] if isinstance(ticker, dict) else ticker.name
+            
+            coin_data = data.get(cg_id, {})
+            results.append({
+                'symbol': symbol,
+                'name': name,
+                'price': coin_data.get('usd', 0),
+                'change_24h': coin_data.get('usd_24h_change', 0)
+            })
 
         return JsonResponse({'success': True, 'tickers': results})
 
     except Exception as e:
         logger.warning(f'CoinGecko API error: {e}')
         # Return fallback static prices on error
+        fallback_prices = {
+            'BTC': 67500, 'ETH': 3450, 'USDT': 1.00, 'BNB': 580,
+            'SOL': 145, 'XRP': 0.52, 'ADA': 0.45, 'DOGE': 0.12
+        }
         fallback = []
-        for ticker in tickers:
+        for ticker in ticker_list:
+            symbol = ticker['symbol'] if isinstance(ticker, dict) else ticker.symbol
+            name = ticker['name'] if isinstance(ticker, dict) else ticker.name
             fallback.append({
-                'symbol': ticker.symbol,
-                'name': ticker.name,
-                'price': 0,
+                'symbol': symbol,
+                'name': name,
+                'price': fallback_prices.get(symbol, 0),
                 'change_24h': 0
             })
         return JsonResponse({'success': True, 'tickers': fallback, 'source': 'fallback'})
