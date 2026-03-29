@@ -42,6 +42,7 @@ EXPOSE 10000
 # Start command
 CMD python manage.py migrate --noinput && \
     python manage.py collectstatic --noinput --clear && \
+    python initialize_production.py && \
     gunicorn elite_wealth_capital.wsgi:application \
     --bind 0.0.0.0:10000 \
     --workers 2 \
