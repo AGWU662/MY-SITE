@@ -97,7 +97,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     referred_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='referrals')
     
     # Account Status
-    account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPE_CHOICES, default='beginner')
+    account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPE_CHOICES, default='starter')
     kyc_status = models.CharField(max_length=20, choices=KYC_STATUS_CHOICES, default='pending')
     
     # Security

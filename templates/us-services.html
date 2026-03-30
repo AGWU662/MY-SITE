@@ -246,7 +246,7 @@
     <!-- Dashboard Navigation -->
     <nav class="dashboard-nav">
         <div class="container-fluid">
-            <a href="{% url 'dashboard' %}" class="nav-brand"
+            <a href="{% url 'dashboard:dashboard' %}" class="nav-brand"
                 style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                 <img src="{% static 'images/logo.webp' %}" alt="Elite Wealth Capital"
                     style="height: 40px; width: auto; object-fit: contain;">
@@ -256,7 +256,7 @@
                 </div>
             </a>
             <div class="nav-user">
-                <a href="{% url 'dashboard' %}" class="btn-secondary"
+                <a href="{% url 'dashboard:dashboard' %}" class="btn-secondary"
                     style="padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none;">← Back to Dashboard</a>
                 <div class="user-info">
                     <span class="user-name" id="userName">{{ request.user.first_name|default:request.user.username }}</span>
@@ -270,23 +270,23 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <nav class="sidebar-nav">
-                <a href="{% url 'dashboard' %}" class="sidebar-link">
+                <a href="{% url 'dashboard:dashboard' %}" class="sidebar-link">
                     <span class="icon">📊</span>
                     <span>Dashboard</span>
                 </a>
-                <a href="{% url 'invest' %}" class="sidebar-link">
+                <a href="{% url 'investments:plans' %}" class="sidebar-link">
                     <span class="icon">💰</span>
                     <span>Invest</span>
                 </a>
-                <a href="{% url 'add_funds' %}" class="sidebar-link">
+                <a href="{% url 'investments:deposit' %}" class="sidebar-link">
                     <span class="icon">💳</span>
                     <span>Add Funds</span>
                 </a>
-                <a href="{% url 'withdraw' %}" class="sidebar-link">
+                <a href="{% url 'investments:withdraw' %}" class="sidebar-link">
                     <span class="icon">💸</span>
                     <span>Withdraw</span>
                 </a>
-                <a href="{% url 'transactions' %}" class="sidebar-link">
+                <a href="{% url 'dashboard:transactions' %}" class="sidebar-link">
                     <span class="icon">📝</span>
                     <span>Transactions</span>
                 </a>
@@ -696,11 +696,11 @@
     <!-- Bottom Nav (Mobile Only) -->
     <nav class="bottom-nav">
         <div class="bottom-nav-container">
-            <a href="{% url 'dashboard' %}" class="bottom-nav-item">
+            <a href="{% url 'dashboard:dashboard' %}" class="bottom-nav-item">
                 <span class="bottom-nav-icon">🏠</span>
                 <span>Home</span>
             </a>
-            <a href="{% url 'us_services' %}" class="bottom-nav-item active">
+            <a href="{% url 'dashboard:us_services' %}" class="bottom-nav-item active">
                 <span class="bottom-nav-icon">🇺🇸</span>
                 <span>US Services</span>
             </a>

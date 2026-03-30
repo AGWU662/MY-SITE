@@ -155,9 +155,9 @@ def deposit_view(request):
     """Deposit funds"""
     if request.method == 'POST':
         amount = Decimal(request.POST.get('amount', 0))
-        crypto_type = request.POST.get('crypto_type')
-        tx_hash = request.POST.get('tx_hash', '')
-        proof_image = request.FILES.get('proof_image')
+        crypto_type = request.POST.get('crypto_type', request.POST.get('payment_method', ''))
+        tx_hash = request.POST.get('transaction_hash', request.POST.get('tx_hash', ''))
+        proof_image = request.FILES.get('proof_image', request.FILES.get('proof', None))
         payment_method = request.POST.get('payment_method', 'crypto')
         
         if amount < 10:
@@ -168,14 +168,14 @@ def deposit_view(request):
         deposit = Deposit.objects.create(
             user=request.user,
             amount=amount,
-            crypto_type=crypto_type if payment_method == 'crypto' else 'BANK',
+            crypto_type=crypto_type if payment_method != 'BANK' else 'BANK',
             tx_hash=tx_hash,
             proof_image=proof_image,
             status='pending'
         )
         
         messages.success(request, f'Deposit request of ${amount} submitted successfully! Awaiting admin confirmation.')
-        return redirect('investments:deposit')
+        return redirect('investments:deposit_status', deposit_id=deposit.id)
     
     # Get wallet addresses from database
     wallet_addresses = WalletAddress.objects.filter(is_active=True)
@@ -189,6 +189,40 @@ def deposit_view(request):
         'wallets': wallets_dict,
         'pending_deposits': pending_deposits,
         'recent_deposits': recent_deposits
+    })
+
+
+@login_required
+def deposit_status(request, deposit_id):
+    """Display deposit status page with real-time updates"""
+    deposit = get_object_or_404(Deposit, id=deposit_id, user=request.user)
+    return render(request, 'investments/deposit_status.html', {'deposit': deposit})
+
+
+@login_required
+def pending_payment(request, deposit_id):
+    """Display pending payment status page"""
+    deposit = get_object_or_404(Deposit, id=deposit_id, user=request.user)
+    return render(request, 'investments/pending_payment.html', {'deposit': deposit})
+
+
+@login_required
+def payment_confirmed(request, deposit_id):
+    """Display payment confirmation success page"""
+    deposit = get_object_or_404(Deposit, id=deposit_id, user=request.user)
+    if deposit.status != 'CONFIRMED':
+        return redirect('investments:pending_payment', deposit_id=deposit_id)
+    return render(request, 'investments/payment_confirmed.html', {'deposit': deposit})
+
+
+@login_required
+def check_deposit_status_api(request, deposit_id):
+    """API endpoint for checking deposit status via AJAX polling"""
+    deposit = get_object_or_404(Deposit, id=deposit_id, user=request.user)
+    return JsonResponse({
+        'status': deposit.status,
+        'confirmed': deposit.status == 'confirmed',
+        'rejected': deposit.status == 'rejected',
     })
 
 

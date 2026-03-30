@@ -28,12 +28,13 @@
     }
 
     .certificate-card {
-        background: white;
+        background: #0A1F44;
         border-radius: 15px;
         overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         transition: all 0.3s ease;
         position: relative;
+        color: #E2E8F0;
     }
 
     .certificate-card:hover {
@@ -59,19 +60,19 @@
     .certificate-title {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #0A1F44;
+        color: #FFD700;
         margin-bottom: 8px;
     }
 
     .certificate-date {
         font-size: 0.85rem;
-        color: #666;
+        color: #B8C5D6;
         margin-bottom: 15px;
     }
 
     .certificate-description {
         font-size: 0.9rem;
-        color: #555;
+        color: #D0D8E0;
         margin-bottom: 15px;
         line-height: 1.4;
     }
@@ -153,11 +154,12 @@
     }
 
     .stat-item {
-        background: white;
+        background: #0A1F44;
         padding: 20px;
         border-radius: 10px;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        color: #E2E8F0;
     }
 
     .stat-number {
@@ -168,7 +170,7 @@
     }
 
     .stat-label {
-        color: #666;
+        color: #B8C5D6;
         font-size: 0.95rem;
     }
 
@@ -343,7 +345,7 @@
         <i class="fas fa-medal"></i>
         <h3>No Certificates Yet</h3>
         <p>Start investing and earning to unlock achievements and certificates!</p>
-        <a href="/investments/plans/" class="btn btn-primary">
+        <a href="{% url 'investments:plans' %}" class="btn btn-primary">
             <i class="fas fa-chart-line me-2"></i>Start Investing
         </a>
     </div>

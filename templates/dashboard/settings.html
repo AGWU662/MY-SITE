@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings - Elite Wealth Capital{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-page {
+        background: linear-gradient(135deg, #050B1A 0%, #0A1F44 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+    
+    .settings-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .settings-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 215, 0, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .settings-card h3 {
+        color: #FFD700;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .setting-item:last-child {
+        border-bottom: none;
+    }
+    
+    .setting-info h5 {
+        color: #fff;
+        margin-bottom: 5px;
+    }
+    
+    .setting-info p {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        transition: 0.3s;
+    }
+    
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 24px;
+        width: 24px;
+        left: 3px;
+        bottom: 3px;
+        background: #0A1F44; color: #E2E8F0;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+    
+    input:checked + .toggle-slider {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+    }
+    
+    input:checked + .toggle-slider:before {
+        transform: translateX(30px);
+    }
+    
+    .btn-gold {
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        color: #000;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .btn-gold:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+    }
+    
+    .btn-outline-danger {
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        background: transparent;
+        padding: 12px 30px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .btn-outline-danger:hover {
+        background: #dc3545;
+        color: #fff;
+    }
+    
+    .back-link {
+        color: #FFD700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 30px;
+    }
+    
+    .back-link:hover {
+        color: #FFA500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <div class="settings-container">
+        <a href="{% url 'dashboard:dashboard' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <h2 style="color: #FFD700; margin-bottom: 30px;">
+            <i class="fas fa-cog me-2"></i>Account Settings
+        </h2>
+        
+        <!-- Notification Settings -->
+        <div class="settings-card">
+            <h3><i class="fas fa-bell me-2"></i>Notifications</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_notifications">
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Email Notifications</h5>
+                        <p>Receive updates about your investments and transactions via email</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="email_notifications" {% if user.email_notifications %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>SMS Notifications</h5>
+                        <p>Get instant SMS alerts for important account activities</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="sms_notifications" {% if user.sms_notifications %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn-gold">Save Notification Settings</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Security Settings -->
+        <div class="settings-card">
+            <h3><i class="fas fa-shield-alt me-2"></i>Security</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_security">
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Two-Factor Authentication</h5>
+                        <p>Add an extra layer of security to your account</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="enable_2fa" {% if user.two_factor_enabled %}checked{% endif %}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Change Password</h5>
+                        <p>Update your account password</p>
+                    </div>
+                    <a href="{% url 'accounts:password_reset' %}" class="btn-gold" style="text-decoration: none;">
+                        Change Password
+                    </a>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn-gold">Save Security Settings</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Profile Settings -->
+        <div class="settings-card">
+            <h3><i class="fas fa-user me-2"></i>Profile</h3>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h5>Edit Profile</h5>
+                    <p>Update your personal information</p>
+                </div>
+                <a href="{% url 'accounts:edit_profile' %}" class="btn-gold" style="text-decoration: none;">
+                    Edit Profile
+                </a>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h5>KYC Verification</h5>
+                    <p>Verify your identity to unlock all features</p>
+                </div>
+                <a href="{% url 'kyc:status' %}" class="btn-gold" style="text-decoration: none;">
+                    {% if user.kyc_status == 'verified' %}View Status{% else %}Verify Now{% endif %}
+                </a>
+            </div>
+        </div>
+        
+        <!-- Danger Zone -->
+        <div class="settings-card" style="border-color: rgba(220, 53, 69, 0.3);">
+            <h3 style="color: #dc3545;"><i class="fas fa-exclamation-triangle me-2"></i>Danger Zone</h3>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <h5>Delete Account</h5>
+                    <p>Permanently delete your account and all data. This action cannot be undone.</p>
+                </div>
+                <button class="btn-outline-danger" onclick="alert('Please contact support to delete your account.')">
+                    Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

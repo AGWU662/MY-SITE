@@ -9,6 +9,9 @@ urlpatterns = [
     path('invest/<int:plan_id>/', views.create_investment, name='invest'),
     path('my-investments/', views.my_investments, name='my_investments'),
     path('deposit/', views.deposit_view, name='deposit'),
+    path('deposit-status/<int:deposit_id>/', views.deposit_status, name='deposit_status'),
+    path('pending-payment/<int:deposit_id>/', views.pending_payment, name='pending_payment'),
+    path('payment-confirmed/<int:deposit_id>/', views.payment_confirmed, name='payment_confirmed'),
     path('withdraw/', views.withdraw_view, name='withdraw'),
     path('loans/', views.loan_application, name='loans'),
     path('loans/<int:loan_id>/repay/', views.loan_repay, name='loan_repay'),
@@ -17,4 +20,5 @@ urlpatterns = [
     
     # API endpoints
     path('api/ticker/', views.crypto_ticker_api, name='crypto_ticker_api'),
+    path('api/deposit-status/<int:deposit_id>/', views.check_deposit_status_api, name='check_deposit_status'),
 ]

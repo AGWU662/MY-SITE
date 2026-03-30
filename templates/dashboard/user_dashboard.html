@@ -39,7 +39,7 @@
         }
 
         .stat-card {
-            background: white;
+            background: #0A1F44; color: #E2E8F0;
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -93,7 +93,7 @@
         }
 
         .portfolio-card {
-            background: white;
+            background: #0A1F44; color: #E2E8F0;
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -204,7 +204,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: white;
+            background: #0A1F44; color: #E2E8F0;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             cursor: pointer;
@@ -291,7 +291,7 @@
         }
 
         .investment-plan-card {
-            background: white;
+            background: #0A1F44; color: #E2E8F0;
             border-radius: 10px;
             padding: 20px;
             text-align: center;
@@ -371,7 +371,7 @@
         }
 
         .status-pending {
-            background: #fff3cd;
+            background: rgba(255,215,0,0.15); color: #FFD700;
             color: #856404;
         }
 
@@ -606,27 +606,27 @@
                 <div class="portfolio-card">
                     <h5 class="mb-3"><i class="fas fa-bolt me-2" style="color: var(--gold);"></i>Quick Actions</h5>
                     <div class="quick-actions">
-                        <a href="/investments/deposit/" class="action-btn">
+                        <a href="{% url 'investments:deposit' %}" class="action-btn">
                             <i class="fas fa-money-bill-wave"></i>
                             <span>Add Funds</span>
                         </a>
-                        <a href="/investments/withdraw/" class="action-btn">
+                        <a href="{% url 'investments:withdraw' %}" class="action-btn">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Withdraw</span>
                         </a>
-                        <a href="/investments/plans/" class="action-btn">
+                        <a href="{% url 'investments:plans' %}" class="action-btn">
                             <i class="fas fa-plus-circle"></i>
                             <span>Invest</span>
                         </a>
-                        <a href="/investments/cards/" class="action-btn">
+                        <a href="{% url 'investments:cards' %}" class="action-btn">
                             <i class="fas fa-credit-card"></i>
                             <span>Cards</span>
                         </a>
-                        <a href="/investments/loans/" class="action-btn">
+                        <a href="{% url 'investments:loans' %}" class="action-btn">
                             <i class="fas fa-hand-holding-usd"></i>
                             <span>Loans</span>
                         </a>
-                        <a href="/investments/agent/" class="action-btn">
+                        <a href="{% url 'investments:agent' %}" class="action-btn">
                             <i class="fas fa-user-tie"></i>
                             <span>Agent</span>
                         </a>

@@ -464,5 +464,39 @@ def us_services(request):
 
 def reviews_page(request):
     """Reviews page with popup functionality"""
-    return render(request, 'reviews.html')
+    return render(request, 'dashboard/reviews.html')
+
+
+@login_required
+def settings_page(request):
+    """User settings page"""
+    user = request.user
+    
+    if request.method == 'POST':
+        # Handle settings update
+        action = request.POST.get('action')
+        
+        if action == 'update_notifications':
+            # Update notification preferences
+            user.email_notifications = request.POST.get('email_notifications') == 'on'
+            user.sms_notifications = request.POST.get('sms_notifications') == 'on'
+            user.save()
+            messages.success(request, 'Notification preferences updated.')
+        
+        elif action == 'update_security':
+            # Handle 2FA toggle
+            enable_2fa = request.POST.get('enable_2fa') == 'on'
+            if enable_2fa and not user.two_factor_enabled:
+                return redirect('accounts:enable_2fa')
+            elif not enable_2fa:
+                user.two_factor_enabled = False
+                user.save()
+                messages.success(request, '2FA has been disabled.')
+        
+        return redirect('dashboard:settings')
+    
+    context = {
+        'user': user,
+    }
+    return render(request, 'dashboard/settings.html', context)
 

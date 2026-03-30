@@ -4,7 +4,63 @@
 
 {% block title %}Admin Panel - Elite Wealth Capital{% endblock %}
 
+{% block extra_css %}
+<style>
+    .admin-nav {
+        background: linear-gradient(135deg, #001f3f 0%, #003d5c 100%);
+        border-bottom: 3px solid #f39c12;
+    }
+    .admin-nav .nav-link {
+        color: white !important;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+        padding: 12px 20px;
+        font-weight: 500;
+    }
+    .admin-nav .nav-link.active {
+        border-bottom-color: #f39c12;
+        background: rgba(243, 156, 18, 0.2);
+    }
+    .admin-nav .nav-link:hover {
+        background: rgba(243, 156, 18, 0.1);
+    }
+    .proof-image-thumb {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #dee2e6;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .proof-image-thumb:hover {
+        transform: scale(1.1);
+        border-color: #f39c12;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<!-- Admin Navigation Bar -->
+<nav class="navbar navbar-expand-lg admin-nav sticky-top">
+    <div class="container-fluid">
+        <h6 class="navbar-brand mb-0 text-white">
+            <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+        </h6>
+        <div class="navbar-collapse">
+            <ul class="nav nav-tabs ms-auto mb-0">
+                <li class="nav-item"><a class="nav-link active" href="{% url 'dashboard:admin_panel' %}"><i class="fas fa-chart-pie me-1"></i>Overview</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:admin_users' %}"><i class="fas fa-users me-1"></i>Users</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:admin_wallets' %}"><i class="fas fa-wallet me-1"></i>Wallets</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:admin_content' %}"><i class="fas fa-file-alt me-1"></i>Content</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:admin_analytics' %}"><i class="fas fa-chart-line me-1"></i>Analytics</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:admin_certificates' %}"><i class="fas fa-certificate me-1"></i>Certificates</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:admin_settings' %}"><i class="fas fa-cog me-1"></i>Settings</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
 <div class="container py-5">
     <div class="row mb-4">
         <div class="col-12">
@@ -158,6 +214,7 @@
                                     <th>User</th>
                                     <th>Amount</th>
                                     <th>Crypto</th>
+                                    <th>Payment Proof</th>
                                     <th>TX Hash</th>
                                     <th>Actions</th>
                                 </tr>
@@ -172,6 +229,50 @@
                                     </td>
                                     <td><strong class="text-success">${{ deposit.amount|floatformat:2|intcomma }}</strong></td>
                                     <td><span class="badge bg-primary">{{ deposit.crypto_type|upper }}</span></td>
+                                    <td>
+                                        {% if deposit.proof_image %}
+                                        <a href="{{ deposit.proof_image.url }}" target="_blank" class="d-inline-block" data-bs-toggle="tooltip" title="Click to view full size">
+                                            <img src="{{ deposit.proof_image.url }}" alt="Proof" class="proof-image-thumb">
+                                        </a>
+                                        <!-- Modal trigger for full image -->
+                                        <button type="button" class="btn btn-sm btn-warning ms-2" data-bs-toggle="modal" data-bs-target="#proofModal{{ deposit.pk }}">
+                                            <i class="fas fa-expand"></i> Full View
+                                        </button>
+                                        <!-- Full image modal -->
+                                        <div class="modal fade" id="proofModal{{ deposit.pk }}" tabindex="-1">
+                                            <div class="modal-dialog modal-xl modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-warning bg-opacity-10">
+                                                        <h5 class="modal-title"><i class="fas fa-receipt me-2"></i>Payment Proof - ${{ deposit.amount|floatformat:2 }} ({{ deposit.crypto_type }})</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center p-4" style="background: #f8f9fa;">
+                                                        <img src="{{ deposit.proof_image.url }}" alt="Payment Proof" class="img-fluid" style="max-height: 70vh;">
+                                                        <div class="mt-3">
+                                                            <p class="mb-1"><strong>User:</strong> {{ deposit.user.email }}</p>
+                                                            <p class="mb-1"><strong>Amount:</strong> ${{ deposit.amount|floatformat:2 }}</p>
+                                                            <p class="mb-1"><strong>Date:</strong> {{ deposit.created_at|date:"M d, Y H:i" }}</p>
+                                                            {% if deposit.tx_hash %}<p class="mb-0"><strong>TX Hash:</strong> <code>{{ deposit.tx_hash }}</code></p>{% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <a href="{{ deposit.proof_image.url }}" target="_blank" class="btn btn-outline-primary">
+                                                            <i class="fas fa-external-link-alt me-1"></i>Open Full Size
+                                                        </a>
+                                                        <a href="{% url 'dashboard:confirm_deposit' deposit.pk %}" class="btn btn-success">
+                                                            <i class="fas fa-check me-1"></i>Confirm Deposit
+                                                        </a>
+                                                        <a href="{% url 'dashboard:reject_deposit' deposit.pk %}" class="btn btn-danger">
+                                                            <i class="fas fa-times me-1"></i>Reject
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <span class="badge bg-secondary">No proof</span>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         {% if deposit.tx_hash %}
                                         <code class="small">{{ deposit.tx_hash|truncatechars:20 }}</code>
@@ -279,6 +380,7 @@
                                     <th>Submitted</th>
                                     <th>User</th>
                                     <th>Document Type</th>
+                                    <th>Documents</th>
                                     <th>Country</th>
                                     <th>Status</th>
                                     <th>Actions</th>
@@ -293,7 +395,88 @@
                                         <small class="text-muted">{{ kyc.user.email }}</small>
                                     </td>
                                     <td>{{ kyc.get_document_type_display }}</td>
-                                    <td>{{ kyc.country }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            {% if kyc.front_image %}
+                                            <a href="{{ kyc.front_image.url }}" target="_blank" class="btn btn-outline-primary btn-sm" title="Front">
+                                                <i class="fas fa-id-card"></i> Front
+                                            </a>
+                                            {% endif %}
+                                            {% if kyc.back_image %}
+                                            <a href="{{ kyc.back_image.url }}" target="_blank" class="btn btn-outline-secondary btn-sm" title="Back">
+                                                <i class="fas fa-id-card"></i> Back
+                                            </a>
+                                            {% endif %}
+                                            {% if kyc.selfie_image %}
+                                            <a href="{{ kyc.selfie_image.url }}" target="_blank" class="btn btn-outline-info btn-sm" title="Selfie">
+                                                <i class="fas fa-camera"></i> Selfie
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                        <!-- View All Modal -->
+                                        <button type="button" class="btn btn-sm btn-outline-dark ms-1" data-bs-toggle="modal" data-bs-target="#kycModal{{ kyc.pk }}">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                        <div class="modal fade" id="kycModal{{ kyc.pk }}" tabindex="-1">
+                                            <div class="modal-dialog modal-xl modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">KYC Documents - {{ kyc.user.full_name }}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-6">
+                                                                <p class="mb-1"><strong>Document Type:</strong> {{ kyc.get_document_type_display }}</p>
+                                                                <p class="mb-1"><strong>Document Number:</strong> {{ kyc.document_number }}</p>
+                                                                <p class="mb-1"><strong>Nationality:</strong> {{ kyc.nationality }}</p>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <p class="mb-1"><strong>Date of Birth:</strong> {{ kyc.date_of_birth|date:"M d, Y" }}</p>
+                                                                <p class="mb-1"><strong>Issuing Country:</strong> {{ kyc.issuing_country }}</p>
+                                                                <p class="mb-1"><strong>Expiry:</strong> {{ kyc.expires_at|date:"M d, Y"|default:"N/A" }}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row g-3">
+                                                            {% if kyc.front_image %}
+                                                            <div class="col-md-4">
+                                                                <div class="card">
+                                                                    <div class="card-header">Front of Document</div>
+                                                                    <img src="{{ kyc.front_image.url }}" class="card-img-bottom" alt="Front" style="max-height: 300px; object-fit: contain;">
+                                                                </div>
+                                                            </div>
+                                                            {% endif %}
+                                                            {% if kyc.back_image %}
+                                                            <div class="col-md-4">
+                                                                <div class="card">
+                                                                    <div class="card-header">Back of Document</div>
+                                                                    <img src="{{ kyc.back_image.url }}" class="card-img-bottom" alt="Back" style="max-height: 300px; object-fit: contain;">
+                                                                </div>
+                                                            </div>
+                                                            {% endif %}
+                                                            {% if kyc.selfie_image %}
+                                                            <div class="col-md-4">
+                                                                <div class="card">
+                                                                    <div class="card-header">Selfie with Document</div>
+                                                                    <img src="{{ kyc.selfie_image.url }}" class="card-img-bottom" alt="Selfie" style="max-height: 300px; object-fit: contain;">
+                                                                </div>
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <a href="{% url 'dashboard:approve_kyc' kyc.pk %}" class="btn btn-success">
+                                                            <i class="fas fa-check me-1"></i>Approve KYC
+                                                        </a>
+                                                        <a href="{% url 'dashboard:reject_kyc' kyc.pk %}" class="btn btn-danger">
+                                                            <i class="fas fa-times me-1"></i>Reject KYC
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ kyc.issuing_country }}</td>
                                     <td><span class="badge bg-warning">{{ kyc.get_status_display }}</span></td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">

@@ -6,8 +6,11 @@ app_name = 'dashboard'
 urlpatterns = [
     # User dashboard
     path('', views.dashboard, name='dashboard'),
+    path('index/', views.dashboard, name='index'),
     path('overview/', views.user_dashboard, name='user_dashboard'),
     path('contact/', views.contact, name='contact'),
+    path('dispute/', views.dispute, name='dispute'),
+    path('settings/', views.settings_page, name='settings'),
     path('export-transactions/', views.export_transactions_csv, name='export_transactions'),
     path('transactions/', views.transaction_history, name='transactions'),
     path('activity-log/', views.activity_log, name='activity_log'),
@@ -56,6 +59,12 @@ urlpatterns = [
     
     # Admin panel - Settings
     path('admin-panel/settings/', admin_views.admin_settings, name='admin_settings'),
+    
+    # Admin panel - Wallet Management
+    path('admin-panel/wallets/', admin_views.admin_wallets, name='admin_wallets'),
+    path('admin-panel/wallets/add/', admin_views.admin_wallet_add, name='admin_wallet_add'),
+    path('admin-panel/wallets/<int:wallet_id>/edit/', admin_views.admin_wallet_edit, name='admin_wallet_edit'),
+    path('admin-panel/wallets/<int:wallet_id>/delete/', admin_views.admin_wallet_delete, name='admin_wallet_delete'),
     
     # Deposit management
     path('admin-panel/deposits/<int:pk>/confirm/', admin_views.confirm_deposit, name='confirm_deposit'),

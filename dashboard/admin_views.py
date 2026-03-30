@@ -15,7 +15,7 @@ from django.core.paginator import Paginator
 import json
 from datetime import timedelta, datetime
 
-from investments.models import Deposit, Withdrawal, Loan, Investment
+from investments.models import Deposit, Withdrawal, Loan, Investment, WalletAddress
 from kyc.models import KYCDocument
 from accounts.models import CustomUser
 from notifications.models import Notification
@@ -1001,3 +1001,137 @@ def reject_loan(request, pk):
         return redirect('dashboard:admin_panel')
     
     return render(request, 'dashboard/reject_loan.html', {'loan': loan})
+
+
+# ============================================================================
+# WALLET ADDRESS MANAGEMENT
+# ============================================================================
+
+@admin_only
+def admin_wallets(request):
+    """Manage company wallet addresses for deposits"""
+    wallets = WalletAddress.objects.all().order_by('crypto_type')
+    
+    context = {
+        'wallets': wallets,
+        'crypto_choices': WalletAddress.CRYPTO_CHOICES,
+        'active_tab': 'wallets',
+    }
+    
+    return render(request, 'dashboard/admin_wallets.html', context)
+
+
+@admin_only
+def admin_wallet_add(request):
+    """Add new wallet address"""
+    if request.method == 'POST':
+        crypto_type = request.POST.get('crypto_type')
+        address = request.POST.get('address')
+        label = request.POST.get('label', '')
+        
+        # Check if wallet for this crypto already exists
+        if WalletAddress.objects.filter(crypto_type=crypto_type).exists():
+            messages.error(request, f'A wallet address for {crypto_type} already exists. Please edit the existing one.')
+            return redirect('dashboard:admin_wallets')
+        
+        try:
+            wallet = WalletAddress.objects.create(
+                crypto_type=crypto_type,
+                address=address,
+                label=label,
+                is_active=request.POST.get('is_active') == 'on',
+            )
+            
+            # Handle QR code upload
+            if 'qr_code' in request.FILES:
+                wallet.qr_code = request.FILES['qr_code']
+                wallet.save()
+            
+            # Log activity
+            AdminActivityLog.objects.create(
+                admin_user=request.user,
+                action_type='wallet_add',
+                description=f'Added {crypto_type} wallet address',
+                target_id=str(wallet.id),
+                target_type='WalletAddress',
+                ip_address=request.META.get('REMOTE_ADDR', ''),
+                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+            )
+            
+            messages.success(request, f'{crypto_type} wallet address added successfully.')
+            return redirect('dashboard:admin_wallets')
+        
+        except Exception as e:
+            messages.error(request, f'Error adding wallet: {str(e)}')
+    
+    context = {
+        'crypto_choices': WalletAddress.CRYPTO_CHOICES,
+        'active_tab': 'wallets',
+    }
+    
+    return render(request, 'dashboard/admin_wallet_add.html', context)
+
+
+@admin_only
+def admin_wallet_edit(request, wallet_id):
+    """Edit existing wallet address"""
+    wallet = get_object_or_404(WalletAddress, id=wallet_id)
+    
+    if request.method == 'POST':
+        old_address = wallet.address
+        
+        wallet.address = request.POST.get('address')
+        wallet.label = request.POST.get('label', '')
+        wallet.is_active = request.POST.get('is_active') == 'on'
+        
+        if 'qr_code' in request.FILES:
+            wallet.qr_code = request.FILES['qr_code']
+        
+        wallet.save()
+        
+        # Log activity
+        AdminActivityLog.objects.create(
+            admin_user=request.user,
+            action_type='wallet_edit',
+            description=f'Updated {wallet.crypto_type} wallet address',
+            target_id=str(wallet.id),
+            target_type='WalletAddress',
+            ip_address=request.META.get('REMOTE_ADDR', ''),
+            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+            changes_before={'address': old_address},
+            changes_after={'address': wallet.address},
+        )
+        
+        messages.success(request, f'{wallet.crypto_type} wallet address updated successfully.')
+        return redirect('dashboard:admin_wallets')
+    
+    context = {
+        'wallet': wallet,
+        'active_tab': 'wallets',
+    }
+    
+    return render(request, 'dashboard/admin_wallet_edit.html', context)
+
+
+@admin_only
+def admin_wallet_delete(request, wallet_id):
+    """Delete wallet address"""
+    wallet = get_object_or_404(WalletAddress, id=wallet_id)
+    
+    if request.method == 'POST':
+        crypto_type = wallet.crypto_type
+        wallet.delete()
+        
+        # Log activity
+        AdminActivityLog.objects.create(
+            admin_user=request.user,
+            action_type='wallet_delete',
+            description=f'Deleted {crypto_type} wallet address',
+            ip_address=request.META.get('REMOTE_ADDR', ''),
+            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+        )
+        
+        messages.success(request, f'{crypto_type} wallet address deleted.')
+        return redirect('dashboard:admin_wallets')
+    
+    return render(request, 'dashboard/admin_wallet_delete.html', {'wallet': wallet})

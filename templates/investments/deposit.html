@@ -684,30 +684,22 @@
                     <div id="bankDetails" class="wallet-details">
                         <div class="bank-instructions">
                             <h4><i class="fas fa-university"></i> Bank Transfer Instructions</h4>
-                            <div class="bank-info">
-                                <div class="bank-info-item">
-                                    <span class="bank-info-label">Bank Name:</span>
-                                    <span class="bank-info-value">Elite Wealth Capital Bank</span>
-                                </div>
-                                <div class="bank-info-item">
-                                    <span class="bank-info-label">Account Name:</span>
-                                    <span class="bank-info-value">Elite Wealth Capital Ltd.</span>
-                                </div>
-                                <div class="bank-info-item">
-                                    <span class="bank-info-label">Account Number:</span>
-                                    <span class="bank-info-value">1234567890</span>
-                                </div>
-                                <div class="bank-info-item">
-                                    <span class="bank-info-label">Routing Number:</span>
-                                    <span class="bank-info-value">987654321</span>
-                                </div>
-                                <div class="bank-info-item">
-                                    <span class="bank-info-label">SWIFT Code:</span>
-                                    <span class="bank-info-value">EWCBUS33</span>
-                                </div>
+                            <div style="text-align: center; padding: 40px 20px;">
+                                <i class="fas fa-headset" style="font-size: 3rem; color: var(--gold); margin-bottom: 20px;"></i>
+                                <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 20px; font-size: 1.1rem;">
+                                    Click below to chat with our support team for personalized bank transfer details
+                                </p>
+                                <button 
+                                    type="button" 
+                                    class="submit-btn" 
+                                    onclick="Tawk_API.toggle()"
+                                    style="display: inline-block; padding: 12px 30px;"
+                                >
+                                    <i class="fas fa-comments"></i> Chat with Support
+                                </button>
                             </div>
-                            <p style="margin-top: 15px; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
-                                <i class="fas fa-info-circle"></i> Please include your account email in the transfer reference.
+                            <p style="margin-top: 15px; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; text-align: center;">
+                                <i class="fas fa-info-circle"></i> Our team is available 24/7 to provide you with accurate bank details and assistance.
                             </p>
                         </div>
                     </div>
@@ -717,6 +709,7 @@
                         {% csrf_token %}
                         
                         <input type="hidden" name="payment_method" id="paymentMethod" required>
+                        <input type="hidden" name="crypto_type" id="cryptoType" value="">
 
                         <div class="form-group">
                             <label for="amount">
@@ -768,9 +761,14 @@
                             <div class="file-name" id="fileName"></div>
                         </div>
 
-                        <button type="submit" class="submit-btn" id="submitBtn" disabled>
-                            <i class="fas fa-paper-plane"></i> Submit Deposit Request
-                        </button>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                            <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                                <i class="fas fa-paper-plane"></i> Submit Deposit Request
+                            </button>
+                            <button type="button" class="submit-btn" id="paidBtn" onclick="handlePaidPayment()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); display: none;">
+                                <i class="fas fa-check-circle"></i> I've Paid
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -849,7 +847,7 @@
                             </div>
                             {% endfor %}
                             <div style="text-align: center;">
-                                <a href="{% url 'transaction_history' %}" class="view-all-link">
+                                <a href="{% url 'dashboard:transactions' %}" class="view-all-link">
                                     <i class="fas fa-list"></i> View All Transactions
                                 </a>
                             </div>
@@ -889,6 +887,7 @@
             
             // Update hidden input
             document.getElementById('paymentMethod').value = selectedMethod;
+            document.getElementById('cryptoType').value = selectedMethod;
             
             // Show/hide wallet details
             document.getElementById('walletDetails').classList.remove('active');
@@ -975,12 +974,54 @@
         }
     }
 
+    // Handle "I've Paid" button click
+    function handlePaidPayment() {
+        const amount = document.getElementById('amount').value;
+        const method = document.getElementById('paymentMethod').value;
+        
+        if (!amount || amount < 10) {
+            alert('Please enter a valid amount (minimum $10)');
+            return;
+        }
+        
+        if (!method) {
+            alert('Please select a payment method');
+            return;
+        }
+        
+        // Show confirmation
+        if (confirm(`Confirm: You've sent $${parseFloat(amount).toFixed(2)} via ${method}?\n\nYour deposit will be reviewed and the funds will be credited to your account.`)) {
+            // Submit the form
+            document.getElementById('depositForm').submit();
+        }
+    }
+
+    // Show "I've Paid" button for bank transfers
+    function updatePaidButtonVisibility() {
+        const paidBtn = document.getElementById('paidBtn');
+        const method = document.getElementById('paymentMethod').value;
+        
+        if (method === 'BANK') {
+            paidBtn.style.display = 'block';
+        } else {
+            paidBtn.style.display = 'none';
+        }
+    }
+
+    // Update form when payment method changes
+    document.querySelectorAll('.payment-method').forEach(method => {
+        method.addEventListener('click', function() {
+            setTimeout(updatePaidButtonVisibility, 100);
+        });
+    });
+
     // Auto-select first payment method if only one is available
     window.addEventListener('DOMContentLoaded', function() {
         const methods = document.querySelectorAll('.payment-method');
         if (methods.length === 1) {
             methods[0].click();
         }
+        updatePaidButtonVisibility();
     });
 </script>
 {% endblock %}
