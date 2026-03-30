@@ -139,14 +139,21 @@ def my_investments(request):
     from investments.utils import check_and_update_investments
     check_and_update_investments(request.user)
     
-    investments = Investment.objects.filter(user=request.user).order_by('-start_date')
-    active_count = investments.filter(status='active').count()
-    completed_count = investments.filter(status='completed').count()
+    investments = Investment.objects.filter(user=request.user).select_related('plan').order_by('-start_date')
+    active_investments = investments.filter(status='active')
+    completed_investments = investments.filter(status='completed')
+    
+    active_count = active_investments.count()
+    completed_count = completed_investments.count()
+    total_invested = sum(inv.amount for inv in active_investments)
+    total_profit = sum(inv.actual_profit for inv in investments)
     
     return render(request, 'investments/my_investments.html', {
         'investments': investments,
         'active_count': active_count,
-        'completed_count': completed_count
+        'completed_count': completed_count,
+        'total_invested': total_invested,
+        'total_profit': total_profit,
     })
 
 
