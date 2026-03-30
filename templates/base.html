@@ -106,6 +106,9 @@
                     
                     {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:dashboard' %}" data-translate="dashboard">Dashboard</a></li>
+                        {% if user.is_staff %}
+                        <li class="nav-item"><a class="nav-link text-warning" href="/admin/"><i class="fas fa-shield-alt me-1"></i>Admin</a></li>
+                        {% endif %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                                 <i class="fas fa-user-circle"></i> {{ user.full_name|default:user.email }}
@@ -113,6 +116,10 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="fas fa-user me-2"></i>Profile</a></li>
                                 <li><a class="dropdown-item" href="{% url 'kyc:status' %}"><i class="fas fa-id-card me-2"></i>KYC</a></li>
+                                {% if user.is_staff %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-warning" href="/admin/"><i class="fas fa-shield-alt me-2"></i>Admin Panel</a></li>
+                                {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'accounts:logout' %}" data-translate="logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                             </ul>
