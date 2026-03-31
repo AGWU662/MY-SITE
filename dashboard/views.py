@@ -29,7 +29,8 @@ def dashboard(request):
     recent_deposits = Deposit.objects.filter(user=user).order_by('-created_at')[:5]
     recent_withdrawals = Withdrawal.objects.filter(user=user).order_by('-created_at')[:5]
     
-    # Get notifications
+    # Get notifications count and list
+    unread_notifications = Notification.objects.filter(user=user, is_read=False).count()
     notifications = Notification.objects.filter(user=user, is_read=False)[:5]
     
     # Calculate stats
@@ -43,6 +44,7 @@ def dashboard(request):
         'recent_deposits': recent_deposits,
         'recent_withdrawals': recent_withdrawals,
         'notifications': notifications,
+        'unread_notifications': unread_notifications,
         'total_invested': total_invested,
         'total_profit': total_profit,
         'total_withdrawn': total_withdrawn,

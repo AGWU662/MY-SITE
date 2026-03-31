@@ -1,59 +1,57 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/base_dashboard.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Investment Plans{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Dark page background */
-    .plans-page {
-        background: url('{% static "images/offices/office-investors.jpg" %}') center/cover no-repeat fixed;
-        min-height: 100vh;
-        position: relative;
-    }
-    
-    .plans-page::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(5, 11, 26, 0.94) 0%, rgba(10, 31, 68, 0.92) 100%);
-        z-index: 0;
-    }
-    
-    .plans-page > * {
-        position: relative;
-        z-index: 1;
-    }
-    
-    .plans-hero {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
-        border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-        padding: 60px 20px;
+    .plans-header {
         text-align: center;
-        color: white;
+        margin-bottom: 30px;
     }
     
-    .plans-hero h1 {
-        color: #FFD700;
-        text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    .plans-header h1 {
+        color: var(--gold);
+        margin-bottom: 10px;
     }
     
-    .plans-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 40px 20px 60px;
+    .plans-header p {
+        color: var(--text-secondary);
+    }
+    
+    .balance-info {
+        background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(255, 215, 0, 0.1));
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 25px;
+    }
+    
+    .balance-info .balance-text {
+        color: var(--text-secondary);
+    }
+    
+    .balance-info .balance-amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--success);
+    }
+    
+    .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
     }
     
     .plan-card {
-        background: rgba(10, 31, 68, 0.6);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 215, 0, 0.2);
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
         border-radius: 20px;
         padding: 30px;
-        margin-bottom: 30px;
         transition: all 0.3s;
         position: relative;
         overflow: hidden;
@@ -66,229 +64,286 @@
     }
     
     .plan-card.featured {
-        border: 2px solid #FFD700;
+        border: 2px solid var(--gold);
         box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
     }
     
     .featured-badge {
         position: absolute;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        color: #000;
-        padding: 8px 20px;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+        color: var(--bg-darkest);
+        padding: 6px 15px;
         border-radius: 20px;
         font-weight: 700;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
+    }
+    
+    .plan-header {
+        text-align: center;
+        margin-bottom: 20px;
     }
     
     .plan-icon {
-        font-size: 3rem;
-        margin-bottom: 20px;
-        color: #FFD700;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: var(--gold);
+        margin: 0 auto 15px;
     }
     
     .plan-name {
-        font-size: 1.8rem;
+        font-size: 1.3rem;
         font-weight: 700;
-        margin-bottom: 10px;
-        color: #fff;
-    }
-    
-    .plan-roi {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: #00D4AA;
-        margin: 20px 0;
-    }
-    
-    .plan-roi-label {
-        font-size: 0.9rem;
-        color: rgba(255,255,255,0.6);
-        display: block;
-        margin-top: 5px;
-    }
-    
-    .plan-details {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 20px;
-        border-radius: 15px;
-        margin: 20px 0;
-    }
-    
-    .detail-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    
-    .detail-row:last-child {
-        border-bottom: none;
-    }
-    
-    .detail-label {
-        color: rgba(255,255,255,0.6);
-        font-weight: 500;
-    }
-    
-    .detail-label i {
-        color: #FFD700;
-    }
-    
-    .detail-value {
-        color: #fff;
-        font-weight: 600;
-    }
-    
-    .invest-btn {
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        border: none;
-        padding: 15px 40px;
-        font-size: 1.1rem;
-        border-radius: 12px;
-        color: #000;
-        font-weight: 700;
-        width: 100%;
-        cursor: pointer;
-        transition: all 0.3s;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-    }
-    
-    .invest-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
-        color: #000;
-    }
-    
-    .plan-description {
-        color: rgba(255,255,255,0.7);
-        line-height: 1.6;
-        margin: 15px 0;
-        font-size: 0.95rem;
+        margin-bottom: 5px;
+        color: var(--text-primary);
     }
     
     .category-badge {
         display: inline-block;
         background: rgba(255, 215, 0, 0.15);
-        color: #FFD700;
-        padding: 5px 12px;
+        color: var(--gold);
+        padding: 4px 12px;
         border-radius: 20px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 600;
-        margin-bottom: 15px;
         border: 1px solid rgba(255, 215, 0, 0.3);
     }
     
-    .no-plans-msg {
+    .plan-roi {
         text-align: center;
-        padding: 60px 30px;
-        background: rgba(10, 31, 68, 0.6);
-        border: 1px solid rgba(255, 215, 0, 0.2);
-        border-radius: 20px;
-        color: rgba(255, 255, 255, 0.7);
+        padding: 20px 0;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        margin: 15px 0;
     }
     
-    .no-plans-msg i {
-        color: rgba(255, 215, 0, 0.3);
+    .plan-roi .roi-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--success);
+    }
+    
+    .plan-roi .roi-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: block;
+    }
+    
+    .plan-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    
+    .plan-details {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .detail-row:first-child {
+        padding-top: 0;
+    }
+    
+    .detail-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+    
+    .detail-label i {
+        color: var(--gold);
+        margin-right: 8px;
+    }
+    
+    .detail-value {
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+    
+    .detail-value.highlight {
+        color: var(--success);
+    }
+    
+    .invest-btn {
+        background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+        border: none;
+        padding: 14px 30px;
+        font-size: 1rem;
+        border-radius: 12px;
+        color: var(--bg-darkest);
+        font-weight: 700;
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .invest-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+        color: var(--bg-darkest);
+    }
+    
+    .no-plans-card {
+        text-align: center;
+        padding: 60px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+    }
+    
+    .no-plans-card i {
+        font-size: 4rem;
+        color: var(--gold);
+        opacity: 0.5;
+        margin-bottom: 20px;
+    }
+    
+    .no-plans-card h3 {
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+    
+    .no-plans-card p {
+        color: var(--text-muted);
     }
     
     @media (max-width: 768px) {
-        .plans-hero {
-            padding: 40px 20px;
+        .plans-grid {
+            grid-template-columns: 1fr;
         }
         
-        .plan-name {
-            font-size: 1.4rem;
+        .balance-info {
+            flex-direction: column;
+            text-align: center;
+            gap: 10px;
         }
         
-        .plan-roi {
+        .plan-roi .roi-value {
             font-size: 2rem;
-        }
-        
-        .plan-card {
-            padding: 20px;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="plans-page">
-    <div class="plans-hero">
-        <h1 class="display-4 mb-3"><i class="fas fa-chart-line me-3"></i>Investment Plans</h1>
-        <p class="lead">Choose the perfect plan for your financial goals</p>
+<!-- Top Bar -->
+<div class="topbar">
+    <div class="topbar-title">
+        <h1><i class="fas fa-rocket me-2" style="color: var(--gold);"></i>Investment Plans</h1>
+        <p>Choose a plan and start earning profits</p>
     </div>
-
-    <div class="plans-container">
-        {% if plans %}
-            <div class="row">
-                {% for plan in plans %}
-                <div class="col-lg-6 mb-4">
-                    <div class="plan-card {% if plan.is_featured %}featured{% endif %}">
-                        {% if plan.is_featured %}
-                        <div class="featured-badge">
-                            <i class="fas fa-star me-1"></i>POPULAR
-                        </div>
-                        {% endif %}
-                        
-                        <div class="text-center">
-                            {% if plan.category %}
-                            <span class="category-badge"><i class="fas fa-tag me-1"></i>{{ plan.category }}</span>
-                            {% endif %}
-                            <i class="fas {{ plan.icon|default:'fa-chart-line' }} plan-icon"></i>
-                            <h2 class="plan-name">{{ plan.name }}</h2>
-                            <p class="plan-description">{{ plan.description }}</p>
-                            
-                            <div class="plan-roi">
-                                {{ plan.daily_roi }}%
-                                <span class="plan-roi-label">Daily ROI</span>
-                            </div>
-                        </div>
-                        
-                        <div class="plan-details">
-                            <div class="detail-row">
-                                <span class="detail-label">
-                                    <i class="fas fa-dollar-sign me-2"></i>Minimum
-                                </span>
-                                <span class="detail-value">${{ plan.min_amount|floatformat:2 }}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">
-                                    <i class="fas fa-dollar-sign me-2"></i>Maximum
-                                </span>
-                                <span class="detail-value">${{ plan.max_amount|floatformat:2 }}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">
-                                    <i class="fas fa-calendar-alt me-2"></i>Duration
-                                </span>
-                                <span class="detail-value">{{ plan.duration_days }} Days</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">
-                                    <i class="fas fa-chart-line me-2"></i>Total Return
-                                </span>
-                                <span class="detail-value" style="color: #00D4AA;">{{ plan.total_roi }}%</span>
-                            </div>
-                        </div>
-                        
-                        <a href="{% url 'investments:invest' plan_id=plan.id %}" class="invest-btn">
-                            <i class="fas fa-rocket me-2"></i>Invest Now
-                        </a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="no-plans-msg">
-                <i class="fas fa-info-circle fa-3x mb-3"></i>
-                <p>No investment plans available at the moment.</p>
-            </div>
-        {% endif %}
-    </div>
+    <a href="{% url 'dashboard:dashboard' %}" class="btn-outline">
+        <i class="fas fa-arrow-left me-2"></i>Dashboard
+    </a>
 </div>
+
+<!-- Available Balance -->
+<div class="balance-info">
+    <div>
+        <span class="balance-text">Your Available Balance</span>
+        <div class="balance-amount">${{ user.balance|floatformat:2|intcomma }}</div>
+    </div>
+    <a href="{% url 'investments:deposit' %}" class="btn-gold">
+        <i class="fas fa-plus me-2"></i>Add Funds
+    </a>
+</div>
+
+<!-- Investment Plans Grid -->
+{% if plans %}
+<div class="plans-grid">
+    {% for plan in plans %}
+    <div class="plan-card {% if plan.is_featured %}featured{% endif %}">
+        {% if plan.is_featured %}
+        <div class="featured-badge">
+            <i class="fas fa-star me-1"></i>POPULAR
+        </div>
+        {% endif %}
+        
+        <div class="plan-header">
+            <div class="plan-icon">
+                <i class="fas {{ plan.icon|default:'fa-chart-line' }}"></i>
+            </div>
+            <h2 class="plan-name">{{ plan.name }}</h2>
+            {% if plan.category %}
+            <span class="category-badge">{{ plan.get_category_display }}</span>
+            {% endif %}
+        </div>
+        
+        <p class="plan-description">{{ plan.description|truncatewords:20 }}</p>
+        
+        <div class="plan-roi">
+            <span class="roi-value">{{ plan.daily_roi }}%</span>
+            <span class="roi-label">Daily Profit</span>
+        </div>
+        
+        <div class="plan-details">
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-coins"></i>Min Amount
+                </span>
+                <span class="detail-value">${{ plan.min_amount|floatformat:2|intcomma }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-gem"></i>Max Amount
+                </span>
+                <span class="detail-value">${{ plan.max_amount|floatformat:2|intcomma }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-clock"></i>Duration
+                </span>
+                <span class="detail-value">{{ plan.duration_days }} Days</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-percentage"></i>Total Return
+                </span>
+                <span class="detail-value highlight">{{ plan.total_roi|floatformat:0 }}%</span>
+            </div>
+        </div>
+        
+        <a href="{% url 'investments:invest' plan_id=plan.id %}" class="invest-btn">
+            <i class="fas fa-rocket"></i>Invest Now
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="no-plans-card">
+    <i class="fas fa-chart-line"></i>
+    <h3>No Investment Plans Available</h3>
+    <p>Check back soon for new investment opportunities.</p>
+    <a href="{% url 'dashboard:dashboard' %}" class="btn-gold mt-3">
+        <i class="fas fa-home me-2"></i>Back to Dashboard
+    </a>
+</div>
+{% endif %}
 {% endblock %}

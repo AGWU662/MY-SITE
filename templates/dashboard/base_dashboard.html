@@ -432,9 +432,6 @@
             </a>
             
             <div class="nav-section">Investments</div>
-            <a href="{% url 'investments:plans' %}" class="nav-item {% if request.resolver_match.url_name == 'plans' %}active{% endif %}">
-                <i class="fas fa-chart-pie"></i> Investment Plans
-            </a>
             <a href="{% url 'investments:my_investments' %}" class="nav-item {% if request.resolver_match.url_name == 'my_investments' %}active{% endif %}">
                 <i class="fas fa-briefcase"></i> My Investments
             </a>
@@ -451,10 +448,7 @@
             </a>
             
             <div class="nav-section">Account</div>
-            <a href="{% url 'kyc:status' %}" class="nav-item {% if 'kyc' in request.path %}active{% endif %}">
-                <i class="fas fa-id-card"></i> KYC Verification
-            </a>
-            <a href="{% url 'dashboard:settings' %}" class="nav-item {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+            <a href="{% url 'dashboard:settings' %}" class="nav-item {% if request.resolver_match.url_name == 'settings' or 'kyc' in request.path %}active{% endif %}">
                 <i class="fas fa-cog"></i> Settings
             </a>
             
