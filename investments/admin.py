@@ -89,18 +89,79 @@ class InvestmentAdmin(admin.ModelAdmin):
 
 @admin.register(Deposit)
 class DepositAdmin(admin.ModelAdmin):
-    list_display = ['user', 'amount_display', 'crypto_type', 'status', 'tx_hash', 'created_at']
+    list_display = ['user', 'amount_display', 'crypto_type', 'payment_method_display', 
+                    'status_badge', 'proof_preview', 'created_at', 'quick_actions']
     list_filter = ['status', 'crypto_type', 'created_at']
     search_fields = ['user__email', 'tx_hash']
-    readonly_fields = ['user', 'created_at', 'confirmed_by', 'tx_hash']
+    readonly_fields = ['user', 'created_at', 'confirmed_by', 'proof_image_large']
     list_select_related = ['user', 'confirmed_by']
     actions = ['mark_confirmed', 'mark_rejected']
     
+    fieldsets = (
+        ('💰 Deposit Details', {
+            'fields': ('user', 'amount', 'crypto_type', 'tx_hash')
+        }),
+        ('📸 Payment Proof', {
+            'fields': ('proof_image_large',),
+            'description': '<strong style="color: blue;">⚠️ REVIEW THE PAYMENT SCREENSHOT BEFORE CONFIRMING</strong>'
+        }),
+        ('✅ Status & Approval', {
+            'fields': ('status', 'admin_note', 'confirmed_by', 'created_at'),
+            'description': '<strong style="color: green;">Change status to "Confirmed" to credit user balance</strong>'
+        }),
+    )
+    
     def amount_display(self, obj):
-        return format_html('<strong>${:,.2f}</strong>', obj.amount)
+        return format_html('<strong style="color: green;">${:,.2f}</strong>', obj.amount)
     amount_display.short_description = 'Amount'
     
+    def payment_method_display(self, obj):
+        if obj.crypto_type == 'BANK':
+            return format_html('<span style="background: #3498db; color: white; padding: 2px 8px; border-radius: 3px;">🏦 Bank</span>')
+        return format_html('<span style="background: #f39c12; color: white; padding: 2px 8px; border-radius: 3px;">🪙 {}</span>', obj.crypto_type)
+    payment_method_display.short_description = 'Payment'
+    
+    def status_badge(self, obj):
+        colors = {'pending': 'orange', 'confirmed': 'green', 'rejected': 'red'}
+        icons = {'pending': '⏳', 'confirmed': '✅', 'rejected': '❌'}
+        color = colors.get(obj.status, 'gray')
+        icon = icons.get(obj.status, '')
+        return format_html(
+            '<span style="background-color: {}; color: white; padding: 3px 10px; border-radius: 15px;">{} {}</span>',
+            color, icon, obj.get_status_display()
+        )
+    status_badge.short_description = 'Status'
+    
+    def proof_preview(self, obj):
+        if obj.proof_image:
+            return format_html(
+                '<a href="{}" target="_blank"><img src="{}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px; border: 2px solid #ddd;" title="Click to view full size"/></a>',
+                obj.proof_image.url, obj.proof_image.url
+            )
+        return format_html('<span style="color: #999;">No proof</span>')
+    proof_preview.short_description = '📸 Proof'
+    
+    def proof_image_large(self, obj):
+        if obj.proof_image:
+            return format_html(
+                '<a href="{}" target="_blank"><img src="{}" style="max-width: 400px; max-height: 300px; border: 3px solid #ddd; border-radius: 8px;" /></a><br><small>Click to view full size</small>',
+                obj.proof_image.url, obj.proof_image.url
+            )
+        return 'No payment proof uploaded'
+    proof_image_large.short_description = 'Payment Screenshot'
+    
+    def quick_actions(self, obj):
+        if obj.status == 'pending':
+            return format_html(
+                '<span style="color: orange; font-weight: bold;">⏳ WAITING FOR REVIEW</span>'
+            )
+        elif obj.status == 'confirmed':
+            return format_html('<span style="color: green;">✅ Released</span>')
+        return format_html('<span style="color: red;">❌ Rejected</span>')
+    quick_actions.short_description = 'Action'
+    
     def mark_confirmed(self, request, queryset):
+        count = 0
         for deposit in queryset.filter(status='pending'):
             user = deposit.user
             user.balance += deposit.amount
@@ -108,15 +169,67 @@ class DepositAdmin(admin.ModelAdmin):
             
             deposit.status = 'confirmed'
             deposit.confirmed_by = request.user
+            deposit.confirmed_at = timezone.now()
             deposit.save()
+            
+            # Create notification for user
+            from notifications.models import Notification
+            Notification.objects.create(
+                user=user,
+                title='Deposit Confirmed',
+                message=f'Your deposit of ${deposit.amount:,.2f} has been confirmed and credited to your account.',
+                notification_type='deposit'
+            )
+            count += 1
         
-        self.message_user(request, f'{queryset.count()} deposits confirmed.')
-    mark_confirmed.short_description = 'Confirm selected deposits'
+        self.message_user(request, f'✅ {count} deposit(s) confirmed and users notified!')
+    mark_confirmed.short_description = '✅ Confirm & Credit Balance'
     
     def mark_rejected(self, request, queryset):
-        queryset.update(status='rejected')
-        self.message_user(request, f'{queryset.count()} deposits rejected.')
-    mark_rejected.short_description = 'Reject selected deposits'
+        count = 0
+        for deposit in queryset.filter(status='pending'):
+            deposit.status = 'rejected'
+            deposit.save()
+            
+            # Create notification for user
+            from notifications.models import Notification
+            Notification.objects.create(
+                user=deposit.user,
+                title='Deposit Rejected',
+                message=f'Your deposit of ${deposit.amount:,.2f} was rejected. Please contact support for assistance.',
+                notification_type='deposit'
+            )
+            count += 1
+        
+        self.message_user(request, f'❌ {count} deposit(s) rejected.')
+    mark_rejected.short_description = '❌ Reject Selected'
+    
+    def save_model(self, request, obj, form, change):
+        """Auto-credit user when admin confirms deposit"""
+        if change:
+            try:
+                old_deposit = Deposit.objects.get(pk=obj.pk)
+                # If status changed from pending to confirmed
+                if old_deposit.status == 'pending' and obj.status == 'confirmed':
+                    user = obj.user
+                    user.balance += obj.amount
+                    user.save()
+                    
+                    obj.confirmed_by = request.user
+                    obj.confirmed_at = timezone.now()
+                    
+                    # Create notification
+                    from notifications.models import Notification
+                    Notification.objects.create(
+                        user=user,
+                        title='Deposit Confirmed',
+                        message=f'Your deposit of ${obj.amount:,.2f} has been confirmed!',
+                        notification_type='deposit'
+                    )
+            except Deposit.DoesNotExist:
+                pass
+        
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(Withdrawal)

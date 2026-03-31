@@ -162,6 +162,7 @@ class Deposit(models.Model):
     """User deposits"""
     
     CRYPTO_CHOICES = [
+        ('BANK', 'Bank Transfer'),
         ('BTC', 'Bitcoin'),
         ('ETH', 'Ethereum'),
         ('USDT', 'Tether (USDT)'),
@@ -175,9 +176,15 @@ class Deposit(models.Model):
         ('rejected', 'Rejected'),
     ]
     
+    PAYMENT_METHOD_CHOICES = [
+        ('bank', 'Bank Transfer'),
+        ('crypto', 'Cryptocurrency'),
+    ]
+    
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='deposits')
     amount = models.DecimalField(max_digits=15, decimal_places=2, validators=[MinValueValidator(0.01)])
-    crypto_type = models.CharField(max_length=10, choices=CRYPTO_CHOICES)
+    crypto_type = models.CharField(max_length=10, choices=CRYPTO_CHOICES, blank=True, null=True)
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES, default='crypto')
     
     # Proof of payment
     tx_hash = models.CharField(max_length=255, blank=True, help_text='Transaction hash')
