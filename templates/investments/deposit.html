@@ -715,10 +715,38 @@ function goToStep(step) {
 }
 
 function openTawkChat() {
-    if (typeof Tawk_API !== 'undefined' && Tawk_API.toggle) {
+    // Check if Tawk is fully loaded
+    if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
+        Tawk_API.maximize();
+    } else if (typeof Tawk_API !== 'undefined' && Tawk_API.toggle) {
         Tawk_API.toggle();
     } else {
-        alert('Live chat is loading. Please try again in a moment.');
+        // Tawk not loaded yet - try to load it or show fallback
+        var checkTawk = setInterval(function() {
+            if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
+                clearInterval(checkTawk);
+                Tawk_API.maximize();
+            }
+        }, 500);
+        
+        // Timeout after 5 seconds
+        setTimeout(function() {
+            clearInterval(checkTawk);
+            if (typeof Tawk_API === 'undefined' || !Tawk_API.maximize) {
+                // Open Tawk.to directly in new window as fallback
+                window.open('https://tawk.to/chat/683b5c2ec873e91904870c54/1jkepnodo', '_blank', 'width=400,height=600');
+            }
+        }, 5000);
+        
+        // Show loading message
+        var btn = event.currentTarget;
+        var originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Opening chat...';
+        btn.disabled = true;
+        setTimeout(function() {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }, 3000);
     }
 }
 
