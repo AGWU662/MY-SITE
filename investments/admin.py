@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.http import HttpResponse
 from django.utils import timezone
+from django.db import transaction
+from django.db.models import F
 import csv
 from .models import (InvestmentPlan, Investment, Deposit, Withdrawal, WalletAddress,
                      Loan, LoanRepayment, VirtualCard, Coupon, CouponUsage, 
@@ -160,17 +162,23 @@ class DepositAdmin(admin.ModelAdmin):
         return format_html('<span style="color: red;">❌ Rejected</span>')
     quick_actions.short_description = 'Action'
     
+    @transaction.atomic
     def mark_confirmed(self, request, queryset):
         count = 0
-        for deposit in queryset.filter(status='pending'):
-            user = deposit.user
-            user.balance += deposit.amount
-            user.save()
+        from accounts.models import CustomUser
+        for deposit in queryset.filter(status='pending').select_for_update():
+            # Lock the user row to prevent race conditions
+            user = CustomUser.objects.select_for_update().get(pk=deposit.user.pk)
+            user.balance = F('balance') + deposit.amount
+            user.save(update_fields=['balance'])
             
             deposit.status = 'confirmed'
             deposit.confirmed_by = request.user
             deposit.confirmed_at = timezone.now()
             deposit.save()
+            
+            # Refresh user to get actual balance for notification
+            user.refresh_from_db()
             
             # Create notification for user
             from notifications.models import Notification
@@ -204,6 +212,7 @@ class DepositAdmin(admin.ModelAdmin):
         self.message_user(request, f'❌ {count} deposit(s) rejected.')
     mark_rejected.short_description = '❌ Reject Selected'
     
+    @transaction.atomic
     def save_model(self, request, obj, form, change):
         """Auto-credit user when admin confirms deposit"""
         if change:

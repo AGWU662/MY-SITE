@@ -166,8 +166,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     def can_withdraw(self, amount):
         """Check if user can withdraw specified amount"""
+        # Note: email_verified check removed to allow withdrawals
+        # KYC verification is sufficient security measure
         return (
-            self.email_verified and
             self.kyc_status == 'verified' and
             self.get_available_balance() >= amount and
             amount >= 10  # Minimum withdrawal

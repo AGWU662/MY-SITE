@@ -153,21 +153,38 @@ def create_investment(request, plan_id):
             messages.error(request, 'Insufficient balance. Please add funds first.')
             return redirect('investments:deposit')
         
-        # Create investment
-        investment = Investment.objects.create(
-            user=request.user,
-            plan=plan,
-            amount=amount
-        )
-        
-        # Deduct from user balance
-        user = request.user
-        user.balance -= amount
-        user.invested_amount += amount
-        user.save()
-        
-        messages.success(request, f'Investment of ${amount} created successfully!')
-        return redirect('dashboard:dashboard')
+        # Use atomic transaction for financial operations
+        from django.db import transaction
+        try:
+            with transaction.atomic():
+                # Lock the user row to prevent race conditions
+                from django.contrib.auth import get_user_model
+                User = get_user_model()
+                user = User.objects.select_for_update().get(pk=request.user.pk)
+                
+                # Double-check balance after lock
+                if amount > user.balance:
+                    messages.error(request, 'Insufficient balance.')
+                    return redirect('investments:deposit')
+                
+                # Create investment
+                investment = Investment.objects.create(
+                    user=user,
+                    plan=plan,
+                    amount=amount
+                )
+                
+                # Deduct from user balance
+                user.balance -= amount
+                user.invested_amount += amount
+                user.save()
+                
+            messages.success(request, f'Investment of ${amount} created successfully!')
+            return redirect('dashboard:dashboard')
+        except Exception as e:
+            logger.error(f'Investment creation error: {str(e)}')
+            messages.error(request, 'An error occurred. Please try again.')
+            return redirect('investments:invest', plan_id=plan_id)
     
     return render(request, 'investments/invest.html', {'plan': plan})
 
@@ -203,7 +220,7 @@ def deposit_view(request):
     if request.method == 'POST':
         try:
             amount_str = request.POST.get('amount', '0')
-            amount = Decimal(amount_str)
+            amount = Decimal(amount_str).quantize(Decimal('0.01'))
             if amount <= 0:
                 messages.error(request, 'Amount must be greater than zero')
                 return redirect('investments:deposit')
@@ -211,20 +228,25 @@ def deposit_view(request):
             messages.error(request, 'Invalid amount entered')
             return redirect('investments:deposit')
         
-        crypto_type = request.POST.get('crypto_type', request.POST.get('payment_method', ''))
+        payment_method = request.POST.get('payment_method', 'crypto')
+        crypto_type = request.POST.get('crypto_type', '')
         tx_hash = request.POST.get('transaction_hash', request.POST.get('tx_hash', ''))
         proof_image = request.FILES.get('proof_image', request.FILES.get('proof', None))
-        payment_method = request.POST.get('payment_method', 'crypto')
         
         if amount < 10:
             messages.error(request, 'Minimum deposit is $10')
+            return redirect('investments:deposit')
+        
+        if amount > 1000000:
+            messages.error(request, 'Maximum single deposit is $1,000,000')
             return redirect('investments:deposit')
         
         # Create deposit request
         deposit = Deposit.objects.create(
             user=request.user,
             amount=amount,
-            crypto_type=crypto_type if payment_method != 'BANK' else 'BANK',
+            payment_method=payment_method,
+            crypto_type=crypto_type if payment_method == 'crypto' else 'BANK',
             tx_hash=tx_hash,
             proof_image=proof_image,
             status='pending'
