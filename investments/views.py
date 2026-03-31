@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.db import transaction
+from accounts.models import CustomUser
 from .models import (InvestmentPlan, Investment, Deposit, Withdrawal, WalletAddress,
                      Loan, LoanRepayment, VirtualCard, Coupon, AgentApplication, CryptoTicker)
 from decimal import Decimal, InvalidOperation
