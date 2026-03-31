@@ -517,7 +517,7 @@
             <p style="color: var(--text-muted); margin-bottom: 25px; max-width: 400px; margin-left: auto; margin-right: auto;">
                 Click below to chat with our support team. They will provide you with the correct bank account details for your transfer.
             </p>
-            <button type="button" class="chat-btn" onclick="openTawkChat()">
+            <button type="button" class="chat-btn" onclick="openTawkChat(this)">
                 <i class="fas fa-comments"></i>Start Live Chat
             </button>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 20px;">
@@ -714,7 +714,7 @@ function goToStep(step) {
     window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-function openTawkChat() {
+function openTawkChat(buttonElement) {
     // Check if Tawk is fully loaded
     if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
         Tawk_API.maximize();
@@ -738,15 +738,16 @@ function openTawkChat() {
             }
         }, 5000);
         
-        // Show loading message
-        var btn = event.currentTarget;
-        var originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Opening chat...';
-        btn.disabled = true;
-        setTimeout(function() {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }, 3000);
+        // Show loading message on button
+        if (buttonElement) {
+            var originalText = buttonElement.innerHTML;
+            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Opening chat...';
+            buttonElement.disabled = true;
+            setTimeout(function() {
+                buttonElement.innerHTML = originalText;
+                buttonElement.disabled = false;
+            }, 3000);
+        }
     }
 }
 
