@@ -265,6 +265,7 @@
 </div>
 
 <!-- Available Balance -->
+{% if user.is_authenticated %}
 <div class="balance-info">
     <div>
         <span class="balance-text">Your Available Balance</span>
@@ -274,6 +275,17 @@
         <i class="fas fa-plus me-2"></i>Add Funds
     </a>
 </div>
+{% else %}
+<div class="balance-info">
+    <div>
+        <span class="balance-text">Ready to start investing?</span>
+        <div class="balance-amount" style="font-size: 1rem;">Create an account to get started</div>
+    </div>
+    <a href="{% url 'accounts:signup' %}" class="btn-gold">
+        <i class="fas fa-user-plus me-2"></i>Sign Up
+    </a>
+</div>
+{% endif %}
 
 <!-- Investment Plans Grid -->
 {% if plans %}
