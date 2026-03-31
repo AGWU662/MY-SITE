@@ -24,14 +24,14 @@ class KYCDocument(models.Model):
     
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='kyc_document')
     
-    # Document Information
+    # Document Information (optional - admin can fill during review)
     document_type = models.CharField(max_length=50, choices=DOCUMENT_TYPE_CHOICES)
-    document_number = models.CharField(max_length=100)
-    issuing_country = models.CharField(max_length=100)
+    document_number = models.CharField(max_length=100, blank=True, default='')
+    issuing_country = models.CharField(max_length=100, blank=True, default='')
     issuing_authority = models.CharField(max_length=200, blank=True)
-    date_of_birth = models.DateField()
-    nationality = models.CharField(max_length=100)
-    issue_date = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)
+    nationality = models.CharField(max_length=100, blank=True, default='')
+    issue_date = models.DateField(null=True, blank=True)
     expires_at = models.DateField(null=True, blank=True)
     
     # Document Images
