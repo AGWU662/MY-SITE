@@ -266,21 +266,48 @@ class WithdrawalAdmin(admin.ModelAdmin):
         self.message_user(request, f'{queryset.count()} withdrawals approved.')
     approve_withdrawal.short_description = 'Approve selected'
     
+    @transaction.atomic
     def reject_withdrawal(self, request, queryset):
-        for withdrawal in queryset.filter(status='pending'):
-            user = withdrawal.user
-            user.balance += withdrawal.amount
-            user.save()
+        """Reject withdrawals and return funds atomically"""
+        for withdrawal in queryset.filter(status='pending').select_for_update():
+            # Atomically update user balance using F() expression
+            from django.db.models import F
+            withdrawal.user.__class__.objects.filter(pk=withdrawal.user.pk).update(
+                balance=F('balance') + withdrawal.amount
+            )
             
             withdrawal.status = 'rejected'
             withdrawal.processed_by = request.user
+            withdrawal.processed_at = timezone.now()
             withdrawal.save()
+            
+            # Send notification
+            Notification.objects.create(
+                user=withdrawal.user,
+                title='Withdrawal Rejected',
+                message=f'Your withdrawal request of ${withdrawal.amount:,.2f} has been rejected.',
+                notification_type='withdrawal'
+            )
         
         self.message_user(request, f'{queryset.count()} withdrawals rejected.')
     reject_withdrawal.short_description = 'Reject selected'
     
     def mark_completed(self, request, queryset):
-        queryset.update(status='completed', processed_by=request.user)
+        """Mark withdrawals as completed and notify users"""
+        for withdrawal in queryset.filter(status='approved'):
+            withdrawal.status = 'completed'
+            withdrawal.processed_by = request.user
+            withdrawal.processed_at = timezone.now()
+            withdrawal.save()
+            
+            # Send notification
+            Notification.objects.create(
+                user=withdrawal.user,
+                title='Withdrawal Completed',
+                message=f'Your withdrawal of ${withdrawal.amount:,.2f} has been processed successfully!',
+                notification_type='withdrawal'
+            )
+        
         self.message_user(request, f'{queryset.count()} withdrawals completed.')
     mark_completed.short_description = 'Mark as completed'
 

@@ -305,12 +305,13 @@ def check_deposit_status_api(request, deposit_id):
 
 
 @login_required
+@transaction.atomic
 def withdraw_view(request):
-    """Withdraw funds"""
+    """Withdraw funds - atomic transaction to prevent race conditions"""
     if request.method == 'POST':
         try:
             amount_str = request.POST.get('amount', '0')
-            amount = Decimal(amount_str)
+            amount = Decimal(amount_str).quantize(Decimal('0.01'))
             if amount <= 0:
                 messages.error(request, 'Amount must be greater than zero')
                 return redirect('investments:withdraw')
@@ -320,20 +321,43 @@ def withdraw_view(request):
         
         withdrawal_method = request.POST.get('withdrawal_method')
         crypto_type = request.POST.get('crypto_type', '')
-        wallet_address = request.POST.get('wallet_address', '')
+        wallet_address = request.POST.get('wallet_address', '').strip()
         
         # Validation
         if amount < 10:
             messages.error(request, 'Minimum withdrawal is $10')
             return redirect('investments:withdraw')
         
-        if not request.user.can_withdraw(amount):
+        if amount > 100000:
+            messages.error(request, 'Maximum single withdrawal is $100,000')
+            return redirect('investments:withdraw')
+        
+        # Wallet address validation for crypto withdrawals
+        if withdrawal_method == 'crypto' and wallet_address:
+            import re
+            # Basic crypto address validation patterns
+            patterns = {
+                'BTC': r'^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$',
+                'ETH': r'^0x[a-fA-F0-9]{40}$',
+                'USDT': r'^(0x[a-fA-F0-9]{40}|T[A-Za-z1-9]{33})$',  # ERC-20 or TRC-20
+                'USDC': r'^0x[a-fA-F0-9]{40}$',
+                'LTC': r'^[LM3][a-km-zA-HJ-NP-Z1-9]{26,33}$',
+            }
+            pattern = patterns.get(crypto_type)
+            if pattern and not re.match(pattern, wallet_address):
+                messages.error(request, f'Invalid {crypto_type} wallet address format')
+                return redirect('investments:withdraw')
+        
+        # Lock user row to prevent race conditions
+        user = CustomUser.objects.select_for_update().get(pk=request.user.pk)
+        
+        if not user.can_withdraw(amount):
             messages.error(request, 'Insufficient balance, KYC not verified, or amount too low.')
             return redirect('investments:withdraw')
         
         # Create withdrawal request
         withdrawal = Withdrawal.objects.create(
-            user=request.user,
+            user=user,
             amount=amount,
             withdrawal_method=withdrawal_method,
             crypto_type=crypto_type,
