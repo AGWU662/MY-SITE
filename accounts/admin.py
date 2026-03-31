@@ -73,12 +73,18 @@ class CustomUserAdmin(UserAdmin):
     
     def account_badge(self, obj):
         colors = {
-            'beginner': 'gray',
-            'intermediate': 'blue',
-            'advanced': 'purple',
-            'vip': 'gold'
+            'starter': '#6c757d',      # gray
+            'advance': '#0d6efd',      # blue
+            'intro': '#6f42c1',        # purple
+            'region': '#20c997',       # teal
+            'pro': '#fd7e14',          # orange
+            'premium': '#dc3545',      # red
+            'executive': '#198754',    # green
+            'elite': '#ffc107',        # gold
+            'platinum': '#0dcaf0',     # cyan
+            'diamond': '#d63384',      # pink
         }
-        color = colors.get(obj.account_type, 'gray')
+        color = colors.get(obj.account_type, '#6c757d')
         return format_html(
             '<span style="background-color: {}; color: white; padding: 3px 8px; border-radius: 3px;">{}</span>',
             color, obj.get_account_type_display()
