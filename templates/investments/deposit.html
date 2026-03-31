@@ -715,40 +715,72 @@ function goToStep(step) {
 }
 
 function openTawkChat(buttonElement) {
-    // Check if Tawk is fully loaded
-    if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
-        Tawk_API.maximize();
-    } else if (typeof Tawk_API !== 'undefined' && Tawk_API.toggle) {
-        Tawk_API.toggle();
-    } else {
-        // Tawk not loaded yet - try to load it or show fallback
-        var checkTawk = setInterval(function() {
-            if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
-                clearInterval(checkTawk);
-                Tawk_API.maximize();
-            }
-        }, 500);
-        
-        // Timeout after 5 seconds
-        setTimeout(function() {
-            clearInterval(checkTawk);
-            if (typeof Tawk_API === 'undefined' || !Tawk_API.maximize) {
-                // Open Tawk.to directly in new window as fallback
-                window.open('https://tawk.to/chat/683b5c2ec873e91904870c54/1jkepnodo', '_blank', 'width=400,height=600');
-            }
-        }, 5000);
-        
-        // Show loading message on button
+    // Show loading state
+    if (buttonElement) {
+        var originalText = buttonElement.innerHTML;
+        buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Opening chat...';
+        buttonElement.disabled = true;
+    }
+    
+    // Function to restore button
+    function restoreButton() {
         if (buttonElement) {
-            var originalText = buttonElement.innerHTML;
-            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Opening chat...';
-            buttonElement.disabled = true;
-            setTimeout(function() {
-                buttonElement.innerHTML = originalText;
-                buttonElement.disabled = false;
-            }, 3000);
+            buttonElement.innerHTML = originalText;
+            buttonElement.disabled = false;
         }
     }
+    
+    // Check if Tawk widget is loaded
+    if (typeof Tawk_API !== 'undefined') {
+        // Try different methods to open the chat
+        if (typeof Tawk_API.maximize === 'function') {
+            Tawk_API.maximize();
+            restoreButton();
+            return;
+        }
+        if (typeof Tawk_API.toggle === 'function') {
+            Tawk_API.toggle();
+            restoreButton();
+            return;
+        }
+        if (typeof Tawk_API.showWidget === 'function') {
+            Tawk_API.showWidget();
+            setTimeout(function() {
+                if (typeof Tawk_API.maximize === 'function') {
+                    Tawk_API.maximize();
+                }
+            }, 500);
+            restoreButton();
+            return;
+        }
+    }
+    
+    // Tawk not loaded - try to find and click the widget button
+    var tawkButton = document.querySelector('iframe[title*="chat"]') || 
+                     document.querySelector('.tawk-min-container') ||
+                     document.querySelector('[class*="tawk"]');
+    if (tawkButton) {
+        tawkButton.click();
+        restoreButton();
+        return;
+    }
+    
+    // Wait for Tawk to load (up to 8 seconds)
+    var attempts = 0;
+    var maxAttempts = 16;
+    var checkTawk = setInterval(function() {
+        attempts++;
+        if (typeof Tawk_API !== 'undefined' && typeof Tawk_API.maximize === 'function') {
+            clearInterval(checkTawk);
+            Tawk_API.maximize();
+            restoreButton();
+        } else if (attempts >= maxAttempts) {
+            clearInterval(checkTawk);
+            restoreButton();
+            // Show error message instead of opening wrong URL
+            alert('Chat is currently unavailable. Please try again in a moment or contact us at support@elitewealthcapita.uk');
+        }
+    }, 500);
 }
 
 function copyAddress() {
