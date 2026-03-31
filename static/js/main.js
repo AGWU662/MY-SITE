@@ -65,7 +65,6 @@
             const result = await response.json();
             
             if (!result.success || !result.tickers) {
-                console.warn('Crypto ticker API returned no data');
                 return;
             }
             
@@ -74,7 +73,7 @@
                 const changeFixed = parseFloat(crypto.change_24h || 0).toFixed(2);
                 const changeClass = crypto.change_24h >= 0 ? 'positive' : 'negative';
                 const changeSymbol = crypto.change_24h >= 0 ? '+' : '';
-                const priceFormatted = parseFloat(crypto.price).toLocaleString(undefined, { 
+                const priceFormatted = parseFloat(crypto.price).toLocaleString('en-US', { 
                     minimumFractionDigits: 2, 
                     maximumFractionDigits: crypto.price < 0.01 ? 8 : 2 
                 });
@@ -89,7 +88,7 @@
 
             tickerTrack.innerHTML = tickerHTML + tickerHTML;
         } catch (error) {
-            console.error('Failed to load crypto ticker:', error);
+            // Silently fail - ticker is non-critical
         }
     }
 

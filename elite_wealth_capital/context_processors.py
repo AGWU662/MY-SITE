@@ -17,11 +17,11 @@ def site_settings(request):
         return {
             'SITE_NAME': site_config.company_name or 'Elite Wealth Capital',
             'COMPANY_NAME': site_config.company_name or 'Elite Wealth Capital',
-            'COMPANY_EMAIL': site_config.company_email or getattr(settings, 'COMPANY_EMAIL', 'admin@elitewealthcapital.uk'),
+            'COMPANY_EMAIL': site_config.company_email or getattr(settings, 'COMPANY_EMAIL', 'admin@elitewealthcapita.uk'),
             'COMPANY_PHONE': site_config.company_phone or getattr(settings, 'COMPANY_PHONE', '+44-XXX-XXXX-XXX'),
             'COMPANY_ADDRESS': site_config.company_address or getattr(settings, 'COMPANY_ADDRESS', 'London, United Kingdom'),
-            'COMPANY_WEBSITE': site_config.company_website or getattr(settings, 'COMPANY_WEBSITE', 'https://elitewealthcapital.uk'),
-            'SUPPORT_EMAIL': site_config.support_email or getattr(settings, 'COMPANY_EMAIL', 'admin@elitewealthcapital.uk'),
+            'COMPANY_WEBSITE': site_config.company_website or getattr(settings, 'COMPANY_WEBSITE', 'https://elitewealthcapita.uk'),
+            'SUPPORT_EMAIL': site_config.support_email or getattr(settings, 'COMPANY_EMAIL', 'admin@elitewealthcapita.uk'),
             'COMPANY_DESCRIPTION': 'Your trusted partner in wealth management and investment solutions',
         }
     except Exception:
@@ -29,11 +29,11 @@ def site_settings(request):
         return {
             'SITE_NAME': 'Elite Wealth Capital',
             'COMPANY_NAME': 'Elite Wealth Capital',
-            'COMPANY_EMAIL': getattr(settings, 'COMPANY_EMAIL', 'admin@elitewealthcapital.uk'),
+            'COMPANY_EMAIL': getattr(settings, 'COMPANY_EMAIL', 'admin@elitewealthcapita.uk'),
             'COMPANY_PHONE': getattr(settings, 'COMPANY_PHONE', '+44-XXX-XXXX-XXX'),
             'COMPANY_ADDRESS': getattr(settings, 'COMPANY_ADDRESS', 'London, United Kingdom'),
-            'COMPANY_WEBSITE': getattr(settings, 'COMPANY_WEBSITE', 'https://elitewealthcapital.uk'),
-            'SUPPORT_EMAIL': getattr(settings, 'COMPANY_EMAIL', 'admin@elitewealthcapital.uk'),
+            'COMPANY_WEBSITE': getattr(settings, 'COMPANY_WEBSITE', 'https://elitewealthcapita.uk'),
+            'SUPPORT_EMAIL': getattr(settings, 'COMPANY_EMAIL', 'admin@elitewealthcapita.uk'),
             'COMPANY_DESCRIPTION': 'Your trusted partner in wealth management and investment solutions',
         }
 

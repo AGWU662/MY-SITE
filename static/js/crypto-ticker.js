@@ -127,7 +127,6 @@ class CryptoTicker {
                 this.useFallbackPrices();
             }
         } catch (error) {
-            console.error('Error fetching crypto prices:', error);
             // Use fallback prices if API fails
             this.useFallbackPrices();
         }

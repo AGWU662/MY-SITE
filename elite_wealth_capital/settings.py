@@ -21,12 +21,10 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv(
     'ALLOWED_HOSTS',
-    'localhost,127.0.0.1,elitewealthcapital.uk,www.elitewealthcapital.uk'
+    'localhost,127.0.0.1,elitewealthcapita.uk,www.elitewealthcapita.uk,my-site-ghnp.onrender.com'
 ).split(',')
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://elitewealthcapital.uk',
-    'https://www.elitewealthcapital.uk',
     'https://elitewealthcapita.uk',
     'https://www.elitewealthcapita.uk',
     'https://my-site-ghnp.onrender.com'
@@ -170,15 +168,15 @@ EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'apikey')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'admin@elitewealthcapital.uk')
-ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', 'admin@elitewealthcapital.uk')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'admin@elitewealthcapita.uk')
+ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', 'admin@elitewealthcapita.uk')
 
 # Company Information
 COMPANY_NAME = os.getenv('COMPANY_NAME', 'Elite Wealth Capital')
-COMPANY_EMAIL = os.getenv('COMPANY_EMAIL', 'admin@elitewealthcapital.uk')
+COMPANY_EMAIL = os.getenv('COMPANY_EMAIL', 'admin@elitewealthcapita.uk')
 COMPANY_PHONE = os.getenv('COMPANY_PHONE', '+44-XXX-XXXX-XXX')
 COMPANY_ADDRESS = os.getenv('COMPANY_ADDRESS', 'London, United Kingdom')
-COMPANY_WEBSITE = os.getenv('COMPANY_WEBSITE', 'https://elitewealthcapital.uk')
+COMPANY_WEBSITE = os.getenv('COMPANY_WEBSITE', 'https://elitewealthcapita.uk')
 
 # Tawk.to Live Chat
 TAWK_PROPERTY_ID = os.getenv('TAWK_PROPERTY_ID', '')
@@ -229,8 +227,9 @@ if not DEBUG:
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOWED_ORIGINS = [
-    'https://elitewealthcapital.uk',
-    'https://www.elitewealthcapital.uk',
+    'https://elitewealthcapita.uk',
+    'https://www.elitewealthcapita.uk',
+    'https://my-site-ghnp.onrender.com',
 ]
 
 # Session Settings

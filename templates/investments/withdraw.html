@@ -260,8 +260,8 @@
         </div>
         
         <div class="form-group">
-            <label class="form-label" for="amount">Amount (USD)</label>
-            <input type="number" id="amount" name="amount" class="form-input" min="50" max="{{ user.balance }}" step="0.01" placeholder="Minimum $50" required>
+            <label class="form-label" for="withdraw-amount">Amount (USD)</label>
+            <input type="number" id="withdraw-amount" name="amount" class="form-input" min="50" max="{{ user.balance }}" step="0.01" placeholder="Minimum $50" required>
             <small style="color: var(--text-muted);">Available: ${{ user.balance|floatformat:2 }}</small>
         </div>
         

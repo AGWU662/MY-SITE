@@ -303,11 +303,11 @@ def withdraw_view(request):
         # Validation
         if amount < 10:
             messages.error(request, 'Minimum withdrawal is $10')
-            return redirect('withdraw')
+            return redirect('investments:withdraw')
         
         if not request.user.can_withdraw(amount):
             messages.error(request, 'Insufficient balance, KYC not verified, or amount too low.')
-            return redirect('withdraw')
+            return redirect('investments:withdraw')
         
         # Create withdrawal request
         withdrawal = Withdrawal.objects.create(
@@ -320,7 +320,7 @@ def withdraw_view(request):
         )
         
         messages.success(request, 'Withdrawal request submitted.')
-        return redirect('dashboard')
+        return redirect('dashboard:dashboard')
     
     return render(request, 'investments/withdraw.html')
 

@@ -15,11 +15,11 @@ settings, created = SiteSettings.objects.get_or_create(pk=1)
 
 # Update company information
 settings.company_name = 'Elite Wealth Capital'
-settings.company_email = 'admin@elitewealthcapital.uk'
-settings.support_email = 'support@elitewealthcapital.uk'
+settings.company_email = 'admin@elitewealthcapita.uk'
+settings.support_email = 'support@elitewealthcapita.uk'
 settings.company_phone = '+44 20 7946 0958'
 settings.company_address = 'London, United Kingdom'
-settings.company_website = 'https://elitewealthcapital.uk'
+settings.company_website = 'https://elitewealthcapita.uk'
 
 # Site configuration defaults
 settings.maintenance_mode = False
