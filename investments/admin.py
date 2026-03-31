@@ -28,6 +28,7 @@ class InvestmentAdmin(admin.ModelAdmin):
     list_filter = ['status', 'plan', 'start_date']
     search_fields = ['user__email', 'user__full_name']
     readonly_fields = ['start_date', 'expected_profit']
+    list_select_related = ['user', 'plan']
     actions = ['mark_completed', 'cancel_investments', 'export_to_csv']
     
     def amount_display(self, obj):
@@ -91,7 +92,8 @@ class DepositAdmin(admin.ModelAdmin):
     list_display = ['user', 'amount_display', 'crypto_type', 'status', 'tx_hash', 'created_at']
     list_filter = ['status', 'crypto_type', 'created_at']
     search_fields = ['user__email', 'tx_hash']
-    readonly_fields = ['user', 'created_at']
+    readonly_fields = ['user', 'created_at', 'confirmed_by', 'tx_hash']
+    list_select_related = ['user', 'confirmed_by']
     actions = ['mark_confirmed', 'mark_rejected']
     
     def amount_display(self, obj):
@@ -123,7 +125,8 @@ class WithdrawalAdmin(admin.ModelAdmin):
                     'wallet_address_short', 'status', 'created_at']
     list_filter = ['status', 'withdrawal_method', 'crypto_type', 'created_at']
     search_fields = ['user__email', 'wallet_address']
-    readonly_fields = ['user', 'created_at']
+    readonly_fields = ['user', 'created_at', 'processed_by', 'processed_at', 'tx_hash']
+    list_select_related = ['user', 'processed_by']
     actions = ['approve_withdrawal', 'reject_withdrawal', 'mark_completed']
     
     def amount_display(self, obj):
@@ -213,7 +216,9 @@ class LoanAdmin(admin.ModelAdmin):
 class VirtualCardAdmin(admin.ModelAdmin):
     list_display = ['user', 'masked_number', 'card_type', 'balance_display', 'status']
     list_filter = ['status', 'card_type']
-    search_fields = ['user__email', 'card_number']
+    search_fields = ['user__email']  # Removed card_number for security
+    readonly_fields = ['card_number', 'cvv']  # Protect sensitive card data
+    list_select_related = ['user']
     
     def balance_display(self, obj):
         return format_html('${:,.2f}', obj.balance)
@@ -350,5 +355,19 @@ class CryptoTickerAdmin(admin.ModelAdmin):
     ordering = ['display_order', 'symbol']
 
 
-admin.site.register(LoanRepayment)
-admin.site.register(CouponUsage)
+@admin.register(LoanRepayment)
+class LoanRepaymentAdmin(admin.ModelAdmin):
+    list_display = ['loan', 'amount', 'payment_method', 'created_at']
+    list_filter = ['payment_method', 'created_at']
+    search_fields = ['loan__user__email']
+    readonly_fields = ['loan', 'created_at']
+    list_select_related = ['loan', 'loan__user']
+
+
+@admin.register(CouponUsage)
+class CouponUsageAdmin(admin.ModelAdmin):
+    list_display = ['coupon', 'user', 'used_at']
+    list_filter = ['used_at']
+    search_fields = ['user__email', 'coupon__code']
+    readonly_fields = ['coupon', 'user', 'used_at']
+    list_select_related = ['coupon', 'user']

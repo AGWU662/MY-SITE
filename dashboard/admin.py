@@ -14,12 +14,12 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         ('Email Configuration', {
             'fields': ('smtp_host', 'smtp_port', 'smtp_username', 'smtp_password', 'from_email'),
             'classes': ('collapse',),
-            'description': 'SMTP settings for outgoing emails'
+            'description': '⚠️ SMTP settings - password is hidden for security'
         }),
         ('API Configuration', {
             'fields': ('stripe_api_key', 'stripe_publishable_key', 'paypal_client_id', 'paypal_client_secret'),
             'classes': ('collapse',),
-            'description': 'Payment gateway API credentials'
+            'description': '⚠️ Payment gateway API credentials - SENSITIVE DATA'
         }),
         ('Site Configuration', {
             'fields': ('maintenance_mode', 'enable_registrations', 'enable_deposits', 'enable_withdrawals'),
@@ -30,6 +30,9 @@ class SiteSettingsAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
         }),
     )
+    
+    # Protect sensitive credentials from being displayed or easily edited
+    readonly_fields = ['smtp_password', 'stripe_api_key', 'paypal_client_secret']
     
     def has_add_permission(self, request):
         # Only allow one SiteSettings instance
@@ -70,3 +73,4 @@ class DisputeAdmin(admin.ModelAdmin):
     list_filter = ['status', 'appeal_type', 'created_at']
     search_fields = ['subject', 'description', 'user__email']
     readonly_fields = ['user', 'created_at']
+    list_select_related = ['user']

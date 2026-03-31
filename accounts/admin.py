@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 from django.urls import reverse
-from django.utils.safestring import mark_safe
 from .models import CustomUser, ActivityLog, Referral
 
 
@@ -15,10 +14,11 @@ class CustomUserAdmin(UserAdmin):
                    'email_verified', 'two_fa_enabled', 'date_joined']
     search_fields = ['email', 'full_name', 'phone', 'referral_code', 'country']
     ordering = ['-date_joined']
+    list_select_related = ['referred_by']
     
     fieldsets = (
         ('Login Credentials', {
-            'fields': ('email', 'password')
+            'fields': ('email',)
         }),
         ('Personal Information', {
             'fields': ('full_name', 'phone', 'country', 'profile_image')
@@ -55,7 +55,8 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
     
-    readonly_fields = ['date_joined', 'last_login', 'referral_code']
+    readonly_fields = ['date_joined', 'last_login', 'referral_code', 'two_fa_secret', 
+                       'last_activity', 'failed_login_attempts', 'locked_until']
     
     def balance_display(self, obj):
         color = 'green' if obj.balance >= 0 else 'red'
@@ -125,6 +126,7 @@ class ActivityLogAdmin(admin.ModelAdmin):
     list_filter = ['action', 'created_at']
     search_fields = ['user__email', 'description', 'ip_address']
     readonly_fields = ['user', 'action', 'description', 'ip_address', 'user_agent', 'created_at']
+    list_select_related = ['user']
     
     def has_add_permission(self, request):
         return False
@@ -139,3 +141,4 @@ class ReferralAdmin(admin.ModelAdmin):
     list_filter = ['status', 'created_at']
     search_fields = ['referrer__email', 'referred__email']
     readonly_fields = ['referrer', 'referred', 'created_at']
+    list_select_related = ['referrer', 'referred']

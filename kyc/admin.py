@@ -10,7 +10,9 @@ class KYCDocumentAdmin(admin.ModelAdmin):
                     'submitted_at', 'reviewed_at', 'quick_verify']
     list_filter = ['status', 'document_type', 'submitted_at']
     search_fields = ['user__email', 'document_number']
-    readonly_fields = ['user', 'submitted_at', 'front_image_preview', 'back_image_preview', 'selfie_image_preview']
+    readonly_fields = ['user', 'submitted_at', 'front_image_preview', 'back_image_preview', 
+                       'selfie_image_preview', 'reviewed_by', 'reviewed_at']
+    list_select_related = ['user', 'reviewed_by']
     actions = ['verify_kyc', 'reject_kyc']
     
     fieldsets = (
