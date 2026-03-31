@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils import timezone
 from .models import KYCDocument
+from notifications.models import Notification
 
 
 @admin.register(KYCDocument)
@@ -85,6 +86,14 @@ class KYCDocumentAdmin(admin.ModelAdmin):
                 user = kyc.user
                 user.kyc_status = 'verified'
                 user.save()
+                
+                # Send notification to user
+                Notification.objects.create(
+                    user=user,
+                    title='KYC Verification Approved ✓',
+                    message='Congratulations! Your identity has been verified successfully. You can now make withdrawals and access all platform features.',
+                    notification_type='success'
+                )
                 count += 1
         
         self.message_user(request, f'{count} KYC documents verified successfully!')
@@ -98,13 +107,21 @@ class KYCDocumentAdmin(admin.ModelAdmin):
                 kyc.status = 'rejected'
                 kyc.reviewed_by = request.user
                 kyc.reviewed_at = timezone.now()
-                kyc.rejection_reason = 'Rejected by admin'
+                kyc.rejection_reason = kyc.rejection_reason or 'Documents could not be verified. Please resubmit clear, valid documents.'
                 kyc.save()
                 
                 # Update user KYC status
                 user = kyc.user
                 user.kyc_status = 'rejected'
                 user.save()
+                
+                # Send notification to user
+                Notification.objects.create(
+                    user=user,
+                    title='KYC Verification Rejected',
+                    message=f'Your KYC verification was rejected. Reason: {kyc.rejection_reason}. Please upload new documents.',
+                    notification_type='warning'
+                )
                 count += 1
         
         self.message_user(request, f'{count} KYC documents rejected.')
@@ -113,7 +130,8 @@ class KYCDocumentAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         """Auto-update user KYC status when admin changes KYC document status"""
         if change:
-            old_status = KYCDocument.objects.get(pk=obj.pk).status
+            old_obj = KYCDocument.objects.get(pk=obj.pk)
+            old_status = old_obj.status
             if old_status != obj.status:
                 obj.reviewed_by = request.user
                 obj.reviewed_at = timezone.now()
@@ -122,5 +140,21 @@ class KYCDocumentAdmin(admin.ModelAdmin):
                 user = obj.user
                 user.kyc_status = obj.status
                 user.save()
+                
+                # Send notification based on new status
+                if obj.status == 'verified':
+                    Notification.objects.create(
+                        user=user,
+                        title='KYC Verification Approved ✓',
+                        message='Congratulations! Your identity has been verified successfully.',
+                        notification_type='success'
+                    )
+                elif obj.status == 'rejected':
+                    Notification.objects.create(
+                        user=user,
+                        title='KYC Verification Rejected',
+                        message=f'Your KYC was rejected. Reason: {obj.rejection_reason or "Please resubmit documents."}',
+                        notification_type='warning'
+                    )
         
         super().save_model(request, obj, form, change)

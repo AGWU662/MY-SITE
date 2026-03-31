@@ -155,22 +155,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
                 return code
     
     def get_available_balance(self):
-        """Returns balance minus pending withdrawals"""
-        from investments.models import Withdrawal
-        pending_withdrawals = Withdrawal.objects.filter(
-            user=self,
-            status='pending'
-        ).aggregate(total=models.Sum('amount'))['total'] or 0
-        
-        return self.balance - pending_withdrawals
+        """Returns actual balance (pending withdrawals are already deducted)"""
+        return self.balance
     
     def can_withdraw(self, amount):
         """Check if user can withdraw specified amount"""
         # Note: email_verified check removed to allow withdrawals
         # KYC verification is sufficient security measure
+        # Balance is deducted immediately when withdrawal is requested,
+        # so we just check actual balance here
         return (
             self.kyc_status == 'verified' and
-            self.get_available_balance() >= amount and
+            self.balance >= amount and
             amount >= 10  # Minimum withdrawal
         )
     

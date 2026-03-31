@@ -229,8 +229,8 @@ def deposit_view(request):
             messages.error(request, 'Invalid amount entered')
             return redirect('investments:deposit')
         
-        payment_method = request.POST.get('payment_method', 'crypto')
-        crypto_type = request.POST.get('crypto_type', '')
+        payment_method = request.POST.get('payment_method', 'crypto').lower()
+        crypto_type = request.POST.get('crypto_type', '').upper()
         tx_hash = request.POST.get('transaction_hash', request.POST.get('tx_hash', ''))
         proof_image = request.FILES.get('proof_image', request.FILES.get('proof', None))
         
@@ -241,6 +241,25 @@ def deposit_view(request):
         if amount > 1000000:
             messages.error(request, 'Maximum single deposit is $1,000,000')
             return redirect('investments:deposit')
+        
+        # Validate payment method
+        if payment_method not in ['bank', 'crypto']:
+            messages.error(request, 'Invalid payment method')
+            return redirect('investments:deposit')
+        
+        # Validate crypto type if crypto payment
+        valid_cryptos = ['BTC', 'ETH', 'USDT', 'USDC', 'LTC', 'BNB']
+        if payment_method == 'crypto' and crypto_type not in valid_cryptos:
+            messages.error(request, 'Please select a valid cryptocurrency')
+            return redirect('investments:deposit')
+        
+        # Validate file upload if provided
+        if proof_image:
+            try:
+                validate_uploaded_file(proof_image, 'Payment proof')
+            except ValidationError as e:
+                messages.error(request, str(e))
+                return redirect('investments:deposit')
         
         # Create deposit request
         deposit = Deposit.objects.create(
@@ -355,6 +374,11 @@ def withdraw_view(request):
         if not user.can_withdraw(amount):
             messages.error(request, 'Insufficient balance, KYC not verified, or amount too low.')
             return redirect('investments:withdraw')
+        
+        # Deduct balance immediately when withdrawal is requested
+        user.balance -= amount
+        user.total_withdrawn += amount
+        user.save()
         
         # Create withdrawal request
         withdrawal = Withdrawal.objects.create(

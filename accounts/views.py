@@ -108,8 +108,22 @@ def signup_view(request):
             messages.error(request, 'Passwords do not match.')
             return redirect('accounts:signup')
         
-        if len(password) < 6:
-            messages.error(request, 'Password must be at least 6 characters.')
+        # Strengthen password policy
+        import re
+        if len(password) < 8:
+            messages.error(request, 'Password must be at least 8 characters.')
+            return redirect('accounts:signup')
+        
+        if not re.search(r'[A-Z]', password):
+            messages.error(request, 'Password must contain at least one uppercase letter.')
+            return redirect('accounts:signup')
+        
+        if not re.search(r'[a-z]', password):
+            messages.error(request, 'Password must contain at least one lowercase letter.')
+            return redirect('accounts:signup')
+        
+        if not re.search(r'[0-9]', password):
+            messages.error(request, 'Password must contain at least one number.')
             return redirect('accounts:signup')
         
         if CustomUser.objects.filter(email=email).exists():
