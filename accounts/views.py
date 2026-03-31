@@ -86,10 +86,10 @@ def signup_view(request):
     
     if request.method == 'POST':
         email = request.POST.get('email', '').strip().lower()
-        full_name = request.POST.get('full_name')
+        full_name = request.POST.get('full_name', '').strip()
         password = request.POST.get('password')
         password_confirm = request.POST.get('password_confirm')
-        referral_code = request.POST.get('referral_code', '').upper()
+        referral_code = request.POST.get('referral_code', '').strip().upper()
         
         # Validate email format
         try:
@@ -98,74 +98,92 @@ def signup_view(request):
             messages.error(request, 'Please enter a valid email address')
             return redirect('accounts:signup')
         
+        # Validate full name
+        if not full_name or len(full_name) < 2:
+            messages.error(request, 'Please enter your full name')
+            return redirect('accounts:signup')
+        
         # Validation
         if password != password_confirm:
             messages.error(request, 'Passwords do not match.')
+            return redirect('accounts:signup')
+        
+        if len(password) < 6:
+            messages.error(request, 'Password must be at least 6 characters.')
             return redirect('accounts:signup')
         
         if CustomUser.objects.filter(email=email).exists():
             messages.error(request, 'Email already registered.')
             return redirect('accounts:signup')
         
-        # Create user
-        user = CustomUser.objects.create_user(
-            email=email,
-            password=password,
-            full_name=full_name
-        )
-        
-        # Generate email verification token
-        user.email_verification_token = secrets.token_urlsafe(32)
-        user.email_verification_sent_at = timezone.now()
-        
-        # Handle referral - New user gets $20 ONLY if using referral code
-        if referral_code:
-            try:
-                referrer = CustomUser.objects.get(referral_code=referral_code)
-                user.referred_by = referrer
-                user.balance = 20.00  # New user gets $20 with referral code
-                
-                # Referrer gets $30 bonus
-                referrer.referral_bonus += 30.00
-                referrer.save()
-                
-                # Create referral record
-                Referral.objects.create(
-                    referrer=referrer,
-                    referred=user,
-                    bonus_amount=30.00,
-                    status='completed'
-                )
-                
-                # Create notification for referrer
-                from notifications.models import Notification
-                Notification.objects.create(
-                    user=referrer,
-                    title='Referral Bonus Earned',
-                    message=f'You earned $30 for referring {user.full_name}!',
-                    notification_type='referral'
-                )
-            except CustomUser.DoesNotExist:
-                user.balance = 0.00  # Invalid referral code = $0
-                messages.warning(request, 'Invalid referral code. No bonus applied.')
-        else:
-            # No referral code = $0 starting balance
-            user.balance = 0.00
-        
-        user.save()
-        
-        # Log activity
-        ActivityLog.objects.create(user=user, action='signup')
-        
-        # Auto-login
-        login(request, user)
-        
-        # Show appropriate message based on referral status
-        if referral_code and user.balance > 0:
-            messages.success(request, f'Account created successfully! Welcome bonus of ${user.balance:.0f} credited.')
-        else:
-            messages.success(request, 'Account created successfully! Welcome to Elite Wealth Capital.')
-        return redirect('dashboard:dashboard')
+        try:
+            # Create user
+            user = CustomUser.objects.create_user(
+                email=email,
+                password=password,
+                full_name=full_name
+            )
+            
+            # Generate email verification token
+            user.email_verification_token = secrets.token_urlsafe(32)
+            user.email_verification_sent_at = timezone.now()
+            
+            # Handle referral - New user gets $20 ONLY if using referral code
+            if referral_code:
+                try:
+                    referrer = CustomUser.objects.get(referral_code=referral_code)
+                    user.referred_by = referrer
+                    user.balance = 20.00  # New user gets $20 with referral code
+                    
+                    # Referrer gets $30 bonus
+                    referrer.referral_bonus += 30.00
+                    referrer.save()
+                    
+                    # Create referral record
+                    Referral.objects.create(
+                        referrer=referrer,
+                        referred=user,
+                        bonus_amount=30.00,
+                        status='completed'
+                    )
+                    
+                    # Create notification for referrer
+                    from notifications.models import Notification
+                    Notification.objects.create(
+                        user=referrer,
+                        title='Referral Bonus Earned',
+                        message=f'You earned $30 for referring {user.full_name}!',
+                        notification_type='referral'
+                    )
+                except CustomUser.DoesNotExist:
+                    user.balance = 0.00  # Invalid referral code = $0
+                    messages.warning(request, 'Invalid referral code. No bonus applied.')
+            else:
+                # No referral code = $0 starting balance
+                user.balance = 0.00
+            
+            user.save()
+            
+            # Log activity
+            ActivityLog.objects.create(user=user, action='signup')
+            
+            # Auto-login
+            login(request, user)
+            
+            # Show appropriate message based on referral status
+            if referral_code and user.balance > 0:
+                messages.success(request, f'Account created successfully! Welcome bonus of ${user.balance:.0f} credited.')
+            else:
+                messages.success(request, 'Account created successfully! Welcome to Elite Wealth Capital.')
+            return redirect('dashboard:dashboard')
+            
+        except Exception as e:
+            # Log the error for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f'Signup error: {str(e)}')
+            messages.error(request, 'An error occurred during signup. Please try again.')
+            return redirect('accounts:signup')
     
     return render(request, 'accounts/signup.html')
 

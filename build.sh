@@ -15,10 +15,14 @@ python manage.py collectstatic --no-input
 echo "=== Applying Migrations ==="
 python manage.py migrate --no-input
 
+# Load investment plans fixture (if exists)
+echo "=== Loading Investment Plans ==="
+python manage.py loaddata investments/fixtures/investment_plans.json || echo "Investment plans fixture skipped"
+
 # Populate wallet addresses for payment methods
 python manage.py populate_wallets || echo "Wallet population skipped"
 
-# Populate investment plans
+# Populate investment plans (fallback if fixture didn't work)
 python manage.py populate_plans || echo "Plan population skipped"
 
 # Create superuser if it doesn't exist (uses environment variables for security)
