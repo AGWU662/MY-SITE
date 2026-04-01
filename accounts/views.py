@@ -47,6 +47,11 @@ def login_view(request):
                 messages.error(request, 'Account is temporarily locked. Please try again later.')
                 return redirect('accounts:login')
             
+            # Staff/Superusers must use admin panel only
+            if user.is_staff or user.is_superuser:
+                messages.info(request, 'Admin accounts must use the admin panel.')
+                return redirect('/admin/')
+            
             login(request, user)
             user.failed_login_attempts = 0
             user.last_login = timezone.now()
