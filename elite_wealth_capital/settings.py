@@ -180,7 +180,7 @@ ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', 'admin@elitewealthcapita.uk')
 # Company Information
 COMPANY_NAME = os.getenv('COMPANY_NAME', 'Elite Wealth Capital')
 COMPANY_EMAIL = os.getenv('COMPANY_EMAIL', 'admin@elitewealthcapita.uk')
-COMPANY_PHONE = os.getenv('COMPANY_PHONE', '+44-XXX-XXXX-XXX')
+COMPANY_PHONE = os.getenv('COMPANY_PHONE', '+47 22 33 44 55')
 COMPANY_ADDRESS = os.getenv('COMPANY_ADDRESS', 'London, United Kingdom')
 COMPANY_WEBSITE = os.getenv('COMPANY_WEBSITE', 'https://elitewealthcapita.uk')
 

@@ -292,7 +292,7 @@ class SiteSettings(models.Model):
     # Company Contact Information
     company_name = models.CharField(max_length=255, default='Elite Wealth Capital', help_text='Company Name')
     company_email = models.EmailField(default='admin@elitewealthcapita.uk', help_text='Primary Company Email')
-    company_phone = models.CharField(max_length=50, default='+44-XXX-XXXX-XXX', help_text='Company Phone Number')
+    company_phone = models.CharField(max_length=50, default='+47 22 33 44 55', help_text='Company Phone Number')
     company_address = models.CharField(max_length=500, default='London, United Kingdom', help_text='Company Address')
     company_website = models.URLField(default='https://elitewealthcapita.uk', help_text='Company Website URL')
     support_email = models.EmailField(default='support@elitewealthcapita.uk', help_text='Support Email')

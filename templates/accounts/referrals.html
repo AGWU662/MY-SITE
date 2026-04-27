@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}Referrals - Elite Wealth Capital{% endblock %}
 
@@ -12,6 +13,22 @@
                 <i class="fas fa-share-alt me-2 text-primary"></i>Referral Program
             </h1>
             <p class="text-muted mt-2">Earn rewards by inviting friends to Elite Wealth Capital</p>
+        </div>
+    </div>
+
+    <!-- Referral Bonus Info Banner -->
+    <div class="alert alert-success mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h5 class="mb-1"><i class="fas fa-gift me-2"></i>Referral Rewards</h5>
+                <p class="mb-0">
+                    <strong>You earn $30</strong> when someone signs up with your code and invests. 
+                    <strong>They get $20</strong> welcome bonus! Minimum investment is $30 (Starter Plan).
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <span class="badge bg-success fs-5 p-2">You: $30 | Friend: $20</span>
+            </div>
         </div>
     </div>
 
@@ -29,14 +46,14 @@
                     <p class="text-muted small mb-3">Share this code with friends</p>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="referralCode" 
-                               value="ELITE2024JS" readonly>
+                               value="{{ referral_code }}" readonly>
                         <button class="btn btn-primary" type="button" onclick="copyCode()">
                             <i class="fas fa-copy me-2"></i>Copy
                         </button>
                     </div>
                     <small class="text-muted d-block">
                         <i class="fas fa-info-circle me-1"></i>
-                        Share your code and earn 5% commission on first deposit
+                        You earn <strong>$30</strong> when they make their first investment
                     </small>
                 </div>
             </div>
@@ -54,14 +71,14 @@
                     <p class="text-muted small mb-3">Direct link to share</p>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="referralLink" 
-                               value="https://elitewealth.com/ref/ELITE2024JS" readonly>
+                               value="{{ request.scheme }}://{{ request.get_host }}/register/?ref={{ referral_code }}" readonly>
                         <button class="btn btn-info text-white" type="button" onclick="copyLink()">
                             <i class="fas fa-copy me-2"></i>Copy
                         </button>
                     </div>
                     <small class="text-muted d-block">
                         <i class="fas fa-info-circle me-1"></i>
-                        Anyone who signs up with your link gets 10% bonus
+                        New members get <strong>$20 welcome bonus</strong> using your link
                     </small>
                 </div>
             </div>
@@ -79,10 +96,8 @@
                             <p class="text-muted small mb-1">
                                 <i class="fas fa-users me-2"></i>Total Referrals
                             </p>
-                            <h4 class="mb-0 text-primary">42</h4>
-                            <small class="text-success">
-                                <i class="fas fa-arrow-up me-1"></i>+5 this month
-                            </small>
+                            <h4 class="mb-0 text-primary">{{ total_referrals|default:0 }}</h4>
+                            <small class="text-muted">All time</small>
                         </div>
                         <i class="fas fa-user-friends fa-2x text-primary opacity-50"></i>
                     </div>
@@ -97,10 +112,10 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <p class="text-muted small mb-1">
-                                <i class="fas fa-check-circle me-2"></i>Active Referrals
+                                <i class="fas fa-check-circle me-2"></i>Credited Referrals
                             </p>
-                            <h4 class="mb-0 text-success">38</h4>
-                            <small class="text-muted">90.5% conversion</small>
+                            <h4 class="mb-0 text-success">{{ referrals.credited_count|default:0 }}</h4>
+                            <small class="text-muted">Bonus paid</small>
                         </div>
                         <i class="fas fa-chart-pie fa-2x text-success opacity-50"></i>
                     </div>
@@ -117,9 +132,9 @@
                             <p class="text-muted small mb-1">
                                 <i class="fas fa-dollar-sign me-2"></i>Total Earnings
                             </p>
-                            <h4 class="mb-0 text-info">$4,250.00</h4>
+                            <h4 class="mb-0 text-info">${{ total_earnings|floatformat:2|intcomma }}</h4>
                             <small class="text-success">
-                                <i class="fas fa-arrow-up me-1"></i>+$285 this month
+                                <i class="fas fa-info-circle me-1"></i>From referrals
                             </small>
                         </div>
                         <i class="fas fa-money-bill-wave fa-2x text-info opacity-50"></i>
@@ -128,17 +143,17 @@
             </div>
         </div>
 
-        <!-- Pending Payouts -->
+        <!-- Potential Earnings -->
         <div class="col-md-3 mb-3">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <p class="text-muted small mb-1">
-                                <i class="fas fa-hourglass-half me-2"></i>Pending Payout
+                                <i class="fas fa-coins me-2"></i>Per Referral
                             </p>
-                            <h4 class="mb-0 text-warning">$285.00</h4>
-                            <small class="text-muted">Next: Jan 31</small>
+                            <h4 class="mb-0 text-warning">$30.00</h4>
+                            <small class="text-muted">Your bonus</small>
                         </div>
                         <i class="fas fa-wallet fa-2x text-warning opacity-50"></i>
                     </div>
@@ -151,30 +166,30 @@
     <div class="card shadow-sm mb-4 border-0">
         <div class="card-header bg-light">
             <h6 class="mb-0">
-                <i class="fas fa-percentage me-2"></i>Commission Structure
+                <i class="fas fa-percentage me-2"></i>How It Works
             </h6>
         </div>
         <div class="card-body">
             <div class="row text-center">
                 <div class="col-md-4 mb-3">
                     <div class="p-3 bg-light rounded">
-                        <h5 class="text-primary mb-2">Level 1</h5>
-                        <h3 class="mb-0">5%</h3>
-                        <p class="text-muted small mt-2">First deposit commission</p>
+                        <h5 class="text-primary mb-2"><i class="fas fa-share me-2"></i>Step 1</h5>
+                        <h3 class="mb-0">Share Code</h3>
+                        <p class="text-muted small mt-2">Share your referral code with friends</p>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <div class="p-3 bg-light rounded">
-                        <h5 class="text-success mb-2">Level 2</h5>
-                        <h3 class="mb-0">2%</h3>
-                        <p class="text-muted small mt-2">Monthly trading commissions</p>
+                        <h5 class="text-success mb-2"><i class="fas fa-user-plus me-2"></i>Step 2</h5>
+                        <h3 class="mb-0">They Sign Up</h3>
+                        <p class="text-muted small mt-2">Friend registers & invests min $30</p>
                     </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <div class="p-3 bg-light rounded">
-                        <h5 class="text-info mb-2">Bonus</h5>
-                        <h3 class="mb-0">$50</h3>
-                        <p class="text-muted small mt-2">Per 10 successful referrals</p>
+                        <h5 class="text-info mb-2"><i class="fas fa-gift me-2"></i>Step 3</h5>
+                        <h3 class="mb-0">Both Earn!</h3>
+                        <p class="text-muted small mt-2">You get $30, they get $20 bonus</p>
                     </div>
                 </div>
             </div>
@@ -201,235 +216,72 @@
                         <th scope="col">Name</th>
                         <th scope="col">Date Joined</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Earnings</th>
-                        <th scope="col">Action</th>
+                        <th scope="col">Bonus</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Referral 1 -->
+                    {% for referral in referrals %}
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="avatar avatar-sm me-2">
-                                    <img src="{% static 'images/avatar-placeholder.png' %}" alt="Avatar" class="rounded-circle" width="32" loading="lazy">
+                                    {% if referral.referred.profile_image %}
+                                        <img src="{{ referral.referred.profile_image.url }}" alt="Avatar" class="rounded-circle" width="32" loading="lazy">
+                                    {% else %}
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 14px;">
+                                            {{ referral.referred.full_name|slice:":1"|upper }}
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div>
-                                    <p class="mb-0 fw-600">Sarah M.</p>
-                                    <small class="text-muted">sarah.m@example.com</small>
+                                    <p class="mb-0 fw-600">{{ referral.referred.full_name }}</p>
+                                    <small class="text-muted">{{ referral.referred.email|slice:":3" }}***@***</small>
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <span>Dec 10, 2024</span>
+                            <span>{{ referral.created_at|date:"M d, Y" }}</span>
                             <br>
-                            <small class="text-muted">5 days ago</small>
+                            <small class="text-muted">{{ referral.created_at|timesince }} ago</small>
                         </td>
                         <td>
-                            <span class="badge bg-success">Active</span>
+                            {% if referral.status == 'credited' %}
+                                <span class="badge bg-success">Credited</span>
+                            {% elif referral.status == 'pending' %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ referral.status|title }}</span>
+                            {% endif %}
                         </td>
                         <td>
-                            <strong class="text-success">$125.50</strong>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#referralDetailsModal">
-                                <i class="fas fa-eye"></i> View
-                            </button>
+                            {% if referral.status == 'credited' %}
+                                <strong class="text-success">${{ referral.bonus_amount|floatformat:2 }}</strong>
+                            {% else %}
+                                <strong class="text-warning">${{ referral.bonus_amount|floatformat:2 }}</strong>
+                                <br><small class="text-muted">Pending</small>
+                            {% endif %}
                         </td>
                     </tr>
-
-                    <!-- Referral 2 -->
+                    {% empty %}
                     <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-2">
-                                    <img src="{% static 'images/avatar-placeholder.png' %}" alt="Avatar" class="rounded-circle" width="32" loading="lazy">
-                                </div>
-                                <div>
-                                    <p class="mb-0 fw-600">Michael B.</p>
-                                    <small class="text-muted">michael.b@example.com</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span>Dec 5, 2024</span>
-                            <br>
-                            <small class="text-muted">10 days ago</small>
-                        </td>
-                        <td>
-                            <span class="badge bg-success">Active</span>
-                        </td>
-                        <td>
-                            <strong class="text-success">$245.75</strong>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#referralDetailsModal">
-                                <i class="fas fa-eye"></i> View
+                        <td colspan="4" class="text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No referrals yet</h5>
+                            <p class="text-muted">Share your referral code to start earning!</p>
+                            <button class="btn btn-primary" onclick="copyCode()">
+                                <i class="fas fa-copy me-2"></i>Copy Your Code
                             </button>
                         </td>
                     </tr>
-
-                    <!-- Referral 3 -->
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-2">
-                                    <img src="{% static 'images/avatar-placeholder.png' %}" alt="Avatar" class="rounded-circle" width="32" loading="lazy">
-                                </div>
-                                <div>
-                                    <p class="mb-0 fw-600">Jessica T.</p>
-                                    <small class="text-muted">jessica.t@example.com</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span>Nov 28, 2024</span>
-                            <br>
-                            <small class="text-muted">17 days ago</small>
-                        </td>
-                        <td>
-                            <span class="badge bg-warning">Pending</span>
-                        </td>
-                        <td>
-                            <strong class="text-warning">$0.00</strong>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#referralDetailsModal">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Referral 4 -->
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-2">
-                                    <img src="{% static 'images/avatar-placeholder.png' %}" alt="Avatar" class="rounded-circle" width="32" loading="lazy">
-                                </div>
-                                <div>
-                                    <p class="mb-0 fw-600">David L.</p>
-                                    <small class="text-muted">david.l@example.com</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span>Nov 20, 2024</span>
-                            <br>
-                            <small class="text-muted">25 days ago</small>
-                        </td>
-                        <td>
-                            <span class="badge bg-success">Active</span>
-                        </td>
-                        <td>
-                            <strong class="text-success">$185.25</strong>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#referralDetailsModal">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Referral 5 -->
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-2">
-                                    <img src="{% static 'images/avatar-placeholder.png' %}" alt="Avatar" class="rounded-circle" width="32" loading="lazy">
-                                </div>
-                                <div>
-                                    <p class="mb-0 fw-600">Emily R.</p>
-                                    <small class="text-muted">emily.r@example.com</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <span>Nov 10, 2024</span>
-                            <br>
-                            <small class="text-muted">35 days ago</small>
-                        </td>
-                        <td>
-                            <span class="badge bg-success">Active</span>
-                        </td>
-                        <td>
-                            <strong class="text-success">$215.50</strong>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#referralDetailsModal">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
+        {% if referrals %}
         <div class="card-footer bg-light d-flex justify-content-between align-items-center">
-            <small class="text-muted">Showing 1-5 of 42 referrals</small>
-            <nav>
-                <ul class="pagination mb-0">
-                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
-                    <li class="page-item active"><span class="page-link">1</span></li>
-                    <li class="page-item disabled"><span class="page-link">2</span></li>
-                    <li class="page-item disabled"><span class="page-link">Next</span></li>
-                </ul>
-            </nav>
+            <small class="text-muted">Showing {{ referrals|length }} referral{{ referrals|length|pluralize }}</small>
         </div>
-    </div>
-</div>
-
-<!-- Referral Details Modal -->
-<div class="modal fade" id="referralDetailsModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header border-bottom">
-                <h5 class="modal-title">
-                    <i class="fas fa-user-circle me-2"></i>Referral Details
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="text-center mb-4">
-                    <img src="{% static 'images/avatar-placeholder.png' %}" alt="Avatar" class="rounded-circle" width="60" loading="lazy">
-                    <h6 class="mt-3 mb-0">Sarah M.</h6>
-                    <small class="text-muted">sarah.m@example.com</small>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <label class="form-label text-muted small">Join Date</label>
-                        <p class="mb-0 fw-600">Dec 10, 2024</p>
-                    </div>
-                    <div class="col-6">
-                        <label class="form-label text-muted small">Status</label>
-                        <p class="mb-0"><span class="badge bg-success">Active</span></p>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <label class="form-label text-muted small">Total Earnings</label>
-                        <p class="mb-0 fw-600 text-success">$125.50</p>
-                    </div>
-                    <div class="col-6">
-                        <label class="form-label text-muted small">Deposit Amount</label>
-                        <p class="mb-0 fw-600">$5,000.00</p>
-                    </div>
-                </div>
-                <hr>
-                <h6>Commission Breakdown</h6>
-                <div class="row text-center">
-                    <div class="col-6 mb-3">
-                        <p class="text-muted small">Level 1 (5%)</p>
-                        <p class="fw-600 text-success">$250.00</p>
-                    </div>
-                    <div class="col-6 mb-3">
-                        <p class="text-muted small">Level 2 (2%)</p>
-                        <p class="fw-600 text-success">-$124.50</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer border-top">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
+        {% endif %}
     </div>
 </div>
 
